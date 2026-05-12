@@ -7,19 +7,22 @@
 import { useState, useRef, useEffect } from "react";
 import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
 import { saveMemberSignup, activateMembership } from "@/lib/supabase";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const features = [
-  "Access to all 15 partner courses",
-  "Up to 25% off all green fees",
-  "Apple & Google Wallet digital pass",
-  "Photo-verified, non-transferable ID",
-  "Instant re-issuance if lost",
-  "No blackout dates, no hidden fees",
+const getFeatures = (t: any) => [
+  t("pricing.features.courses"),
+  t("pricing.features.savings"),
+  t("pricing.features.wallet"),
+  t("pricing.features.verified"),
+  t("pricing.features.reissue"),
+  t("pricing.features.noBlackout"),
 ];
 
 type Step = 1 | 2 | 3;
 
 export default function PricingSection() {
+  const { t } = useLanguage();
+  const features = getFeatures(t);
   const [step, setStep] = useState<Step>(1);
   const [photoName, setPhotoName] = useState<string>("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);

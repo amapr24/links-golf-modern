@@ -5,39 +5,21 @@
 
 import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const faqs = [
-  {
-    q: "What is Links Golf Membership?",
-    a: "Your all-in-one membership to premium golf across Puerto Rico. Instant access to exclusive discounts at every partner course, a digital wallet pass, and a verified photo ID — no physical card needed.",
-  },
-  {
-    q: "Who can join?",
-    a: "Membership is currently open to Puerto Rico residents only. Proof of residency may be requested at activation.",
-  },
-  {
-    q: "Do I need to download an app?",
-    a: "Not at all. Your pass lives in your built-in Wallet — the same place as your boarding passes and credit cards. Works with both Apple Wallet and Google Wallet.",
-  },
-  {
-    q: "How do I use it at the course?",
-    a: "Simply present your digital ID from Apple Wallet or Google Wallet at any partner course's pro shop. The system validates your membership in seconds and unlocks your member rate.",
-  },
-  {
-    q: "What if I lose my phone?",
-    a: "No problem. Instantly invalidate your current QR code. As soon as you have a new device, we re-issue your pass immediately — no forms, no waiting.",
-  },
-  {
-    q: "Is the membership transferable?",
-    a: "No. The membership is non-transferable and bound to your verified photo. Each member has a unique QR code tied to their identity.",
-  },
-  {
-    q: "When does my membership renew?",
-    a: "Your membership is valid for one full year from the date of purchase. You'll receive a renewal reminder 30 days before expiration.",
-  },
+const getFaqs = (t: any) => [
+  { q: t("faq.q1"), a: t("faq.a1") },
+  { q: t("faq.q2"), a: t("faq.a2") },
+  { q: t("faq.q3"), a: t("faq.a3") },
+  { q: t("faq.q4"), a: t("faq.a4") },
+  { q: t("faq.q5"), a: t("faq.a5") },
+  { q: t("faq.q6"), a: t("faq.a6") },
+  { q: t("faq.q7"), a: t("faq.a7") },
 ];
 
 export default function FaqSection() {
+  const { t } = useLanguage();
+  const faqs = getFaqs(t);
   const [open, setOpen] = useState<number | null>(0);
 
   return (
@@ -46,7 +28,7 @@ export default function FaqSection() {
         <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
           {/* Left: heading */}
           <div className="md:sticky md:top-24">
-            <p className="section-label mb-4">05 · FAQ</p>
+            <p className="section-label mb-4">05 · {t("faq.label")}</p>
             <h2
               className="leading-tight fade-up"
               style={{
@@ -56,10 +38,7 @@ export default function FaqSection() {
                 color: "oklch(0.13 0.05 145)",
               }}
             >
-              Common{" "}
-              <em style={{ color: "oklch(0.42 0.14 145)", fontStyle: "italic" }}>
-                questions.
-              </em>
+              {t("faq.heading")}
             </h2>
           </div>
 

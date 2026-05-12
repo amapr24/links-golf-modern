@@ -5,35 +5,38 @@
  */
 
 import { DollarSign, Smartphone, ShieldCheck, CalendarDays } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const benefits = [
+const getBenefits = (t: any) => [
   {
     icon: DollarSign,
-    title: "Real Savings",
-    highlight: "Up to 25% off",
-    body: "Pays for itself in 3–4 rounds. Every visit, all year.",
+    title: t("benefits.savings.title"),
+    highlight: t("benefits.savings.highlight"),
+    body: t("benefits.savings.body"),
   },
   {
     icon: Smartphone,
-    title: "Digital ID Card",
-    highlight: "Always in your pocket",
-    body: "Lives in Apple Wallet or Google Wallet. No app, no physical card.",
+    title: t("benefits.card.title"),
+    highlight: t("benefits.card.highlight"),
+    body: t("benefits.card.body"),
   },
   {
     icon: ShieldCheck,
-    title: "Verified Identity",
-    highlight: "Non-transferable",
-    body: "Photo-verified and bound to you. Unique QR code, always secure.",
+    title: t("benefits.identity.title"),
+    highlight: t("benefits.identity.highlight"),
+    body: t("benefits.identity.body"),
   },
   {
     icon: CalendarDays,
-    title: "One Flat Price",
-    highlight: "Discounts all year",
-    body: "Single annual fee, all 15 courses. No blackout dates.",
+    title: t("benefits.price.title"),
+    highlight: t("benefits.price.highlight"),
+    body: t("benefits.price.body"),
   },
 ];
 
 export default function BenefitsSection() {
+  const { t } = useLanguage();
+  const benefits = getBenefits(t);
   return (
     <section
       id="benefits"
@@ -44,33 +47,29 @@ export default function BenefitsSection() {
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           {/* Left: Text panel */}
           <div>
-            <p className="section-label mb-4 text-white/50">01 · Why Links</p>
+            <p className="section-label mb-4 text-white/50">01 · {t("benefits.label")}</p>
             <h2
               className="text-white leading-tight mb-6 fade-up"
               style={{
                 fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(2.4rem, 5vw, 3.5rem)",
-                fontWeight: 600,
+                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                fontWeight: 400,
               }}
             >
-              Built for golfers who want to{" "}
-              <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
-                play more
-              </em>{" "}
-              and save.
+              {t("benefits.heading")}
             </h2>
             <p
               className="text-white/60 leading-relaxed mb-8 fade-up"
               style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", fontWeight: 300 }}
             >
-              The only card that opens doors at 15 of Puerto Rico's most celebrated courses — from championship resorts to beloved municipal gems.
+              {t("benefits.description")}
             </p>
             <div className="fade-up">
               <button
                 onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
                 className="btn-fairway text-xs py-3 px-6"
               >
-                Join for $199/year
+                {t("benefits.cta")}
               </button>
             </div>
 

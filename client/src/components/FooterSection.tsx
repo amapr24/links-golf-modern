@@ -3,7 +3,10 @@
  * Design: Dark forest background, clean link columns
  */
 
+import { useLanguage } from "@/contexts/LanguageContext";
+
 export default function FooterSection() {
+  const { t } = useLanguage();
   const scrollTo = (id: string) => {
     document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
   };
@@ -35,7 +38,7 @@ export default function FooterSection() {
               className="text-sm leading-relaxed"
               style={{ color: "rgba(255,255,255,0.35)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
             >
-              Puerto Rico's premier golf membership. Play more, pay less.
+              {t("footer.tagline")}
             </p>
           </div>
 
@@ -45,7 +48,7 @@ export default function FooterSection() {
               className="text-xs font-semibold uppercase tracking-widest mb-4"
               style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
             >
-              Membership
+              {t("footer.membership")}
             </p>
             <div className="space-y-2.5">
               {[
@@ -118,7 +121,7 @@ export default function FooterSection() {
               className="text-xs font-semibold uppercase tracking-widest mb-4"
               style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
             >
-              Legal
+              {t("footer.legal")}
             </p>
             <div className="space-y-2.5">
               {["Terms of Service", "Privacy Policy"].map((label) => (
