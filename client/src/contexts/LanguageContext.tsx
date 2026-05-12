@@ -150,7 +150,7 @@ const translations: Record<Language, Record<string, string>> = {
   es: {
     // Navigation
     "nav.benefits": "Beneficios",
-    "nav.courses": "Cursos",
+    "nav.courses": "Campos",
     "nav.howItWorks": "Cómo Funciona",
     "nav.faq": "Preguntas",
     "nav.getCard": "OBTÉN TU MEMBRESIA",
