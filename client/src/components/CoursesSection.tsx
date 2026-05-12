@@ -206,9 +206,20 @@ export default function CoursesSection() {
 
         {/* Bottom CTA */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-10 pt-8 fade-up" style={{ borderTop: "1px solid oklch(0.88 0.02 85)" }}>
-          <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.06 145)" }}>
-            <span className="font-semibold" style={{ color: "oklch(0.13 0.05 145)" }}>15 courses</span> across Puerto Rico — one membership unlocks them all.
-          </p>
+          <div className="flex flex-col gap-2">
+            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.06 145)" }}>
+              <span className="font-semibold" style={{ color: "oklch(0.13 0.05 145)" }}>15 courses</span> across Puerto Rico — one membership unlocks them all.
+            </p>
+            <a
+              href="/courses"
+              className="text-sm font-semibold flex items-center gap-1 transition-colors duration-200"
+              style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
+              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+            >
+              View full course directory →
+            </a>
+          </div>
           <button
             onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
             className="flex items-center gap-2 text-sm font-semibold"
