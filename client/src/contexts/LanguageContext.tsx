@@ -285,30 +285,31 @@ const translations: Record<Language, Record<string, string>> = {
 };
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
-  const [mounted, setMounted] = useState(false);
-
-  // Load language preference from localStorage on mount
-  useEffect(() => {
-    const saved = localStorage.getItem("language") as Language | null;
-    if (saved && (saved === "en" || saved === "es")) {
-      setLanguageState(saved);
+  const [language, setLanguageState] = useState<Language>(() => {
+    // Initialize from localStorage if available
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("language") as Language | null;
+      if (saved && (saved === "en" || saved === "es")) {
+        return saved;
+      }
     }
-    setMounted(true);
-  }, []);
+    return "en";
+  });
+
+  // Save to localStorage whenever language changes
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("language", language);
+    }
+  }, [language]);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("language", lang);
   };
 
   const t = (key: string): string => {
     return translations[language][key] || key;
   };
-
-  if (!mounted) {
-    return <>{children}</>;
-  }
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t }}>
