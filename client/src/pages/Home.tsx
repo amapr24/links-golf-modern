@@ -6,6 +6,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
 import BenefitsSection from "@/components/BenefitsSection";
@@ -17,6 +18,7 @@ import FooterSection from "@/components/FooterSection";
 import StickyCTA from "@/components/StickyCTA";
 
 export default function Home() {
+  const { language } = useLanguage();
   const [heroExited, setHeroExited] = useState(false);
   const heroRef = useRef<HTMLDivElement>(null);
 
@@ -46,7 +48,7 @@ export default function Home() {
     );
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [language]);
 
   return (
     <div className="min-h-screen bg-[#F7F3EC]">

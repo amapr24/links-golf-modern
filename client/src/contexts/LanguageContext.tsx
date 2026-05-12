@@ -21,7 +21,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.getCard": "GET YOUR MEMBERSHIP",
 
     // Hero
-    "hero.location": "PUERTO RICO · 15 PARTNER COURSES",
+    "hero.location": "EXCLUSIVE FOR PUERTO RICO RESIDENTS",
     "hero.playMore": "Play More.",
     "hero.payLess": "Pay Less.",
     "hero.description": "One membership unlocks up to 25% off green fees at Puerto Rico's finest courses — from TPC Dorado Beach to Royal Isabela.",
@@ -109,6 +109,8 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.features.noBlackout": "No blackout dates",
 
     // FAQ
+    "faq.label": "FAQ",
+    "faq.heading": "Common questions.",
     "faq.title": "Common questions.",
     "faq.q1": "What is Links Golf Membership?",
     "faq.a1": "Your all-in-one membership to premium golf across Puerto Rico. Instant access to exclusive discounts of every partner course, a digital wallet pass, and a verified photo ID — no physical card needed.",
@@ -154,6 +156,8 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.phone": "Phone",
     "dashboard.email": "Email",
     "dashboard.logout": "Logout",
+    "dashboard.active": "Active",
+    "dashboard.pass.download": "Download pass",
 
     // Login
     "login.title": "Welcome Back",
@@ -164,6 +168,18 @@ const translations: Record<Language, Record<string, string>> = {
     "login.noAccount": "Don't have an account?",
     "login.signUp": "Sign up here",
     "login.forgotPassword": "Forgot password?",
+    "login.memberNotFound": "Member not found. Please sign up first.",
+    "login.error": "An error occurred. Please try again.",
+    "login.invalidOtp": "Invalid code. Please try again.",
+    "login.sending": "Sending…",
+    "login.sendOtp": "Send verification code",
+    "login.otpSent": "Verification code sent to",
+    "login.verificationCode": "Verification code",
+    "login.verifying": "Verifying…",
+    "login.verify": "Verify and sign in",
+    "login.backToEmail": "Back to email",
+    "login.welcome": "Welcome back",
+    "login.redirecting": "Redirecting to your dashboard…",
   },
   es: {
     // Navigation
@@ -174,7 +190,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.getCard": "OBTÉN TU MEMBRESIA",
 
     // Hero
-    "hero.location": "PUERTO RICO · 15 CAMPOS ASOCIADOS",
+    "hero.location": "EXCLUSIVO PARA RESIDENTES DE PUERTO RICO",
     "hero.playMore": "Juega Más.",
     "hero.payLess": "Paga Menos.",
     "hero.description": "Una membresía te da acceso a descuentos de hasta 25% en los mejores campos de Puerto Rico — desde TPC Dorado Beach hasta Royal Isabela.",
@@ -262,6 +278,8 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.features.noBlackout": "Sin fechas bloqueadas",
 
     // FAQ
+    "faq.label": "PREGUNTAS",
+    "faq.heading": "Preguntas frecuentes.",
     "faq.title": "Preguntas frecuentes.",
     "faq.q1": "¿Qué es la Membresía Links Golf?",
     "faq.a1": "Tu membresía todo en uno para golf premium en Puerto Rico. Acceso instantáneo a descuentos exclusivos en todos los campos asociados, un pase de billetera digital e ID de foto verificada — sin tarjeta física necesaria.",
@@ -307,6 +325,8 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.phone": "Teléfono",
     "dashboard.email": "Correo Electrónico",
     "dashboard.logout": "Cerrar Sesión",
+    "dashboard.active": "Activo",
+    "dashboard.pass.download": "Descargar pase",
 
     // Login
     "login.title": "Bienvenido de Vuelta",
@@ -317,6 +337,18 @@ const translations: Record<Language, Record<string, string>> = {
     "login.noAccount": "¿No tienes cuenta?",
     "login.signUp": "Regístrate aquí",
     "login.forgotPassword": "¿Olvidaste tu contraseña?",
+    "login.memberNotFound": "Miembro no encontrado. Regístrate primero.",
+    "login.error": "Ocurrió un error. Inténtalo de nuevo.",
+    "login.invalidOtp": "Código no válido. Inténtalo de nuevo.",
+    "login.sending": "Enviando…",
+    "login.sendOtp": "Enviar código de verificación",
+    "login.otpSent": "Código de verificación enviado a",
+    "login.verificationCode": "Código de verificación",
+    "login.verifying": "Verificando…",
+    "login.verify": "Verificar e iniciar sesión",
+    "login.backToEmail": "Volver al correo",
+    "login.welcome": "Bienvenido de nuevo",
+    "login.redirecting": "Redirigiendo a tu panel…",
   },
 };
 

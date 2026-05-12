@@ -231,15 +231,16 @@ export default function CoursesSection() {
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              {t("courses.viewAll")} →
+              {t("courses.viewAll")}
             </a>
           </div>
           <button
+            type="button"
             onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
             className="flex items-center gap-2 text-sm font-semibold"
             style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
           >
-            {t("courses.viewAll")} <ArrowRight size={14} />
+            {t("nav.getCard")} <ArrowRight size={14} />
           </button>
         </div>
       </div>

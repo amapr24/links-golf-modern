@@ -13,24 +13,28 @@ export default function BenefitsSection() {
 
   const benefits = [
     {
+      id: "savings",
       icon: DollarSign,
       title: t("benefits.savings.title"),
       highlight: t("benefits.savings.highlight"),
       body: t("benefits.savings.body"),
     },
     {
+      id: "card",
       icon: Smartphone,
       title: t("benefits.card.title"),
       highlight: t("benefits.card.highlight"),
       body: t("benefits.card.body"),
     },
     {
+      id: "identity",
       icon: ShieldCheck,
       title: t("benefits.identity.title"),
       highlight: t("benefits.identity.highlight"),
       body: t("benefits.identity.body"),
     },
     {
+      id: "price",
       icon: CalendarDays,
       title: t("benefits.price.title"),
       highlight: t("benefits.price.highlight"),
@@ -119,7 +123,7 @@ export default function BenefitsSection() {
               const Icon = b.icon;
               return (
                 <div
-                  key={b.title}
+                  key={b.id}
                   className="fade-up rounded-sm p-6"
                   style={{
                     background: "rgba(255,255,255,0.06)",
