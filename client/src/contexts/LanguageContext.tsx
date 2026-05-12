@@ -18,7 +18,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.courses": "Courses",
     "nav.howItWorks": "How It Works",
     "nav.faq": "FAQ",
-    "nav.getCard": "GET YOUR CARD",
+    "nav.getCard": "GET YOUR MEMBERSHIP",
 
     // Hero
     "hero.location": "PUERTO RICO · 15 PARTNER COURSES",
@@ -28,7 +28,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.stats.courses": "PARTNER COURSES",
     "hero.stats.savings": "MAX SAVINGS",
     "hero.stats.price": "PER YEAR",
-    "hero.cta": "GET YOUR CARD — $199/YR",
+    "hero.cta": "GET YOUR MEMBERSHIP — $199/YR",
     "hero.viewCourses": "VIEW ALL COURSES",
 
     // Benefits
@@ -153,7 +153,7 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.courses": "Cursos",
     "nav.howItWorks": "Cómo Funciona",
     "nav.faq": "Preguntas",
-    "nav.getCard": "OBTÉN TU TARJETA",
+    "nav.getCard": "OBTÉN TU MEMBRESIA",
 
     // Hero
     "hero.location": "PUERTO RICO · 15 CAMPOS ASOCIADOS",
@@ -163,7 +163,7 @@ const translations: Record<Language, Record<string, string>> = {
     "hero.stats.courses": "CAMPOS ASOCIADOS",
     "hero.stats.savings": "AHORROS MÁXIMOS",
     "hero.stats.price": "POR AÑO",
-    "hero.cta": "OBTÉN TU TARJETA — $199/AÑO",
+    "hero.cta": "OBTÉN TU MEMBRESIA — $199/AÑO",
     "hero.viewCourses": "VER TODOS LOS CAMPOS",
 
     // Benefits
@@ -189,7 +189,7 @@ const translations: Record<Language, Record<string, string>> = {
     "howItWorks.title": "Del registro al primer golpe en minutos.",
     "howItWorks.step1": "Regístrate",
     "howItWorks.step1Desc": "Proporciona tus datos y carga una selfie.",
-    "howItWorks.step2": "Obtén Tu Tarjeta",
+    "howItWorks.step2": "Obtén Tu Membresía",
     "howItWorks.step2Desc": "El pase digital aparece instantáneamente en tu billetera.",
     "howItWorks.step3": "Juega",
     "howItWorks.step3Desc": "Muestra tu pase en cualquier campo asociado y disfruta tu descuento.",
@@ -213,7 +213,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.photoRequired": "Requerido: De frente. Se usa solo para ID Digital.",
     "pricing.takeUploadPhoto": "Tomar o Cargar Foto",
     "pricing.continuePayment": "CONTINUAR AL PAGO",
-    "pricing.payNow": "PAGAR $199 Y OBTÉN MI TARJETA",
+    "pricing.payNow": "PAGAR $199 Y OBTÉNER MEMBRESIA",
     "pricing.cardNumber": "Número de Tarjeta",
     "pricing.expiry": "VENCIMIENTO",
     "pricing.cvv": "CVV",
@@ -251,7 +251,7 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.benefits": "Beneficios",
     "footer.ourNetwork": "Nuestra Red",
     "footer.howItWorks": "Cómo Funciona",
-    "footer.getYourCard": "Obtén Tu Tarjeta",
+    "footer.getYourCard": "Obtén Tu Membresía",
     "footer.faq": "Preguntas",
     "footer.contactUs": "Contáctanos",
     "footer.email": "info@linksgolfpr.com",
