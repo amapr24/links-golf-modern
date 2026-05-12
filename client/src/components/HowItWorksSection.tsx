@@ -137,11 +137,11 @@ export default function HowItWorksSection() {
                   </div>
                 </div>
                 <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center"
+                  className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
                   style={{ background: "oklch(0.42 0.14 145 / 0.3)" }}
                 >
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <span className="text-white/60 text-xs">👤</span>
+                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+                    <span className="text-white/60 text-2xl">👤</span>
                   </div>
                 </div>
               </div>
@@ -155,7 +155,7 @@ export default function HowItWorksSection() {
                 </div>
               </div>
               {/* Details row */}
-              <div className="flex items-end justify-between">
+              <div className="flex items-center justify-between gap-4">
                 <div>
                   <div className="text-white/40 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
                     Member No.
@@ -167,23 +167,6 @@ export default function HowItWorksSection() {
                     Valid Until
                   </div>
                   <div className="text-white/80 text-sm font-mono">##/##</div>
-                </div>
-                {/* QR placeholder */}
-                <div
-                  className="w-12 h-12 rounded-sm flex items-center justify-center"
-                  style={{ background: "white" }}
-                >
-                  <div className="w-10 h-10 grid grid-cols-3 gap-0.5 p-0.5">
-                    {Array.from({ length: 9 }).map((_, j) => (
-                      <div
-                        key={j}
-                        className="rounded-[1px]"
-                        style={{
-                          background: [0,2,6,8,4].includes(j) ? "#0F1A12" : "transparent",
-                        }}
-                      />
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>

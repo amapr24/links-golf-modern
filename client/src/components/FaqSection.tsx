@@ -61,19 +61,6 @@ export default function FaqSection() {
                 questions.
               </em>
             </h2>
-            <p
-              className="mt-4 text-sm leading-relaxed fade-up"
-              style={{ color: "oklch(0.5 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
-            >
-              Still have questions? Reach us at{" "}
-              <a
-                href="mailto:info@linksgolfpr.com"
-                className="underline"
-                style={{ color: "oklch(0.42 0.14 145)" }}
-              >
-                info@linksgolfpr.com
-              </a>
-            </p>
           </div>
 
           {/* Right: accordion */}
@@ -134,6 +121,35 @@ export default function FaqSection() {
                 </div>
               </div>
             ))}
+
+            {/* Contact section after FAQ */}
+            <div
+              className="rounded-sm p-6 mt-8 fade-up"
+              style={{
+                background: "rgba(255,255,255,0.6)",
+                border: "1px solid oklch(0.88 0.02 85)",
+              }}
+            >
+              <p
+                className="text-sm font-semibold mb-2"
+                style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+              >
+                Still have questions?
+              </p>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
+              >
+                Reach us at{" "}
+                <a
+                  href="mailto:info@linksgolfpr.com"
+                  className="underline font-medium"
+                  style={{ color: "oklch(0.42 0.14 145)" }}
+                >
+                  info@linksgolfpr.com
+                </a>
+              </p>
+            </div>
           </div>
         </div>
       </div>

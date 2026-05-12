@@ -11,25 +11,25 @@ const benefits = [
     icon: DollarSign,
     title: "Real Savings",
     highlight: "Up to 25% off",
-    body: "Every round, every visit, all year long. Your membership pays for itself in as few as 3–4 rounds.",
+    body: "Pays for itself in 3–4 rounds. Every visit, all year.",
   },
   {
     icon: Smartphone,
     title: "Digital ID Card",
     highlight: "Always in your pocket",
-    body: "Your pass lives in Apple Wallet or Google Wallet — no app download, no physical card to lose.",
+    body: "Lives in Apple Wallet or Google Wallet. No app, no physical card.",
   },
   {
     icon: ShieldCheck,
     title: "Verified Identity",
     highlight: "Non-transferable",
-    body: "Photo-verified and bound to your identity. Unique QR code ensures your membership is always yours.",
+    body: "Photo-verified and bound to you. Unique QR code, always secure.",
   },
   {
     icon: CalendarDays,
     title: "One Flat Price",
     highlight: "Discounts all year",
-    body: "A single annual fee unlocks every partner course. No blackout dates, no hidden fees.",
+    body: "Single annual fee, all 15 courses. No blackout dates.",
   },
 ];
 
@@ -63,7 +63,7 @@ export default function BenefitsSection() {
               className="text-white/60 leading-relaxed mb-8 fade-up"
               style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", fontWeight: 300 }}
             >
-              Links Golf Membership is the only card that opens doors at 15 of Puerto Rico's most celebrated courses — from championship resort layouts to beloved municipal gems.
+              The only card that opens doors at 15 of Puerto Rico's most celebrated courses — from championship resorts to beloved municipal gems.
             </p>
             <div className="fade-up">
               <button

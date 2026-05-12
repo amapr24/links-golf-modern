@@ -312,6 +312,10 @@ export default function PricingSection() {
                     <a href="#" className="underline" style={{ color: "oklch(0.42 0.14 145)" }}>
                       Terms of Service
                     </a>
+                    {" "}and{" "}
+                    <a href="#" className="underline" style={{ color: "oklch(0.42 0.14 145)" }}>
+                      Privacy Policy
+                    </a>
                     .
                   </p>
                 </div>

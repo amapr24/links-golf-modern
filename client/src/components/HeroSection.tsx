@@ -43,14 +43,14 @@ export default function HeroSection() {
       <div
         className="absolute inset-0"
         style={{
-          background: "linear-gradient(to top, rgba(10,18,12,0.92) 0%, rgba(10,18,12,0.55) 40%, rgba(10,18,12,0.2) 70%, rgba(10,18,12,0.1) 100%)",
+          background: "linear-gradient(to top, rgba(10,18,12,0.95) 0%, rgba(10,18,12,0.7) 35%, rgba(10,18,12,0.35) 65%, rgba(10,18,12,0.15) 100%)",
         }}
       />
       {/* Left-side vignette for text legibility */}
       <div
         className="absolute inset-0 hidden md:block"
         style={{
-          background: "linear-gradient(to right, rgba(10,18,12,0.5) 0%, transparent 60%)",
+          background: "linear-gradient(to right, rgba(10,18,12,0.65) 0%, transparent 55%)",
         }}
       />
 
@@ -59,11 +59,11 @@ export default function HeroSection() {
         <div className="max-w-2xl">
           {/* Location badge */}
           <div
-            className="inline-flex items-center gap-1.5 mb-5 px-3 py-1.5 rounded-full text-white/80 text-xs font-medium tracking-widest uppercase"
+            className="inline-flex items-center gap-1.5 mb-5 px-3 py-1.5 rounded-full text-white text-xs font-medium tracking-widest uppercase"
             style={{
-              background: "rgba(255,255,255,0.1)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              backdropFilter: "blur(8px)",
+              background: "rgba(0,0,0,0.35)",
+              border: "1px solid rgba(255,255,255,0.25)",
+              backdropFilter: "blur(10px)",
               fontFamily: "'Outfit', sans-serif",
               opacity: loaded ? 1 : 0,
               transform: loaded ? "translateY(0)" : "translateY(12px)",
@@ -90,12 +90,12 @@ export default function HeroSection() {
           >
             Play More.
             <br />
-            <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>Pay Less.</em>
+            <em style={{ color: "oklch(0.65 0.16 145)", fontStyle: "italic", textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>Pay Less.</em>
           </h1>
 
           {/* Sub-headline */}
           <p
-            className="text-white/80 mb-8 leading-relaxed"
+            className="text-white mb-8 leading-relaxed"
             style={{
               fontFamily: "'Outfit', sans-serif",
               fontSize: "clamp(1rem, 2.5vw, 1.15rem)",
@@ -105,6 +105,7 @@ export default function HeroSection() {
               transform: loaded ? "translateY(0)" : "translateY(20px)",
               transition: "opacity 700ms ease, transform 700ms ease",
               transitionDelay: "350ms",
+              textShadow: "0 1px 4px rgba(0,0,0,0.3)",
             }}
           >
             One membership unlocks up to <strong className="text-white font-semibold">25% off green fees</strong> at Puerto Rico's finest courses — from TPC Dorado Beach to Royal Isabela.
