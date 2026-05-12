@@ -4,9 +4,9 @@
  * Multi-step form: Player Details → Payment → Digital ID
  */
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
-import { saveMemberSignup } from "@/lib/supabase";
+import { saveMemberSignup, activateMembership } from "@/lib/supabase";
 
 const features = [
   "Access to all 15 partner courses",
@@ -22,9 +22,25 @@ type Step = 1 | 2 | 3;
 export default function PricingSection() {
   const [step, setStep] = useState<Step>(1);
   const [photoName, setPhotoName] = useState<string>("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
+  const [memberId, setMemberId] = useState<number | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  // Activate membership when payment succeeds (step 3)
+  useEffect(() => {
+    if (step === 3 && memberId) {
+      const now = new Date();
+      const expiresDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+      
+      activateMembership({
+        memberId,
+        activatedAt: now.toISOString(),
+        expiresAt: expiresDate.toISOString(),
+      }).catch((err) => console.error("Failed to activate membership:", err));
+    }
+  }, [step, memberId]);
 
   const handleContinueToPayment = async () => {
     setError("");
@@ -43,14 +59,19 @@ export default function PricingSection() {
         return;
       }
 
-      // Save to Supabase
-      await saveMemberSignup({
+      // Save to Supabase with photo file and address
+      const member = await saveMemberSignup({
         firstName,
         lastName,
         email,
         phone,
-        address,
+        address: address || "",
+        photoFile: photoFile || undefined,
       });
+
+      if (member?.id) {
+        setMemberId(member.id);
+      }
 
       setStep(2);
     } catch (err) {
@@ -313,7 +334,11 @@ export default function PricingSection() {
                       accept="image/*"
                       capture="user"
                       className="hidden"
-                      onChange={(e) => setPhotoName(e.target.files?.[0]?.name || "")}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        setPhotoName(file?.name || "");
+                        setPhotoFile(file || null);
+                      }}
                     />
                     <button
                       type="button"
@@ -399,102 +424,126 @@ export default function PricingSection() {
                       className="text-xs uppercase tracking-widest"
                       style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Annual Membership · Links Golf PR
+                      Annual Membership
                     </div>
                   </div>
-                  <div>
-                    <label style={labelStyle}>Card Number</label>
-                    <input
-                      type="text"
-                      placeholder="1234 5678 9012 3456"
-                      className={inputClass}
-                      style={inputStyle}
-                    />
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="space-y-3">
                     <div>
-                      <label style={labelStyle}>Expiry</label>
+                      <label style={labelStyle}>Card Number</label>
                       <input
                         type="text"
-                        placeholder="MM / YY"
+                        placeholder="1234 5678 9012 3456"
                         className={inputClass}
                         style={inputStyle}
                       />
                     </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label style={labelStyle}>Expiry</label>
+                        <input
+                          type="text"
+                          placeholder="MM / YY"
+                          className={inputClass}
+                          style={inputStyle}
+                        />
+                      </div>
+                      <div>
+                        <label style={labelStyle}>CVV</label>
+                        <input
+                          type="text"
+                          placeholder="•••"
+                          className={inputClass}
+                          style={inputStyle}
+                        />
+                      </div>
+                    </div>
                     <div>
-                      <label style={labelStyle}>CVV</label>
+                      <label style={labelStyle}>Name on Card</label>
                       <input
                         type="text"
-                        placeholder="•••"
+                        placeholder="Juan Pérez"
                         className={inputClass}
                         style={inputStyle}
                       />
                     </div>
-                  </div>
-                  <div>
-                    <label style={labelStyle}>Name on Card</label>
-                    <input
-                      type="text"
-                      placeholder="Juan Pérez"
-                      className={inputClass}
-                      style={inputStyle}
-                    />
                   </div>
                   <button
                     onClick={() => setStep(3)}
                     className="btn-fairway w-full text-sm py-3.5 mt-2"
                   >
-                    Pay $199 & Get My Card <ArrowRight size={14} />
+                    PAY $199 & GET MY CARD <ArrowRight size={14} />
                   </button>
-                  <div className="flex items-center justify-center gap-2 text-xs" style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}>
-                    <span>🔒</span> Secured by SSL encryption
-                  </div>
+                  <p
+                    className="text-xs text-center"
+                    style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
+                  >
+                    🔒 Secured by SSL encryption
+                  </p>
                 </div>
               )}
 
               {step === 3 && (
-                <div className="text-center py-6 space-y-4">
-                  <div
-                    className="w-16 h-16 rounded-full flex items-center justify-center mx-auto"
-                    style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
-                  >
-                    <Check size={28} style={{ color: "oklch(0.42 0.14 145)" }} />
+                <div className="space-y-4">
+                  {/* Success message */}
+                  <div className="text-center mb-6">
+                    <div
+                      className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
+                      style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
+                    >
+                      <Check size={24} style={{ color: "oklch(0.42 0.14 145)" }} />
+                    </div>
+                    <h3
+                      className="font-semibold text-lg"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
+                    >
+                      Welcome to Links Golf!
+                    </h3>
+                    <p
+                      className="text-sm mt-1"
+                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      Your membership is active. Add your pass to your wallet.
+                    </p>
                   </div>
-                  <h3
-                    className="font-semibold text-xl"
-                    style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
-                  >
-                    Welcome to Links Golf!
-                  </h3>
-                  <p
-                    className="text-sm"
-                    style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
-                  >
-                    Your digital membership card is being issued to your wallet. Check your email for next steps.
-                  </p>
-                  <div className="flex gap-3 justify-center pt-2">
+
+                  {/* Wallet buttons */}
+                  <div className="space-y-2">
                     <button
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-xs font-semibold"
-                      style={{ background: "oklch(0.13 0.05 145)", color: "white", fontFamily: "'Outfit', sans-serif" }}
+                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all"
+                      style={{
+                        background: "black",
+                        color: "white",
+                        fontFamily: "'Outfit', sans-serif",
+                      }}
                     >
                       🍎 Add to Apple Wallet
                     </button>
                     <button
-                      className="flex items-center gap-2 px-4 py-2.5 rounded-sm text-xs font-semibold"
-                      style={{ background: "oklch(0.13 0.05 145)", color: "white", fontFamily: "'Outfit', sans-serif" }}
+                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all"
+                      style={{
+                        background: "oklch(0.42 0.14 145)",
+                        color: "white",
+                        fontFamily: "'Outfit', sans-serif",
+                      }}
                     >
                       🤖 Add to Google Wallet
                     </button>
                   </div>
+
+                  {/* Dashboard button */}
                   <button
-                    onClick={() => (window.location.href = "/dashboard")}
-                    className="w-full mt-4 py-3 rounded-sm text-sm font-semibold transition-all duration-200"
-                    style={{ background: "oklch(0.42 0.14 145)", color: "white", fontFamily: "'Outfit', sans-serif" }}
-                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                    onClick={() => window.location.href = "/dashboard"}
+                    className="btn-fairway w-full text-sm py-3.5"
                   >
                     Go to My Dashboard
                   </button>
+
+                  <p
+                    className="text-xs text-center"
+                    style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
+                  >
+                    Check your email for membership details and course information.
+                  </p>
                 </div>
               )}
             </div>
