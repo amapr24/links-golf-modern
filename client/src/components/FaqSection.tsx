@@ -32,16 +32,20 @@ export default function FaqSection() {
   };
 
   return (
-    <section id="faq" style={faqBackgroundStyle}>
-      {/* Very light overlay - image shows through */}
+    <section
+      id="faq"
+      className="relative overflow-hidden"
+      style={faqBackgroundStyle}
+    >
+      {/* Light overlay — section is `relative` so this stays clipped to FAQ, not the viewport */}
       <div
+        className="pointer-events-none absolute inset-0"
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.8) 100%)",
+          background:
+            "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.8) 100%)",
         }}
       />
-      <div className="container py-20 md:py-28">
+      <div className="container relative z-10 py-20 md:py-28">
         <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
           {/* Left: heading */}
           <div className="md:sticky md:top-24">

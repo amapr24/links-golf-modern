@@ -1,13 +1,23 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
 
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error("Supabase URL and key are required");
+export const isSupabaseConfigured = Boolean(supabaseUrl && supabaseKey);
+
+/** Null when env is missing so importing modules (e.g. Home → PricingSection) do not crash the app. */
+export const supabase: SupabaseClient | null = isSupabaseConfigured
+  ? createClient(supabaseUrl!, supabaseKey!)
+  : null;
+
+function requireSupabase(): SupabaseClient {
+  if (!supabase) {
+    throw new Error(
+      "Supabase is not configured. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to your .env file.",
+    );
+  }
+  return supabase;
 }
-
-export const supabase = createClient(supabaseUrl, supabaseKey);
 
 /**
  * Member signup data structure
@@ -32,12 +42,13 @@ export interface MemberActivationData {
  * Upload member photo to Supabase storage
  */
 export async function uploadMemberPhoto(file: File, email: string) {
+  const sb = requireSupabase();
   try {
     const fileExt = file.name.split(".").pop();
     const fileName = `${email}-${Date.now()}.${fileExt}`;
     const filePath = `member-photos/${fileName}`;
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await sb.storage
       .from("members")
       .upload(filePath, file, { upsert: false });
 
@@ -47,7 +58,7 @@ export async function uploadMemberPhoto(file: File, email: string) {
     }
 
     // Get public URL
-    const { data: publicData } = supabase.storage
+    const { data: publicData } = sb.storage
       .from("members")
       .getPublicUrl(filePath);
 
@@ -62,6 +73,7 @@ export async function uploadMemberPhoto(file: File, email: string) {
  * Save member data to Supabase
  */
 export async function saveMemberSignup(data: MemberSignupData) {
+  const sb = requireSupabase();
   try {
     let photoUrl = data.photoUrl;
 
@@ -70,7 +82,7 @@ export async function saveMemberSignup(data: MemberSignupData) {
       photoUrl = await uploadMemberPhoto(data.photoFile, data.email);
     }
 
-    const { data: result, error } = await supabase
+    const { data: result, error } = await sb
       .from("members")
       .insert([
         {
@@ -101,8 +113,9 @@ export async function saveMemberSignup(data: MemberSignupData) {
  * Activate member membership (set activated_at and expires_at on payment success)
  */
 export async function activateMembership(data: MemberActivationData) {
+  const sb = requireSupabase();
   try {
-    const { data: result, error } = await supabase
+    const { data: result, error } = await sb
       .from("members")
       .update({
         activated_at: data.activatedAt,

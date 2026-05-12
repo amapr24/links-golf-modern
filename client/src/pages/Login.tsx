@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocation } from "wouter";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
-import { supabase } from "@/lib/supabase";
+import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { trpc } from "@/lib/trpc";
 
 type Step = "email" | "otp" | "success";
@@ -21,6 +21,12 @@ export default function Login() {
   const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!supabase) {
+      setError(
+        "Login is not configured (missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).",
+      );
+      return;
+    }
     setLoading(true);
 
     try {
@@ -110,6 +116,22 @@ export default function Login() {
       setLoading(false);
     }
   };
+
+  if (!isSupabaseConfigured) {
+    return (
+      <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center px-4 py-12">
+        <div className="w-full max-w-md rounded-lg border border-amber-200 bg-amber-50 p-6 text-amber-950 text-sm">
+          <p className="font-medium mb-2">Supabase is not configured</p>
+          <p className="text-amber-900/90">
+            Add <code className="font-mono text-xs">VITE_SUPABASE_URL</code> and{" "}
+            <code className="font-mono text-xs">VITE_SUPABASE_ANON_KEY</code> to
+            your <code className="font-mono text-xs">.env</code> file to enable
+            login and sign-up.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center px-4 py-12">

@@ -41,18 +41,21 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Gradient overlays */}
+      {/* Gradient overlays — bottom stays dark for text; top fades to transparent
+          so the sky stays vivid (avoids a milky / “white film” look) */}
       <div
-        className="absolute inset-0"
+        className="absolute inset-0 pointer-events-none"
         style={{
-          background: "linear-gradient(to top, rgba(10,18,12,0.95) 0%, rgba(10,18,12,0.7) 35%, rgba(10,18,12,0.35) 65%, rgba(10,18,12,0.15) 100%)",
+          background:
+            "linear-gradient(to top, rgba(10,18,12,0.94) 0%, rgba(10,18,12,0.72) 28%, rgba(10,18,12,0.38) 52%, rgba(10,18,12,0.12) 72%, rgba(10,18,12,0) 100%)",
         }}
       />
       {/* Left-side vignette for text legibility */}
       <div
-        className="absolute inset-0 hidden md:block"
+        className="absolute inset-0 hidden md:block pointer-events-none"
         style={{
-          background: "linear-gradient(to right, rgba(10,18,12,0.65) 0%, transparent 55%)",
+          background:
+            "linear-gradient(to right, rgba(10,18,12,0.45) 0%, transparent 58%)",
         }}
       />
 

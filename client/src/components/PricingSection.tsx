@@ -6,7 +6,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
-import { saveMemberSignup, activateMembership } from "@/lib/supabase";
+import {
+  activateMembership,
+  isSupabaseConfigured,
+  saveMemberSignup,
+} from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
@@ -35,20 +39,26 @@ export default function PricingSection() {
 
   // Activate membership when payment succeeds (step 3)
   useEffect(() => {
-    if (step === 3 && memberId) {
-      const now = new Date();
-      const expiresDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-      
-      activateMembership({
-        memberId,
-        activatedAt: now.toISOString(),
-        expiresAt: expiresDate.toISOString(),
-      }).catch((err) => console.error("Failed to activate membership:", err));
-    }
+    if (step !== 3 || !memberId || !isSupabaseConfigured) return;
+
+    const now = new Date();
+    const expiresDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
+
+    activateMembership({
+      memberId,
+      activatedAt: now.toISOString(),
+      expiresAt: expiresDate.toISOString(),
+    }).catch((err) => console.error("Failed to activate membership:", err));
   }, [step, memberId]);
 
   const handleContinueToPayment = async () => {
     setError("");
+    if (!isSupabaseConfigured) {
+      setError(
+        "Sign-up is unavailable in this environment (Supabase env vars are not set).",
+      );
+      return;
+    }
     setIsSubmitting(true);
 
     try {

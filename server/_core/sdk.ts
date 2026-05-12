@@ -32,9 +32,13 @@ class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
     console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl);
     if (!ENV.oAuthServerUrl) {
-      console.error(
-        "[OAuth] ERROR: OAUTH_SERVER_URL is not configured! Set OAUTH_SERVER_URL environment variable."
-      );
+      const msg =
+        "OAUTH_SERVER_URL is not set; OAuth login will not work until it is configured.";
+      if (ENV.isProduction) {
+        console.error("[OAuth]", msg);
+      } else {
+        console.warn("[OAuth]", msg);
+      }
     }
   }
 

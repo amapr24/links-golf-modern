@@ -150,7 +150,16 @@ function vitePluginManusDebugCollector(): Plugin {
   };
 }
 
-const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector()];
+// Manus preview tooling embeds its own React bundle; with the app’s React that
+// often yields a blank page locally. Set MANUS_DEV_TOOLS=1 when using a Manus host.
+const enableManusDevTools = process.env.MANUS_DEV_TOOLS === "1";
+
+const plugins = [
+  react(),
+  tailwindcss(),
+  jsxLocPlugin(),
+  ...(enableManusDevTools ? [vitePluginManusRuntime(), vitePluginManusDebugCollector()] : []),
+];
 
 export default defineConfig({
   plugins,
