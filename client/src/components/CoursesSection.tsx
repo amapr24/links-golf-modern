@@ -40,13 +40,15 @@ export default function CoursesSection() {
 
   const filtered = courses.filter((c) => filter === "all" || c.tier === filter);
 
+  const coursesBackgroundStyle = {
+    backgroundImage: `url(${AERIAL_IMAGE})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundAttachment: "fixed",
+  };
+
   return (
-    <section id="courses" className="relative" style={{
-      backgroundImage: `url(${AERIAL_IMAGE})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    }}>
+    <section id="courses" className="relative" style={coursesBackgroundStyle}>
       {/* Medium overlay - reveals image gradually */}
       <div
         style={{

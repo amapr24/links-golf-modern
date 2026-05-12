@@ -106,16 +106,18 @@ export default function PricingSection() {
     marginBottom: "0.4rem",
   };
 
+  const pricingBackgroundStyle = {
+    backgroundImage: `url(${AERIAL_IMAGE})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundAttachment: "fixed",
+  };
+
   return (
     <section
       id="pricing"
       className="relative"
-      style={{
-        backgroundImage: `url(${AERIAL_IMAGE})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: "fixed",
-      }}
+      style={pricingBackgroundStyle}
     >
       {/* Light overlay - reveals image clearly */}
       <div

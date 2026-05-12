@@ -24,13 +24,15 @@ export default function FaqSection() {
   const faqs = getFaqs(t);
   const [open, setOpen] = useState<number | null>(0);
 
+  const faqBackgroundStyle = {
+    backgroundImage: `url(${AERIAL_IMAGE})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundAttachment: "fixed",
+  };
+
   return (
-    <section id="faq" style={{
-      backgroundImage: `url(${AERIAL_IMAGE})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      backgroundAttachment: "fixed",
-    }}>
+    <section id="faq" style={faqBackgroundStyle}>
       {/* Very light overlay - image shows through */}
       <div
         style={{
