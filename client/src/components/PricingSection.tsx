@@ -439,6 +439,15 @@ export default function PricingSection() {
                       🤖 Add to Google Wallet
                     </button>
                   </div>
+                  <button
+                    onClick={() => (window.location.href = "/dashboard")}
+                    className="w-full mt-4 py-3 rounded-sm text-sm font-semibold transition-all duration-200"
+                    style={{ background: "oklch(0.42 0.14 145)", color: "white", fontFamily: "'Outfit', sans-serif" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
+                    onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+                  >
+                    Go to My Dashboard
+                  </button>
                 </div>
               )}
             </div>
