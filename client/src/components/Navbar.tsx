@@ -6,17 +6,20 @@
 
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
-
-const navLinks = [
-  { label: "Benefits", href: "#benefits" },
-  { label: "Courses", href: "#courses" },
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "FAQ", href: "#faq" },
-];
+import { useLanguage } from "@/contexts/LanguageContext";
+import LanguageToggle from "./LanguageToggle";
 
 export default function Navbar() {
+  const { t } = useLanguage();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const navLinks = [
+    { label: t("nav.benefits"), href: "#benefits" },
+    { label: t("nav.courses"), href: "#courses" },
+    { label: t("nav.howItWorks"), href: "#how-it-works" },
+    { label: t("nav.faq"), href: "#faq" },
+  ];
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 60);
@@ -76,12 +79,13 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden md:flex items-center gap-4">
+            <LanguageToggle />
             <button
               onClick={() => handleNavClick("#pricing")}
               className="btn-fairway text-xs py-2.5 px-5"
             >
-              Get Your Card
+              {t("nav.getCard")}
             </button>
           </div>
 
@@ -130,12 +134,13 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
-            <div className="pt-4 w-full">
+            <div className="pt-8 w-full space-y-4">
+              <LanguageToggle />
               <button
                 onClick={() => handleNavClick("#pricing")}
                 className="btn-fairway w-full text-sm py-4"
               >
-                Get Your Card — $199/yr
+                {t("nav.getCard")} — $199/yr
               </button>
             </div>
           </div>
