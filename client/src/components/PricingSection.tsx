@@ -6,6 +6,7 @@
 
 import { useState, useRef } from "react";
 import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
+import { saveMemberSignup } from "@/lib/supabase";
 
 const features = [
   "Access to all 15 partner courses",
@@ -21,7 +22,44 @@ type Step = 1 | 2 | 3;
 export default function PricingSection() {
   const [step, setStep] = useState<Step>(1);
   const [photoName, setPhotoName] = useState<string>("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string>("");
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const handleContinueToPayment = async () => {
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      const firstName = (document.getElementById("inp-firstname") as HTMLInputElement)?.value;
+      const lastName = (document.getElementById("inp-lastname") as HTMLInputElement)?.value;
+      const email = (document.getElementById("inp-email") as HTMLInputElement)?.value;
+      const phone = (document.getElementById("inp-phone") as HTMLInputElement)?.value;
+      const address = (document.getElementById("inp-address") as HTMLInputElement)?.value;
+
+      if (!firstName || !lastName || !email || !phone) {
+        setError("Please fill in all required fields");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Save to Supabase
+      await saveMemberSignup({
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+      });
+
+      setStep(2);
+    } catch (err) {
+      console.error("Error saving member:", err);
+      setError("Failed to save your information. Please try again.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const inputClass =
     "w-full px-4 py-3 text-sm rounded-sm border outline-none transition-all duration-200 focus:border-[oklch(0.42_0.14_145)] focus:ring-2 focus:ring-[oklch(0.42_0.14_145_/_0.15)]";
@@ -297,12 +335,21 @@ export default function PricingSection() {
                       Required · Front-facing · Used for your Digital ID only.
                     </p>
                   </div>
+                  {error && (
+                    <div
+                      className="p-3 rounded-sm text-sm text-center"
+                      style={{ background: "rgba(220, 38, 38, 0.1)", color: "rgb(220, 38, 38)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {error}
+                    </div>
+                  )}
                   <button
                     id="btn-next-1"
-                    onClick={() => setStep(2)}
-                    className="btn-fairway w-full text-sm py-3.5 mt-2"
+                    onClick={handleContinueToPayment}
+                    disabled={isSubmitting}
+                    className="btn-fairway w-full text-sm py-3.5 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Continue to Payment <ArrowRight size={14} />
+                    {isSubmitting ? "Saving..." : "Continue to Payment"} <ArrowRight size={14} />
                   </button>
                   <p
                     className="text-xs text-center"
