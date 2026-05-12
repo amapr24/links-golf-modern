@@ -41,7 +41,20 @@ export default function CoursesSection() {
   const filtered = courses.filter((c) => filter === "all" || c.tier === filter);
 
   return (
-    <section id="courses" className="relative" style={{ background: "#F7F3EC" }}>
+    <section id="courses" className="relative" style={{
+      backgroundImage: `url(${AERIAL_IMAGE})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundAttachment: "fixed",
+    }}>
+      {/* Medium overlay - reveals image gradually */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 100%)",
+        }}
+      />
       {/* Top image band */}
       <div
         className="w-full h-56 md:h-72 bg-cover bg-center relative overflow-hidden"
@@ -224,7 +237,7 @@ export default function CoursesSection() {
             className="flex items-center gap-2 text-sm font-semibold"
             style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
           >
-            {t("courses.cta")} <ArrowRight size={14} />
+            {t("courses.viewAll")} <ArrowRight size={14} />
           </button>
         </div>
       </div>

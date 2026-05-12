@@ -1,49 +1,64 @@
 /*
  * BenefitsSection — Links Golf Membership
- * Design: Dark forest background, four benefit cards with icons
- * Asymmetric: Left text panel + right 2x2 card grid
+ * Design: Golf course background with dark overlay, continues hero experience
  */
 
 import { DollarSign, Smartphone, ShieldCheck, CalendarDays } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
-const getBenefits = (t: any) => [
-  {
-    icon: DollarSign,
-    title: t("benefits.savings.title"),
-    highlight: t("benefits.savings.highlight"),
-    body: t("benefits.savings.body"),
-  },
-  {
-    icon: Smartphone,
-    title: t("benefits.card.title"),
-    highlight: t("benefits.card.highlight"),
-    body: t("benefits.card.body"),
-  },
-  {
-    icon: ShieldCheck,
-    title: t("benefits.identity.title"),
-    highlight: t("benefits.identity.highlight"),
-    body: t("benefits.identity.body"),
-  },
-  {
-    icon: CalendarDays,
-    title: t("benefits.price.title"),
-    highlight: t("benefits.price.highlight"),
-    body: t("benefits.price.body"),
-  },
-];
+const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
-  const benefits = getBenefits(t);
+
+  const benefits = [
+    {
+      icon: DollarSign,
+      title: t("benefits.savings.title"),
+      highlight: t("benefits.savings.highlight"),
+      body: t("benefits.savings.body"),
+    },
+    {
+      icon: Smartphone,
+      title: t("benefits.card.title"),
+      highlight: t("benefits.card.highlight"),
+      body: t("benefits.card.body"),
+    },
+    {
+      icon: ShieldCheck,
+      title: t("benefits.identity.title"),
+      highlight: t("benefits.identity.highlight"),
+      body: t("benefits.identity.body"),
+    },
+    {
+      icon: CalendarDays,
+      title: t("benefits.price.title"),
+      highlight: t("benefits.price.highlight"),
+      body: t("benefits.price.body"),
+    },
+  ];
+
   return (
     <section
       id="benefits"
-      className="relative"
-      style={{ background: "oklch(0.13 0.05 145)" }}
+      className="relative overflow-hidden"
+      style={{
+        backgroundImage: `url(${AERIAL_IMAGE})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
-      <div className="container py-20 md:py-28">
+      {/* Dark overlay - continues hero fade */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.55) 100%)",
+        }}
+      />
+
+      <div className="container py-20 md:py-28 relative z-10">
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           {/* Left: Text panel */}
           <div>
@@ -59,7 +74,7 @@ export default function BenefitsSection() {
               {t("benefits.heading")}
             </h2>
             <p
-              className="text-white/60 leading-relaxed mb-8 fade-up"
+              className="text-white/70 leading-relaxed mb-8 fade-up"
               style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", fontWeight: 300 }}
             >
               {t("benefits.description")}
@@ -74,7 +89,7 @@ export default function BenefitsSection() {
             </div>
 
             {/* Stat row */}
-            <div className="flex gap-8 mt-10 pt-10 border-t fade-up" style={{ borderColor: "rgba(255,255,255,0.08)" }}>
+            <div className="flex gap-8 mt-10 pt-10 border-t fade-up" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
               {[
                 { num: "15", label: "Courses" },
                 { num: "25%", label: "Max Discount" },
@@ -88,7 +103,7 @@ export default function BenefitsSection() {
                     {s.num}
                   </div>
                   <div
-                    className="text-white/40 text-xs uppercase tracking-wider mt-0.5"
+                    className="text-white/50 text-xs uppercase tracking-wider mt-0.5"
                     style={{ fontFamily: "'Outfit', sans-serif" }}
                   >
                     {s.label}
@@ -107,8 +122,8 @@ export default function BenefitsSection() {
                   key={b.title}
                   className="fade-up rounded-sm p-6"
                   style={{
-                    background: "rgba(255,255,255,0.04)",
-                    border: "1px solid rgba(255,255,255,0.07)",
+                    background: "rgba(255,255,255,0.06)",
+                    border: "1px solid rgba(255,255,255,0.1)",
                     transitionDelay: `${i * 80}ms`,
                   }}
                 >
@@ -131,7 +146,7 @@ export default function BenefitsSection() {
                     {b.title}
                   </h3>
                   <p
-                    className="text-white/55 text-sm leading-relaxed"
+                    className="text-white/60 text-sm leading-relaxed"
                     style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                   >
                     {b.body}

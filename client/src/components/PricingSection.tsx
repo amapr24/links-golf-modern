@@ -9,6 +9,8 @@ import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
 import { saveMemberSignup, activateMembership } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
+
 const getFeatures = (t: any) => [
   t("pricing.features.courses"),
   t("pricing.features.savings"),
@@ -108,8 +110,21 @@ export default function PricingSection() {
     <section
       id="pricing"
       className="relative"
-      style={{ background: "oklch(0.13 0.05 145)" }}
+      style={{
+        backgroundImage: `url(${AERIAL_IMAGE})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
+      {/* Light overlay - reveals image clearly */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 100%)",
+        }}
+      />
       {/* Subtle texture overlay */}
       <div
         className="absolute inset-0 opacity-5"

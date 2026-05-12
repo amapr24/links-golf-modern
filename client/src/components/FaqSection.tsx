@@ -7,6 +7,8 @@ import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
+
 const getFaqs = (t: any) => [
   { q: t("faq.q1"), a: t("faq.a1") },
   { q: t("faq.q2"), a: t("faq.a2") },
@@ -23,7 +25,20 @@ export default function FaqSection() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" style={{ background: "#F7F3EC" }}>
+    <section id="faq" style={{
+      backgroundImage: `url(${AERIAL_IMAGE})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundAttachment: "fixed",
+    }}>
+      {/* Very light overlay - image shows through */}
+      <div
+        style={{
+          position: "absolute",
+          inset: 0,
+          background: "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.8) 100%)",
+        }}
+      />
       <div className="container py-20 md:py-28">
         <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
           {/* Left: heading */}

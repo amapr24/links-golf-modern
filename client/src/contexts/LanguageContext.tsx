@@ -128,6 +128,9 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.contactUs": "Contact us at",
 
     // Footer
+    "footer.tagline": "Unlock Puerto Rico's finest courses with one membership.",
+    "footer.membership": "MEMBERSHIP",
+    "footer.legal": "LEGAL",
     "footer.benefits": "Benefits",
     "footer.ourNetwork": "Our Network",
     "footer.howItWorks": "How It Works",
@@ -278,6 +281,9 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.contactUs": "Contáctanos en",
 
     // Footer
+    "footer.tagline": "Desbloquea los mejores campos de Puerto Rico con una membresía.",
+    "footer.membership": "MEMBRESÍA",
+    "footer.legal": "LEGAL",
     "footer.benefits": "Beneficios",
     "footer.ourNetwork": "Nuestra Red",
     "footer.howItWorks": "Cómo Funciona",
