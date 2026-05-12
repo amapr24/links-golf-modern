@@ -7,10 +7,12 @@
 
 import { useEffect, useState } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/hero-golf-pr-CZJDsMr2L3k8yznVeYKFj5.webp";
 
 export default function HeroSection() {
+  const { t } = useLanguage();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -72,7 +74,7 @@ export default function HeroSection() {
             }}
           >
             <MapPin size={11} />
-            Puerto Rico · 15 Partner Courses
+            {t("hero.location")}
           </div>
 
           {/* Main headline */}
@@ -88,9 +90,9 @@ export default function HeroSection() {
               transitionDelay: "200ms",
             }}
           >
-            Play More.
+            {t("hero.playMore")}
             <br />
-            <em style={{ color: "oklch(0.65 0.16 145)", fontStyle: "italic", textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>Pay Less.</em>
+            <em style={{ color: "oklch(0.65 0.16 145)", fontStyle: "italic", textShadow: "0 2px 8px rgba(0,0,0,0.4)" }}>{t("hero.payLess")}</em>
           </h1>
 
           {/* Sub-headline */}
@@ -108,7 +110,7 @@ export default function HeroSection() {
               textShadow: "0 1px 4px rgba(0,0,0,0.3)",
             }}
           >
-            One membership unlocks up to <strong className="text-white font-semibold">25% off green fees</strong> at Puerto Rico's finest courses — from TPC Dorado Beach to Royal Isabela.
+            {t("hero.description")}
           </p>
 
           {/* Price + CTAs */}
@@ -122,11 +124,11 @@ export default function HeroSection() {
             }}
           >
             <button onClick={scrollToPricing} className="btn-fairway text-sm py-4 px-7">
-              Get Your Card — $199/yr
+              {t("hero.cta")}
               <ArrowRight size={15} />
             </button>
             <button onClick={scrollToCourses} className="btn-outline-white text-sm py-4 px-7">
-              View All Courses
+              {t("hero.viewCourses")}
             </button>
           </div>
 
@@ -140,9 +142,9 @@ export default function HeroSection() {
             }}
           >
             {[
-              { value: "15", label: "Partner Courses" },
-              { value: "25%", label: "Max Savings" },
-              { value: "$199", label: "Per Year" },
+              { value: "15", label: t("hero.stats.courses") },
+              { value: "25%", label: t("hero.stats.savings") },
+              { value: "$199", label: t("hero.stats.price") },
             ].map((stat) => (
               <div key={stat.value} className="flex items-baseline gap-1.5">
                 <span
