@@ -6,6 +6,7 @@
 
 import { useState } from "react";
 import { MapPin, ArrowRight } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
@@ -34,6 +35,7 @@ const discountColor = (d: number) => {
 };
 
 export default function CoursesSection() {
+  const { t } = useLanguage();
   const [filter, setFilter] = useState<"all" | "resort" | "club">("all");
 
   const filtered = courses.filter((c) => filter === "all" || c.tier === filter);
@@ -53,7 +55,7 @@ export default function CoursesSection() {
         />
         <div className="absolute inset-0 flex items-end pb-8 container">
           <div>
-            <p className="section-label mb-2">02 · Our Network</p>
+            <p className="section-label mb-2">02 · {t("courses.label")}</p>
             <h2
               className="leading-tight fade-up"
               style={{
@@ -63,10 +65,7 @@ export default function CoursesSection() {
                 color: "oklch(0.13 0.05 145)",
               }}
             >
-              The island's{" "}
-              <em style={{ color: "oklch(0.42 0.14 145)", fontStyle: "italic" }}>
-                finest greens.
-              </em>
+              {t("courses.heading")}
             </h2>
           </div>
         </div>
@@ -78,7 +77,7 @@ export default function CoursesSection() {
             className="text-sm fade-up"
             style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
           >
-            Championship resort layouts, tucked-away municipal gems, and everything between.
+            {t("courses.description")}
           </p>
           {/* Filter tabs */}
           <div className="flex gap-1 fade-up" style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}>
@@ -94,7 +93,7 @@ export default function CoursesSection() {
                   color: filter === f ? "white" : "oklch(0.45 0.06 145)",
                 }}
               >
-                {f === "all" ? "All Courses" : f === "resort" ? "Resort" : "Club"}
+                {f === "all" ? t("courses.filter.all") : f === "resort" ? t("courses.filter.resort") : t("courses.filter.club")}
               </button>
             ))}
           </div>
@@ -208,7 +207,7 @@ export default function CoursesSection() {
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-10 pt-8 fade-up" style={{ borderTop: "1px solid oklch(0.88 0.02 85)" }}>
           <div className="flex flex-col gap-2">
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.06 145)" }}>
-              <span className="font-semibold" style={{ color: "oklch(0.13 0.05 145)" }}>15 courses</span> across Puerto Rico — one membership unlocks them all.
+              {t("courses.bottomText")}
             </p>
             <a
               href="/courses"
@@ -217,7 +216,7 @@ export default function CoursesSection() {
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
             >
-              View full course directory →
+              {t("courses.viewAll")} →
             </a>
           </div>
           <button
@@ -225,7 +224,7 @@ export default function CoursesSection() {
             className="flex items-center gap-2 text-sm font-semibold"
             style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
           >
-            Get your membership <ArrowRight size={14} />
+            {t("courses.cta")} <ArrowRight size={14} />
           </button>
         </div>
       </div>

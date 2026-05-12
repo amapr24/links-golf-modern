@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocation } from "wouter";
 import { Mail, ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import { trpc } from "@/lib/trpc";
 
 type Step = "email" | "otp" | "success";
 
@@ -41,15 +42,26 @@ export default function Login() {
       localStorage.setItem("login_email", email);
       localStorage.setItem("login_member_id", member.id);
 
-      // In a real app, you'd send an OTP via email
-      // For now, we'll simulate it with a 6-digit code
-      const simulatedOtp = Math.random().toString().slice(2, 8);
-      localStorage.setItem("login_otp", simulatedOtp);
+      // Call backend to send OTP email via tRPC
+      const sendOtpMutation = trpc.member.sendOtp.useMutation();
       
-      // Show the OTP (in production, this would be sent via email)
-      console.log(`[DEMO] OTP for ${email}: ${simulatedOtp}`);
-      
-      setStep("otp");
+      try {
+        const result = await sendOtpMutation.mutateAsync({ email: email.toLowerCase() });
+        
+        if (!result.success) {
+          setError(result.error || "Failed to send OTP. Please try again.");
+          setLoading(false);
+          return;
+        }
+        
+        // OTP sent successfully, move to verification step
+        setStep("otp");
+      } catch (emailErr) {
+        console.error("[sendOtp] Error:", emailErr);
+        setError("Failed to send OTP email. Please try again.");
+        setLoading(false);
+        return;
+      }
     } catch (err) {
       setError(t("login.error") || "An error occurred. Please try again.");
       console.error(err);

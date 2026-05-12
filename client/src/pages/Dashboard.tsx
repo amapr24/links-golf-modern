@@ -6,6 +6,7 @@
 
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
 interface MemberData {
@@ -20,6 +21,7 @@ interface MemberData {
 }
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [copied, setCopied] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -112,8 +114,8 @@ export default function Dashboard() {
             onMouseEnter={(e) => (e.currentTarget.style.background = "oklch(0.92 0.02 85)")}
             onMouseLeave={(e) => (e.currentTarget.style.background = "oklch(0.96 0.01 85)")}
           >
-            <LogOut size={14} />
-            Logout
+                <LogOut size={14} />
+            {t("dashboard.logout")}
           </button>
         </div>
       </header>
@@ -129,7 +131,7 @@ export default function Dashboard() {
               color: "oklch(0.13 0.05 145)",
             }}
           >
-            Welcome back, {member.firstName}!
+            {t("dashboard.welcome")}, {member.firstName}!
           </h1>
           <p
             className="text-sm"
@@ -139,7 +141,7 @@ export default function Dashboard() {
               fontWeight: 300,
             }}
           >
-            Your membership is active and ready to use at all 15 partner courses.
+            {t("dashboard.active")}
           </p>
         </div>
 
@@ -268,7 +270,7 @@ export default function Dashboard() {
                 onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
               >
                 <Download size={16} />
-                Download Pass
+                {t("dashboard.pass.download")}
               </button>
               <button
                 className="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-sm font-medium text-sm transition-all duration-200"
