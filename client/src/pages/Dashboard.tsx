@@ -4,7 +4,8 @@
  * Features: View pass, renewal info, course access, download pass, contact support
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "wouter";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
 interface MemberData {
@@ -19,7 +20,20 @@ interface MemberData {
 }
 
 export default function Dashboard() {
+  const [, setLocation] = useLocation();
   const [copied, setCopied] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const sessionToken = localStorage.getItem("member_session");
+    if (!sessionToken) {
+      setLocation("/login");
+      return;
+    }
+    setIsAuthenticated(true);
+    setLoading(false);
+  }, [setLocation]);
   const [member] = useState<MemberData>({
     firstName: "Juan",
     lastName: "Pérez",
@@ -38,9 +52,26 @@ export default function Dashboard() {
   };
 
   const handleLogout = () => {
-    // TODO: Implement logout logic
-    alert("Logout functionality coming soon");
+    localStorage.removeItem("member_session");
+    localStorage.removeItem("member_id");
+    localStorage.removeItem("member_email");
+    setLocation("/");
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
+          <p>Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen" style={{ background: "oklch(0.98 0.001 286.375)" }}>
