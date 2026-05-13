@@ -34,6 +34,30 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     return bounds;
   };
 
+  // Create tooltip content for marker
+  const createTooltipContent = (course: CourseCoordinate): string => {
+    return `
+      <div style="
+        background: white;
+        padding: 8px 12px;
+        border-radius: 4px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        font-family: 'Outfit', sans-serif;
+        max-width: 200px;
+      ">
+        <div style="font-weight: 600; font-size: 13px; color: #1a1a1a; margin-bottom: 4px;">
+          ${course.name}
+        </div>
+        <div style="font-size: 12px; color: #666; margin-bottom: 6px;">
+          ${course.location}
+        </div>
+        <div style="font-size: 12px; font-weight: 600; color: #2d7a4a;">
+          ${course.discount}% discount
+        </div>
+      </div>
+    `;
+  };
+
   // Classic markers (no mapId / AdvancedMarker setup required for Forge keys)
   const createMarker = (
     map: google.maps.Map,
@@ -58,6 +82,23 @@ export function CoursesMap({ filter }: CoursesMapProps) {
       },
     });
 
+    // Create info window for hover tooltip
+    const infoWindow = new google.maps.InfoWindow({
+      content: createTooltipContent(course),
+      disableAutoPan: true,
+    });
+
+    // Show tooltip on hover
+    marker.addListener("mouseover", () => {
+      infoWindow.open(map, marker);
+    });
+
+    // Hide tooltip on mouse out
+    marker.addListener("mouseout", () => {
+      infoWindow.close();
+    });
+
+    // Select course on click
     marker.addListener("click", () => {
       setSelectedCourse(course);
     });
