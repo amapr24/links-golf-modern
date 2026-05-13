@@ -1,11 +1,12 @@
 /**
  * CoursesMap — Interactive Google Map showing partner golf courses in Puerto Rico
  * Displays course pins with filtering by directory course type.
- * Pin hover: immediate custom label (no slow native `title` tooltip). Click opens detail card below.
+ * Pin hover: immediate custom label (no slow native `title` tooltip).
+ * Course pills always visible — no popup detail card.
  */
 
 import { useRef, useEffect, useState, useMemo, useCallback } from "react";
-import { ChevronsDown, MapPin, X } from "lucide-react";
+import { ChevronsDown, MapPin } from "lucide-react";
 import { MapView } from "./Map";
 import { courseCoordinates, type CourseCoordinate } from "@/data/courseCoordinates";
 import type { PartnerCourseType } from "@/data/partnerCourses";
@@ -19,13 +20,32 @@ interface CoursesMapProps {
   filter: CoursesMapFilter;
 }
 
+/** Holes data from the full directory — keyed by slug */
+const COURSE_HOLES: Record<string, number> = {
+  tpc_dorado_beach: 72,
+  bahia_beach: 18,
+  el_conquistador: 18,
+  el_legado: 18,
+  dorado_del_mar: 18,
+  palmas_del_mar: 36,
+  royal_isabela: 18,
+  wyndham_rio_mar: 36,
+  caguas_real: 18,
+  club_deportivo_oeste: 18,
+  coco_beach: 36,
+  costa_caribe: 27,
+  fort_buchanan: 9,
+  punta_borinquen: 18,
+  rio_bayamon: 18,
+};
+
 const discountColor = (d: number) => {
   if (d >= 25) return { bg: "oklch(0.42 0.14 145)", text: "white" };
   if (d >= 20) return { bg: "oklch(0.35 0.12 145)", text: "white" };
   return { bg: "oklch(0.92 0.04 145)", text: "oklch(0.28 0.12 145)" };
 };
 
-/** Teardrop pin (SVG) — reads as “map pin” / fairway marker vs plain circle */
+/** Teardrop pin (SVG) — reads as "map pin" / fairway marker vs plain circle */
 function golfPinIcon(fill: string, selected: boolean): google.maps.Icon {
   const w = selected ? 36 : 30;
   const h = selected ? 46 : 38;
@@ -35,6 +55,20 @@ function golfPinIcon(fill: string, selected: boolean): google.maps.Icon {
     scaledSize: new google.maps.Size(w, h),
     anchor: new google.maps.Point(w / 2, h - 2),
   };
+}
+
+/** Course type label for desktop pill */
+function courseTypeLabel(type: PartnerCourseType, t: (key: string) => string): string {
+  switch (type) {
+    case "Resort":
+      return t("courses.homeFilter.resort");
+    case "Semi-Private":
+      return t("courses.homeFilter.semiPrivate");
+    case "Public":
+      return t("courses.homeFilter.public");
+    case "Country Club":
+      return t("courses.homeFilter.countryClub");
+  }
 }
 
 export function CoursesMap({ filter }: CoursesMapProps) {
@@ -195,7 +229,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
 
     const bounds = calculateBounds(filteredCourses);
     if (bounds) {
-      map.fitBounds(bounds, { top: 100, right: 100, bottom: 100, left: 100 });
+      map.fitBounds(bounds, { top: 60, right: 60, bottom: 60, left: 60 });
     }
   };
 
@@ -212,7 +246,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
 
     const bounds = calculateBounds(filteredCourses);
     if (bounds) {
-      mapRef.current.fitBounds(bounds, { top: 100, right: 100, bottom: 100, left: 100 });
+      mapRef.current.fitBounds(bounds, { top: 60, right: 60, bottom: 60, left: 60 });
     }
   }, [filter, selectedCourse, language, t, createMarker, filteredCourses]);
 
@@ -237,11 +271,13 @@ export function CoursesMap({ filter }: CoursesMapProps) {
 
   return (
     <div className="w-full min-w-0 max-w-full">
+      {/* Grid: wider rectangular map + course list side panel */}
       <div
-        className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 min-[900px]:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] min-[900px]:grid-rows-[minmax(0,480px)] min-[900px]:gap-8 min-[900px]:items-stretch min-[900px]:h-[480px] min-[900px]:max-h-[480px] min-[900px]:min-h-0 min-[900px]:overflow-hidden"
+        className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 min-[900px]:grid-cols-[minmax(0,5fr)_minmax(0,2fr)] min-[900px]:grid-rows-[minmax(0,380px)] min-[900px]:gap-6 min-[900px]:items-stretch min-[900px]:h-[380px] min-[900px]:max-h-[380px] min-[900px]:min-h-0 min-[900px]:overflow-hidden"
         role="presentation"
       >
-        <div className="relative min-h-0 min-w-0 h-[min(68vh,26rem)] min-[640px]:max-[899px]:h-[440px] min-[900px]:h-[480px] min-[900px]:min-h-0 rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
+        {/* Map — wider, shorter rectangle to echo Puerto Rico's shape */}
+        <div className="relative min-h-0 min-w-0 h-[min(55vh,22rem)] min-[640px]:max-[899px]:h-[340px] min-[900px]:h-[380px] min-[900px]:min-h-0 rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
           <MapView
             initialCenter={{ lat: 18.2208, lng: -66.5901 }}
             initialZoom={9}
@@ -287,7 +323,8 @@ export function CoursesMap({ filter }: CoursesMapProps) {
           )}
         </div>
 
-        <div className="relative flex min-h-0 min-w-0 flex-col mt-1 min-[900px]:mt-0 min-[900px]:h-full min-[900px]:min-h-0 min-[900px]:overflow-hidden min-[900px]:rounded-lg min-[900px]:ring-1 min-[900px]:ring-black/[0.06]">
+        {/* Course list panel */}
+        <div className="relative flex min-h-0 min-w-0 flex-col mt-1 min-[900px]:mt-0 min-[900px]:h-full min-[900px]:min-h-0 min-[900px]:overflow-hidden">
           <ul
             ref={listUlRef}
             className="m-0 flex min-h-0 list-none flex-col gap-2.5 overflow-y-auto overscroll-contain p-0 pb-6 pr-1 max-h-[360px] max-[899px]:shrink-0 min-[900px]:max-h-full min-[900px]:min-h-0 min-[900px]:flex-1 min-[900px]:pr-1 [scrollbar-width:thin] [scrollbar-color:oklch(0.55_0.06_145/0.35)_oklch(0.92_0.02_85/0.5)] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/25 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-black/[0.06]"
@@ -298,6 +335,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
               const colors = discountColor(course.discount);
               const displayName = partnerCourseName(course.slug, course.name, language, t);
               const selected = course === selectedCourse;
+              const holes = COURSE_HOLES[course.slug];
               return (
                 <li key={course.slug} className="shrink-0">
                   <button
@@ -308,7 +346,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                       else delete pillRefs.current[course.slug];
                     }}
                     onClick={() => onCoursePillClick(course)}
-                    className="course-map-pill flex min-h-[5.25rem] w-full items-center justify-between gap-4 rounded-lg border px-3.5 py-2.5 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
+                    className="course-map-pill flex w-full items-center justify-between gap-3 rounded-lg border px-3.5 py-3 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
                       background: selected ? "oklch(0.97 0.03 145)" : "white",
@@ -322,25 +360,40 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-semibold">{displayName}</div>
                       <div
-                        className="mt-0.5 flex items-center gap-1 text-xs"
+                        className="mt-0.5 flex items-center gap-1.5 text-xs flex-wrap"
                         style={{ color: "oklch(0.55 0.06 145)" }}
                       >
-                        <MapPin size={10} aria-hidden />
-                        {course.location}
+                        <span className="inline-flex items-center gap-0.5">
+                          <MapPin size={10} aria-hidden />
+                          {course.location}
+                        </span>
+                        {/* Desktop: show extra info */}
+                        <span className="hidden min-[900px]:inline">·</span>
+                        <span className="hidden min-[900px]:inline">
+                          {courseTypeLabel(course.courseType, t)}
+                        </span>
+                        {holes && (
+                          <>
+                            <span className="hidden min-[900px]:inline">·</span>
+                            <span className="hidden min-[900px]:inline">
+                              {holes} {t("courses.holes") || "holes"}
+                            </span>
+                          </>
+                        )}
                       </div>
                     </div>
                     <div
-                      className="flex h-12 w-16 shrink-0 flex-col items-center justify-center rounded-sm"
+                      className="flex h-11 w-14 shrink-0 flex-col items-center justify-center rounded-sm"
                       style={{ background: colors.bg }}
                     >
                       <span
                         className="font-bold leading-none"
-                        style={{ color: colors.text, fontSize: "1.1rem" }}
+                        style={{ color: colors.text, fontSize: "1rem" }}
                       >
                         {course.discount}%
                       </span>
                       <span
-                        className="mt-0.5 text-[9px] font-medium uppercase tracking-wider"
+                        className="mt-0.5 text-[8px] font-medium uppercase tracking-wider"
                         style={{ color: colors.text, opacity: 0.75 }}
                       >
                         {t("courses.discountOff")}
@@ -351,95 +404,40 @@ export function CoursesMap({ filter }: CoursesMapProps) {
               );
             })}
           </ul>
-          {listScrollable ? (
+
+          {/* Scroll indicator — positioned at the bottom edge of the pill list */}
+          {listScrollable && (
             <div
-              className="flex shrink-0 flex-col items-center gap-0.5 px-1 pt-2.5 pb-1 min-[900px]:rounded-b-lg"
+              className="pointer-events-none absolute bottom-0 left-0 right-1 z-10 flex flex-col items-center"
               aria-hidden
             >
-              <ChevronsDown
-                size={20}
-                strokeWidth={2}
-                style={{ color: "oklch(0.42 0.14 145)" }}
-                aria-hidden
+              {/* Fade gradient so pills don't hard-cut */}
+              <div
+                className="w-full h-10"
+                style={{
+                  background: "linear-gradient(to bottom, transparent, #F7F3EC)",
+                }}
               />
-              <p
-                className="m-0 text-center text-[11px] font-medium leading-snug px-1"
-                style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-              >
-                {t("courses.mapListScrollHint")}
-              </p>
+              <div className="flex items-center gap-1.5 pb-1 -mt-1" style={{ background: "#F7F3EC" }}>
+                <ChevronsDown
+                  size={16}
+                  strokeWidth={2.5}
+                  style={{ color: "oklch(0.42 0.14 145)" }}
+                  aria-hidden
+                />
+                <p
+                  className="m-0 text-[10px] font-medium leading-snug"
+                  style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                >
+                  {t("courses.mapListScrollHint")}
+                </p>
+              </div>
             </div>
-          ) : null}
+          )}
         </div>
       </div>
 
-      {selectedCourse && (
-        <div
-          className="mt-4 max-w-lg mx-auto min-[900px]:mx-0 min-[900px]:max-w-none p-5 md:p-6 bg-white rounded-lg border shadow-sm"
-          style={{ borderColor: "oklch(0.88 0.02 85)" }}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <h3
-              className="text-lg md:text-xl font-semibold leading-snug text-balance pr-2 flex-1 min-w-0"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                color: "oklch(0.13 0.05 145)",
-              }}
-            >
-              {partnerCourseName(
-                selectedCourse.slug,
-                selectedCourse.name,
-                language,
-                t,
-              )}
-            </h3>
-            <button
-              type="button"
-              onClick={() => setSelectedCourse(null)}
-              className="shrink-0 min-h-11 min-w-11 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-800 hover:bg-gray-100 transition touch-manipulation"
-              aria-label={t("courses.mapCloseDetail")}
-            >
-              <X size={20} strokeWidth={2} />
-            </button>
-          </div>
-          <p
-            className="mt-2 text-base leading-relaxed"
-            style={{
-              fontFamily: "'Outfit', sans-serif",
-              color: "oklch(0.35 0.06 145)",
-            }}
-          >
-            {selectedCourse.location}
-          </p>
-          <div className="mt-4 flex flex-wrap items-center gap-3">
-            <span
-              className="inline-block px-2.5 py-1 text-sm font-semibold rounded-sm"
-              style={{
-                background:
-                  selectedCourse.tier === "resort"
-                    ? "oklch(0.42 0.14 145)"
-                    : "oklch(0.92 0.04 145)",
-                color:
-                  selectedCourse.tier === "resort"
-                    ? "white"
-                    : "oklch(0.28 0.12 145)",
-                fontFamily: "'Outfit', sans-serif",
-              }}
-            >
-              {selectedCourse.tier === "resort"
-                ? t("courses.filter.resort")
-                : t("courses.filter.club")}
-            </span>
-            <span
-              className="text-base font-semibold"
-              style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
-            >
-              {selectedCourse.discount}% {t("courses.discount")}
-            </span>
-          </div>
-        </div>
-      )}
-
+      {/* Course count info */}
       <p
         className="mt-4 text-sm md:text-base text-center min-[900px]:text-left leading-relaxed"
         style={{

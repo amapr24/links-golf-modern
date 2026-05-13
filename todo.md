@@ -97,3 +97,9 @@
 - [x] Auto-login after checkout: create session and redirect to dashboard
 - [x] Secure auto-login: verify Stripe checkout session before creating member session
 - [x] DEBUG: Fix auto-login session creation failure after Stripe checkout (localStorage cross-window issue resolved)
+
+## Courses Section Layout Improvements
+- [x] Make map container more rectangular (echo Puerto Rico's shape)
+- [x] Reposition scroll indicator carats to bottom edge of course pills
+- [x] Remove popup/modal on map marker click (cards always visible)
+- [x] Expand desktop pills to show full directory info (holes, discount %, location)
