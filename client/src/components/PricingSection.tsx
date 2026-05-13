@@ -196,28 +196,38 @@ export default function PricingSection() {
       const cancelUrl = `${origin}/pricing`;
       const memberIdNum = parseInt(memberId, 10);
 
-      const result = await createCheckoutMutation.mutateAsync({
+      // First, call createCheckout to get the session ID
+      const tempResult = await createCheckoutMutation.mutateAsync({
         paymentType,
-        successUrl: `${origin}/success`,
+        successUrl: `${origin}/success`, // Placeholder, will be updated later
         cancelUrl,
         memberId: memberIdNum,
         memberEmail: signupEmail,
         memberName: `${signupFirstName} ${signupLastName}`.trim(),
       });
 
-      if (!result.success || !result.url) {
-        setError(result.error || "Failed to create checkout session");
+      if (!tempResult.success || !tempResult.url) {
+        setError(tempResult.error || "Failed to create checkout session");
         setIsSubmitting(false);
         return;
       }
 
       // Build the success URL with the session ID and member info as query parameters
       // This way it's available in the new window that Stripe redirects to
-      const successUrlWithParams = `${origin}/success?sessionId=${encodeURIComponent(result.sessionId || "")}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
+      const successUrlWithParams = `${origin}/success?sessionId=${encodeURIComponent(tempResult.sessionId || "")}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
+      
+      // Store in sessionStorage as fallback (for same-window access)
+      sessionStorage.setItem("checkout_session_id", tempResult.sessionId || "");
+      sessionStorage.setItem("checkout_member_id", memberIdNum.toString());
+      sessionStorage.setItem("checkout_member_email", signupEmail);
+      
+      const result = tempResult;
 
       toast.info("Redirecting to checkout...");
       // Open Stripe checkout in a new window
-      window.open(result.url, "_blank");
+      if (result.url) {
+        window.open(result.url, "_blank");
+      }
       setIsSubmitting(false);
     } catch (err) {
       console.error("Error starting checkout:", err);

@@ -96,4 +96,4 @@
 - [x] Remove auto-redirect from success page (keep manual button click only)
 - [x] Auto-login after checkout: create session and redirect to dashboard
 - [x] Secure auto-login: verify Stripe checkout session before creating member session
-- [ ] DEBUG: Fix auto-login session creation failure after Stripe checkout
+- [x] DEBUG: Fix auto-login session creation failure after Stripe checkout (localStorage cross-window issue resolved)
