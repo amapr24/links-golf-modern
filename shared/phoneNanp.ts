@@ -1,15 +1,24 @@
 /**
- * Puerto Rico / US NANP: normalize to "+1 XXX-XXX-XXXX" for storage and display.
- * Accepts 10 digits or 11 digits starting with 1; strips other punctuation.
+ * US / PR numbers only: country code +1 is implied and not shown in the form.
+ * Collect up to 10 national digits; optional leading 1 is stripped when pasting full NANP.
  */
-export function formatNanpPhoneForStorage(raw: string): string | null {
-  const d = raw.replace(/\D/g, "");
-  let n = d;
-  if (n.length === 11 && n.startsWith("1")) {
-    n = n.slice(1);
+
+/** Strip to at most 10 national digits (digits only; leading country 1 removed if present). */
+export function normalizeUsLocalPhoneDigits(raw: string): string {
+  let d = raw.replace(/\D/g, "");
+  if (d.length >= 11 && d.startsWith("1")) {
+    d = d.slice(1);
   }
-  if (n.length !== 10) {
+  return d.slice(0, 10);
+}
+
+/**
+ * Validates 10 national digits and returns storage form with hardcoded +1.
+ */
+export function formatUsPhoneForStorage(raw: string): string | null {
+  const d = normalizeUsLocalPhoneDigits(raw);
+  if (d.length !== 10) {
     return null;
   }
-  return `+1 ${n.slice(0, 3)}-${n.slice(3, 6)}-${n.slice(6)}`;
+  return `+1 ${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
 }

@@ -108,8 +108,9 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.firstName": "First Name",
     "pricing.lastName": "Last Name",
     "pricing.phone": "Phone",
-    "pricing.phoneFormatHint": "US / PR: 10 digits or +1… We save as +1 787-555-0100.",
-    "pricing.invalidPhone": "Enter a valid US or Puerto Rico phone (10 digits, or 11 starting with 1).",
+    "pricing.phoneFormatHint":
+      "Enter 10 digits only (US / Puerto Rico). Country code +1 is saved automatically and is not shown here.",
+    "pricing.invalidPhone": "Enter exactly 10 digits for your US or Puerto Rico phone number.",
     "pricing.email": "Email Address",
     "pricing.address": "Address",
     "pricing.verificationPhoto": "Verification Photo",
@@ -443,8 +444,9 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.firstName": "Nombre",
     "pricing.lastName": "Apellido",
     "pricing.phone": "Teléfono",
-    "pricing.phoneFormatHint": "EE. UU. / PR: 10 dígitos o +1… Guardamos como +1 787-555-0100.",
-    "pricing.invalidPhone": "Ingresa un teléfono válido de EE. UU. o Puerto Rico (10 dígitos, o 11 que empiecen con 1).",
+    "pricing.phoneFormatHint":
+      "Ingresa solo 10 dígitos (EE. UU. / Puerto Rico). El código +1 se guarda automáticamente y no se muestra aquí.",
+    "pricing.invalidPhone": "Ingresa exactamente 10 dígitos para tu número de EE. UU. o Puerto Rico.",
     "pricing.email": "Correo Electrónico",
     "pricing.address": "Dirección",
     "pricing.verificationPhoto": "Foto de Verificación",

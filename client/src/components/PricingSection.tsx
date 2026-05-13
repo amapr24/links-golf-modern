@@ -12,7 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { isSupabaseConfigured, saveMemberSignup, classifyMemberSignupError } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
-import { formatNanpPhoneForStorage } from "@shared/phoneNanp";
+import { formatUsPhoneForStorage, normalizeUsLocalPhoneDigits } from "@shared/phoneNanp";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -45,6 +45,8 @@ export default function PricingSection() {
   const [signupFirstName, setSignupFirstName] = useState("");
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
+  /** US/PR: 10 national digits only; +1 applied on save. */
+  const [phoneLocal, setPhoneLocal] = useState("");
   const postPhotoRef = useRef<HTMLInputElement>(null);
 
   const handleContinueToPayment = async () => {
@@ -61,16 +63,15 @@ export default function PricingSection() {
       const firstName = (document.getElementById("inp-firstname") as HTMLInputElement)?.value;
       const lastName = (document.getElementById("inp-lastname") as HTMLInputElement)?.value;
       const email = (document.getElementById("inp-email") as HTMLInputElement)?.value;
-      const phone = (document.getElementById("inp-phone") as HTMLInputElement)?.value;
       const address = (document.getElementById("inp-address") as HTMLInputElement)?.value;
 
-      if (!firstName || !lastName || !email || !phone) {
+      if (!firstName || !lastName || !email || phoneLocal.length === 0) {
         setError("Please fill in all required fields");
         setIsSubmitting(false);
         return;
       }
 
-      const phoneFormatted = formatNanpPhoneForStorage(phone);
+      const phoneFormatted = formatUsPhoneForStorage(phoneLocal);
       if (!phoneFormatted) {
         setError(t("pricing.invalidPhone"));
         setIsSubmitting(false);
@@ -447,9 +448,14 @@ export default function PricingSection() {
                     <input
                       id="inp-phone"
                       type="tel"
-                      inputMode="tel"
-                      autoComplete="tel"
-                      placeholder="+1 787-555-0100"
+                      inputMode="numeric"
+                      autoComplete="tel-national"
+                      maxLength={10}
+                      placeholder="7875550100"
+                      value={phoneLocal}
+                      onChange={(e) =>
+                        setPhoneLocal(normalizeUsLocalPhoneDigits(e.target.value))
+                      }
                       className={inputClass}
                       style={inputStyle}
                     />
