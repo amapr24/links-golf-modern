@@ -26,15 +26,15 @@ export default function CoursesSection() {
 
   const filtered = partnerCourses.filter((c) => filter === "all" || c.tier === filter);
 
-  // Course cards remount when `filter` changes; Home's IO only runs on mount/language,
-  // so new nodes never get `.visible` and stay opacity-0 without this.
+  // Course cards remount when `filter` or `viewMode` changes; Home's IO only runs on
+  // mount/language, so new nodes never get `.visible` and stay opacity-0 without this.
   useLayoutEffect(() => {
     const root = document.getElementById("courses");
     if (!root) return;
     root.querySelectorAll(".course-card.fade-up").forEach((el) => {
       el.classList.add("visible");
     });
-  }, [filter]);
+  }, [filter, viewMode]);
 
   const tabIds = { all: "courses-tab-all", resort: "courses-tab-resort", club: "courses-tab-club" } as const;
   const activeTabId = tabIds[filter];
