@@ -636,18 +636,6 @@ export default function PricingSection() {
                     </div>
                   </div>
 
-                  <div
-                    className="rounded-sm p-4"
-                    style={{ background: "oklch(0.42 0.14 145 / 0.08)", border: "1px solid oklch(0.42 0.14 145 / 0.25)" }}
-                  >
-                    <p
-                      className="text-sm"
-                      style={{ color: "oklch(0.2 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.paymentMethodDesc")}
-                    </p>
-                  </div>
-
                   <div className="space-y-3">
                     <button
                       type="button"
