@@ -8,14 +8,14 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollElementIntoViewMotionSafe } from "@/lib/scroll";
-import { useAuth } from "@/_core/hooks/useAuth";
+import { useHasMemberSession } from "@/hooks/useHasMemberSession";
 import { getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import LanguageToggle from "./LanguageToggle";
 
 export default function Navbar() {
   const { t } = useLanguage();
-  const { isAuthenticated, loading } = useAuth();
+  const hasMemberSession = useHasMemberSession();
   const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -84,23 +84,9 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div
-            className="hidden md:flex items-center gap-4"
-            aria-busy={loading}
-          >
+          <div className="hidden md:flex items-center gap-4">
             <LanguageToggle />
-            {loading ? (
-              <>
-                <span
-                  className="h-9 w-14 rounded-md bg-white/15 animate-pulse"
-                  aria-hidden
-                />
-                <span
-                  className="h-9 min-w-[9.5rem] rounded-md bg-white/15 animate-pulse"
-                  aria-hidden
-                />
-              </>
-            ) : isAuthenticated ? (
+            {hasMemberSession ? (
               <button
                 type="button"
                 onClick={() => navigate("/dashboard")}
@@ -173,23 +159,9 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
-            <div
-              className="pt-8 w-full space-y-4"
-              aria-busy={loading}
-            >
+            <div className="pt-8 w-full space-y-4">
               <LanguageToggle />
-              {loading ? (
-                <>
-                  <span
-                    className="block h-12 w-full rounded-md bg-white/15 animate-pulse"
-                    aria-hidden
-                  />
-                  <span
-                    className="block h-12 w-full rounded-md bg-white/15 animate-pulse"
-                    aria-hidden
-                  />
-                </>
-              ) : isAuthenticated ? (
+              {hasMemberSession ? (
                 <button
                   type="button"
                   onClick={() => {
