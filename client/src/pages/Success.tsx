@@ -14,17 +14,33 @@ export default function Success() {
   useEffect(() => {
     const createSession = async () => {
       try {
-        // Get checkout data from URL query parameters
+        // Get checkout data from URL query parameters and sessionStorage
         const params = new URLSearchParams(window.location.search);
-        const sessionId = params.get("sessionId");
-        const memberId = params.get("memberId");
-        const email = params.get("email");
+        
+        // Try to get sessionId from multiple sources
+        let sessionId = params.get("sessionId") || 
+                        params.get("session_id") || 
+                        params.get("checkout_session_id") ||
+                        sessionStorage.getItem("checkout_session_id");
+        
+        const memberId = params.get("memberId") || 
+                         sessionStorage.getItem("checkout_member_id");
+        
+        const email = params.get("email") || 
+                      sessionStorage.getItem("checkout_member_email");
 
         console.log("[Success] Received params:", { sessionId, memberId, email });
 
-        if (!memberId || !email || !sessionId) {
+        if (!memberId || !email) {
           console.error("[Success] Missing parameters:", { sessionId, memberId, email });
           setError("Missing checkout information. Please contact support.");
+          setIsCreatingSession(false);
+          return;
+        }
+
+        if (!sessionId) {
+          console.error("[Success] Missing session ID");
+          setError("Missing session information. Please contact support.");
           setIsCreatingSession(false);
           return;
         }
@@ -39,6 +55,11 @@ export default function Success() {
         console.log("[Success] Session creation result:", result);
 
         if (result.success) {
+          // Clear sessionStorage
+          sessionStorage.removeItem("checkout_session_id");
+          sessionStorage.removeItem("checkout_member_id");
+          sessionStorage.removeItem("checkout_member_email");
+          
           // Redirect to dashboard
           setLocation("/dashboard");
         } else {

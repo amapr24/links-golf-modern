@@ -196,32 +196,33 @@ export default function PricingSection() {
       const cancelUrl = `${origin}/pricing`;
       const memberIdNum = parseInt(memberId, 10);
 
-      // First, call createCheckout to get the session ID
-      const tempResult = await createCheckoutMutation.mutateAsync({
+      // Build the success URL with the session ID and member info as query parameters
+      // We'll pass this to Stripe so it redirects with the data we need
+      // Note: We use a placeholder for sessionId since we don't have it yet,
+      // but we'll use Stripe's {CHECKOUT_SESSION_ID} placeholder if available,
+      // or we can fetch it server-side and rebuild the URL
+      const successUrlWithParams = `${origin}/success?memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
+
+      // Call createCheckout with the full success URL that includes member data
+      const result = await createCheckoutMutation.mutateAsync({
         paymentType,
-        successUrl: `${origin}/success`, // Placeholder, will be updated later
+        successUrl: successUrlWithParams, // Pass the full URL with member data
         cancelUrl,
         memberId: memberIdNum,
         memberEmail: signupEmail,
         memberName: `${signupFirstName} ${signupLastName}`.trim(),
       });
 
-      if (!tempResult.success || !tempResult.url) {
-        setError(tempResult.error || "Failed to create checkout session");
+      if (!result.success || !result.url) {
+        setError(result.error || "Failed to create checkout session");
         setIsSubmitting(false);
         return;
       }
 
-      // Build the success URL with the session ID and member info as query parameters
-      // This way it's available in the new window that Stripe redirects to
-      const successUrlWithParams = `${origin}/success?sessionId=${encodeURIComponent(tempResult.sessionId || "")}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
-      
-      // Store in sessionStorage as fallback (for same-window access)
-      sessionStorage.setItem("checkout_session_id", tempResult.sessionId || "");
+      // Store in sessionStorage as fallback
+      sessionStorage.setItem("checkout_session_id", result.sessionId || "");
       sessionStorage.setItem("checkout_member_id", memberIdNum.toString());
       sessionStorage.setItem("checkout_member_email", signupEmail);
-      
-      const result = tempResult;
 
       toast.info("Redirecting to checkout...");
       // Open Stripe checkout in a new window
