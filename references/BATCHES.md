@@ -1,6 +1,6 @@
 # Roadmap batches (auth → abuse → product → design)
 
-Use this file to **re-orient** when switching tasks or onboarding. For **concrete UI/engineering tickets**, see [`BACKLOG.md`](BACKLOG.md).
+Use this file to **re-orient** when switching tasks or onboarding. For **concrete UI/engineering tickets**, see [`BACKLOG.md`](./BACKLOG.md).
 
 Status is approximate; update when you ship a slice.
 
@@ -13,10 +13,10 @@ Status is approximate; update when you ship a slice.
 | # | Item | Status (repo) |
 |---|------|----------------|
 | 1 | Replace client-forgeable `member_session` (`btoa`) with server-validated session (signed JWT + httpOnly cookie) | **Done** — `server/memberJwt.ts`, `member.session` / `member.logout`, `client` gates on `trpc.member.session`. |
-| 2 | Do not trust client for welcome / profile on verify | **Mostly done** — welcome fields from **service role** when configured (`server/memberWelcomeFromDb.ts`); `memberId` still supplied by client after anon member lookup. |
+| 2 | Do not trust client for welcome / profile on verify | **Done** — welcome fields from **service role** when configured (`server/memberWelcomeFromDb.ts`); after OTP, [`resolveMemberIdFromEmail`](../server/memberWelcomeFromDb.ts) sets session `sub` only (no client `memberId` on verify). See [`BACKLOG.md`](./BACKLOG.md) **Resend / member OTP → Implemented in code**. |
 | 3 | `pnpm test` green without Resend/Supabase secrets | **Done** — `describe.skipIf` in `server/resend.test.ts`, `server/supabase.test.ts`. |
 
-**Env:** `MEMBER_JWT_SECRET` (prod), optional `SUPABASE_SERVICE_ROLE_KEY` + URL for welcome. See [`BACKLOG.md`](BACKLOG.md) Resend / OTP section.
+**Env:** `MEMBER_JWT_SECRET` (prod), optional `SUPABASE_SERVICE_ROLE_KEY` + URL for welcome, `TRUST_PROXY` behind proxies. See [`BACKLOG.md`](./BACKLOG.md) Resend / OTP and [`ENVIRONMENT.md`](./ENVIRONMENT.md).
 
 ---
 
@@ -44,17 +44,17 @@ Item **5** shipped with **dual write**: after Resend succeeds we set **`members.
 
 **Goal:** Layout, mobile course UX, social proof — best **after** A–C so auth/data paths are stable.
 
-**All Batch D–related tickets** live in [`BACKLOG.md`](BACKLOG.md) (open the file and jump to these headings):
+**All Batch D–related tickets** live in [`BACKLOG.md`](./BACKLOG.md) (start at **Open engineering (at a glance)**):
 
-- **Courses map & partner UI** — pins, hover popover, click card width, desktop pin typography, “View full course directory” mobile-only, decorative arrows.
-- **Marketing & conversion (Batch D — beyond map)** — section shell / rhythm, broader mobile course UX, featured row / social proof.
-- **Internationalization (optional)** — e.g. Spanish display names for `partnerCourses` in map/list/pages.
+- **Courses map & partner UI** — implemented items + **ES partner names** in BACKLOG; **optional polish** there: custom pins, breakpoint QA, rich hover.
+- **Marketing & conversion** — section shell **done** in BACKLOG; **open follow-up**: mobile course UX, social proof.
+- **Internationalization** — Partner course Spanish labels **done** (see BACKLOG **Courses map → Implemented**).
 
-**Auth remainder (Batch A #2)** — same file, **Still operational / follow-up** item **7** (server-resolved member id after OTP; no client-supplied `memberId`).
+**Batches A–C** (tables above): all rows **Done** in repo. **Batch D** remaining work is only what BACKLOG lists under **Open engineering**, **Optional polish**, and **Sign-up → Open follow-up**.
 
 ---
 
 ## Suggested order (when unsure)
 
-1. **[`BACKLOG.md`](BACKLOG.md)** — Work down the sections (ops → map → i18n → marketing → sign-up) as priority dictates.
-2. **[`BATCHES.md`](BATCHES.md)** — Use only for **done vs open** at the batch level; every open slice should map to a **BACKLOG** heading or numbered item.
+1. **[`BACKLOG.md`](./BACKLOG.md)** — **Open engineering (at a glance)** first, then the detailed section.
+2. **[`BATCHES.md`](./BATCHES.md)** — Batch-level **done vs open**; map remaining work to BACKLOG headings.
