@@ -10,13 +10,13 @@
 - [x] Webhook handler: processes `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`
 - [x] tRPC procedure: `member.createCheckout` for initiating checkout sessions
 - [x] Unit tests: webhook event handling (5 tests) and database operations
+- [x] Webhook route: `/api/stripe/webhook` Express endpoint to receive Stripe events
 
 ### Frontend Payment Flow (In Progress)
 - [ ] Pricing section: add "Subscribe Now" / "Buy Once" buttons that trigger checkout
 - [ ] Checkout modal or redirect: call `trpc.member.createCheckout` and open Stripe session URL
 - [ ] Success page: display membership confirmation and digital member card
 - [ ] Member dashboard: show subscription status, renewal date, payment history
-- [ ] Webhook route: `/api/stripe/webhook` Express endpoint to receive Stripe events
 
 ### Payment Testing & Validation
 - [ ] Test card: 4242 4242 4242 4242 (Stripe test mode)
