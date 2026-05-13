@@ -5,12 +5,15 @@
  */
 
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { PARTNER_COURSE_COUNT } from "@/data/partnerCourses";
 
 interface StickyCTAProps {
   visible: boolean;
 }
 
 export default function StickyCTA({ visible }: StickyCTAProps) {
+  const { t } = useLanguage();
   const scrollToPricing = () => {
     scrollSelectorIntoViewMotionSafe("#pricing");
   };
@@ -35,13 +38,13 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
             className="text-white font-bold text-lg leading-none"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            $199
+            {t("pricing.price")}
           </div>
           <div
             className="text-white/40 text-xs"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
-            per year · 15 courses
+            {t("sticky.subline", { count: PARTNER_COURSE_COUNT })}
           </div>
         </div>
         <button
@@ -49,7 +52,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
           onClick={scrollToPricing}
           className="btn-fairway text-xs py-3 px-6 flex-shrink-0"
         >
-          Get Your Card
+          {t("nav.getCard")}
         </button>
       </div>
     </div>

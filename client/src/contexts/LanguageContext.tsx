@@ -5,7 +5,7 @@ type Language = "en" | "es";
 interface LanguageContextType {
   language: Language;
   setLanguage: (lang: Language) => void;
-  t: (key: string) => string;
+  t: (key: string, params?: Record<string, string | number>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -21,6 +21,9 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.getCard": "GET YOUR MEMBERSHIP",
     "nav.login": "Login",
     "nav.dashboard": "Dashboard",
+
+    // Sticky mobile CTA (home)
+    "sticky.subline": "per year · {{count}} courses",
 
     // Hero
     "hero.location": "EXCLUSIVE FOR PUERTO RICO RESIDENTS",
@@ -199,6 +202,9 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.getCard": "OBTÉN TU MEMBRESIA",
     "nav.login": "Iniciar Sesión",
     "nav.dashboard": "Panel de Control",
+
+    // Sticky mobile CTA (home)
+    "sticky.subline": "por año · {{count}} campos",
 
     // Hero
     "hero.location": "EXCLUSIVO PARA RESIDENTES DE PUERTO RICO",
@@ -393,8 +399,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguageState(lang);
   };
 
-  const t = (key: string): string => {
-    return translations[language][key] || key;
+  const t = (key: string, params?: Record<string, string | number>): string => {
+    let s = translations[language][key] || key;
+    if (params) {
+      for (const [k, v] of Object.entries(params)) {
+        s = s.replaceAll(`{{${k}}}`, String(v));
+      }
+    }
+    return s;
   };
 
   return (
