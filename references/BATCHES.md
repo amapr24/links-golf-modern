@@ -35,8 +35,8 @@ Item **5** shipped with **dual write**: after Resend succeeds we set **`members.
 
 | # | Item | Status (repo) |
 |---|------|----------------|
-| 6 | Dashboard: real member data (Supabase or tRPC `member.me`) instead of mock Juan / static LGM | **Not done** — `client/src/pages/Dashboard.tsx` still static placeholder. |
-| 7 | Footer / misc i18n (e.g. hardcoded nav labels in `FooterSection`) | **Partial** |
+| 6 | Dashboard: real member data (Supabase or tRPC `member.me`) instead of mock Juan / static LGM | **Done** — [`trpc.member.me`](../server/routers.ts) + [`fetchMemberProfileForSession`](../server/memberProfileFromDb.ts); [`Dashboard`](../client/src/pages/Dashboard.tsx) uses session + profile, localized dates, photo URL when `http(s)`. |
+| 7 | Footer / misc i18n (e.g. hardcoded nav labels in `FooterSection`) | **Done** — [`FooterSection`](../client/src/components/FooterSection.tsx) uses existing `footer.*` keys plus [`footer.supportTitle`](../client/src/contexts/LanguageContext.tsx), terms/privacy, bottom bar strings (EN/ES). |
 
 ---
 
@@ -50,6 +50,4 @@ Many **map / “02 · Our Network”** items live in [`BACKLOG.md`](BACKLOG.md) 
 
 ## Suggested order (when unsure)
 
-1. **B** if OTP email is live or will be soon (cost + abuse).  
-2. **C** so post-login matches Supabase and marketing.  
-3. **D** / **BACKLOG** polish when core flows are settled.
+1. **D** / **BACKLOG** — Map, Our Network, and conversion polish (A–C are done in repo).

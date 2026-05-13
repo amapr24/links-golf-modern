@@ -4,47 +4,83 @@
  * Features: View pass, renewal info, course access, download pass, contact support
  */
 
-import { useState, useEffect } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useLocation } from "wouter";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
+import { PARTNER_COURSE_COUNT } from "@/data/partnerCourses";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
-interface MemberData {
+function formatLongDate(iso: string, language: Language): string {
+  const locale = language === "es" ? "es-PR" : "en-US";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(locale, {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
+}
+
+function formatShortDate(iso: string, language: Language): string {
+  const locale = language === "es" ? "es-PR" : "en-US";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "—";
+  return d.toLocaleDateString(locale, {
+    month: "2-digit",
+    day: "2-digit",
+    year: "2-digit",
+  });
+}
+
+type MemberDisplay = {
   firstName: string;
   lastName: string;
   memberNumber: string;
   email: string;
   phone: string;
-  joinDate: string;
-  renewalDate: string;
-  photoUrl?: string;
-}
+  joinDateLabel: string;
+  renewalDateIso: string;
+  photoUrl: string | null;
+};
 
 export default function Dashboard() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [, setLocation] = useLocation();
   const [copied, setCopied] = useState(false);
-  const { data: session, isPending } = trpc.member.session.useQuery();
+  const { data: session, isPending: sessionPending } = trpc.member.session.useQuery();
+  const {
+    data: profile,
+    isPending: profilePending,
+    isError: profileError,
+    refetch: refetchProfile,
+  } = trpc.member.me.useQuery(undefined, {
+    enabled: Boolean(session),
+  });
   const logoutMutation = trpc.member.logout.useMutation();
   const trpcUtils = trpc.useUtils();
 
+  const member = useMemo((): MemberDisplay | null => {
+    if (!profile) return null;
+    return {
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      memberNumber: profile.memberNumber,
+      email: profile.email,
+      phone: profile.phone,
+      joinDateLabel: formatLongDate(profile.joinDateIso, language),
+      renewalDateIso: profile.renewalDateIso,
+      photoUrl: profile.photoUrl,
+    };
+  }, [profile, language]);
+
   useEffect(() => {
-    if (isPending) return;
+    if (sessionPending) return;
     if (!session) setLocation("/login");
-  }, [isPending, session, setLocation]);
-  const [member] = useState<MemberData>({
-    firstName: "Juan",
-    lastName: "Pérez",
-    memberNumber: "LGM-000123",
-    email: "juan@example.com",
-    phone: "+1 (787) 555-0123",
-    joinDate: "May 12, 2026",
-    renewalDate: "May 12, 2027",
-    photoUrl: "👤",
-  });
+  }, [sessionPending, session, setLocation]);
 
   const handleCopyMemberNumber = () => {
+    if (!member) return;
     navigator.clipboard.writeText(member.memberNumber);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -55,22 +91,55 @@ export default function Dashboard() {
       await logoutMutation.mutateAsync();
     } finally {
       await trpcUtils.member.session.invalidate();
+      await trpcUtils.member.me.invalidate();
       setLocation("/");
     }
   };
 
-  if (isPending) {
+  const loading = sessionPending || (Boolean(session) && profilePending);
+
+  if (loading) {
     return (
       <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p>Loading...</p>
+          <p>{t("dashboard.loadingProfile")}</p>
         </div>
       </div>
     );
   }
 
   if (!session) {
+    return null;
+  }
+
+  if (!member && !profilePending && (profileError || profile == null)) {
+    return (
+      <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center px-4">
+        <div
+          className="max-w-md rounded-lg border p-6 text-center text-sm"
+          style={{
+            background: "white",
+            borderColor: "oklch(0.88 0.02 85)",
+            fontFamily: "'Outfit', sans-serif",
+            color: "oklch(0.35 0.05 145)",
+          }}
+        >
+          <p className="mb-4">{t("dashboard.profileUnavailable")}</p>
+          <button
+            type="button"
+            onClick={() => void refetchProfile()}
+            className="px-4 py-2 rounded-sm text-sm font-medium text-white"
+            style={{ background: "oklch(0.42 0.14 145)" }}
+          >
+            {t("dashboard.retry")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!member) {
     return null;
   }
 
@@ -99,7 +168,7 @@ export default function Dashboard() {
               className="font-semibold text-sm"
               style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.13 0.05 145)" }}
             >
-              Links Golf Member
+              {t("dashboard.brandTitle")}
             </span>
           </div>
           <button
@@ -176,8 +245,18 @@ export default function Dashboard() {
                     className="w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{ background: "oklch(0.42 0.14 145 / 0.3)" }}
                   >
-                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
-                      <span className="text-white/60 text-4xl">{member.photoUrl}</span>
+                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
+                      {member.photoUrl?.startsWith("http") ? (
+                        <img
+                          src={member.photoUrl}
+                          alt=""
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white/60 text-4xl">
+                          {member.photoUrl || "👤"}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -207,7 +286,7 @@ export default function Dashboard() {
                       className="text-white/40 text-xs uppercase tracking-widest mb-1"
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Member No.
+                      {t("dashboard.pass.memberNo")}
                     </div>
                     <div className="text-white/80 text-sm font-mono">{member.memberNumber}</div>
                   </div>
@@ -216,14 +295,10 @@ export default function Dashboard() {
                       className="text-white/40 text-xs uppercase tracking-widest mb-1"
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Valid Until
+                      {t("dashboard.pass.validUntil")}
                     </div>
                     <div className="text-white/80 text-sm font-mono">
-                      {new Date(member.renewalDate).toLocaleDateString("en-US", {
-                        month: "2-digit",
-                        day: "2-digit",
-                        year: "2-digit",
-                      })}
+                      {formatShortDate(member.renewalDateIso, language)}
                     </div>
                   </div>
                 </div>
@@ -236,7 +311,7 @@ export default function Dashboard() {
                       className="text-xs text-white/40"
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Show this at pro shop
+                      {t("dashboard.pass.showAtProShop")}
                     </div>
                   </div>
                 </div>
@@ -251,7 +326,7 @@ export default function Dashboard() {
                     border: "1px solid oklch(0.42 0.14 145 / 0.2)",
                   }}
                 >
-                  Founding Member · 2026–27
+                  {t("dashboard.pass.badge")}
                 </div>
               </div>
             </div>
@@ -283,7 +358,7 @@ export default function Dashboard() {
                 onMouseLeave={(e) => (e.currentTarget.style.background = "oklch(0.96 0.01 85)")}
               >
                 <Copy size={16} />
-                Copy Number
+                {t("dashboard.copyNumber")}
               </button>
             </div>
           </div>
@@ -310,17 +385,13 @@ export default function Dashboard() {
                     className="text-xs font-semibold uppercase tracking-widest mb-1"
                     style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    Renewal Date
+                    {t("dashboard.renewalCardTitle")}
                   </div>
                   <div
                     className="text-sm font-semibold"
                     style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    {new Date(member.renewalDate).toLocaleDateString("en-US", {
-                      month: "long",
-                      day: "numeric",
-                      year: "numeric",
-                    })}
+                    {formatLongDate(member.renewalDateIso, language)}
                   </div>
                 </div>
               </div>
@@ -328,7 +399,7 @@ export default function Dashboard() {
                 className="text-xs"
                 style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
               >
-                You'll receive a renewal reminder 30 days before expiration.
+                {t("dashboard.renewalReminder")}
               </div>
             </div>
 
@@ -352,13 +423,13 @@ export default function Dashboard() {
                     className="text-xs font-semibold uppercase tracking-widest mb-1"
                     style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    Course Access
+                    {t("dashboard.courseAccessTitle")}
                   </div>
                   <div
                     className="text-sm font-semibold"
                     style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    15 Courses
+                    {t("dashboard.coursesCount", { count: PARTNER_COURSE_COUNT })}
                   </div>
                 </div>
               </div>
@@ -366,7 +437,7 @@ export default function Dashboard() {
                 className="text-xs font-medium mt-2"
                 style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
               >
-                View all courses →
+                {t("dashboard.viewAllCourses")}
               </button>
             </div>
 
@@ -390,20 +461,20 @@ export default function Dashboard() {
                     className="text-xs font-semibold uppercase tracking-widest mb-1"
                     style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    Need Help?
+                    {t("dashboard.needHelp")}
                   </div>
                   <div
                     className="text-xs mb-2"
                     style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                   >
-                    Contact our support team
+                    {t("dashboard.contactTeam")}
                   </div>
                   <a
-                    href="mailto:info@linksgolfpr.com"
+                    href={`mailto:${t("footer.email")}`}
                     className="text-xs font-medium"
                     style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    info@linksgolfpr.com
+                    {t("footer.email")}
                   </a>
                 </div>
               </div>
@@ -426,7 +497,7 @@ export default function Dashboard() {
               color: "oklch(0.13 0.05 145)",
             }}
           >
-            Account Details
+            {t("dashboard.accountDetails")}
           </h2>
 
           <div className="grid md:grid-cols-2 gap-8">
@@ -437,7 +508,7 @@ export default function Dashboard() {
                   className="text-xs font-semibold uppercase tracking-widest mb-2 block"
                   style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  Full Name
+                  {t("dashboard.fullName")}
                 </label>
                 <div
                   className="text-sm"
@@ -452,7 +523,7 @@ export default function Dashboard() {
                   className="text-xs font-semibold uppercase tracking-widest mb-2 block"
                   style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  Email Address
+                  {t("dashboard.email")}
                 </label>
                 <div
                   className="text-sm"
@@ -470,7 +541,7 @@ export default function Dashboard() {
                   className="text-xs font-semibold uppercase tracking-widest mb-2 block"
                   style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  Phone Number
+                  {t("dashboard.phone")}
                 </label>
                 <div
                   className="text-sm"
@@ -485,13 +556,13 @@ export default function Dashboard() {
                   className="text-xs font-semibold uppercase tracking-widest mb-2 block"
                   style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  Member Since
+                  {t("dashboard.memberSince")}
                 </label>
                 <div
                   className="text-sm"
                   style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  {member.joinDate}
+                  {member.joinDateLabel}
                 </div>
               </div>
             </div>
@@ -508,7 +579,7 @@ export default function Dashboard() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
-            Edit Details
+            {t("dashboard.editDetails")}
           </button>
         </div>
       </main>

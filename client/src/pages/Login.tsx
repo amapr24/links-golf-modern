@@ -112,6 +112,7 @@ export default function Login() {
       }
 
       await trpcUtils.member.session.invalidate();
+      await trpcUtils.member.me.invalidate();
 
       localStorage.removeItem("login_email");
       localStorage.removeItem("login_member_id");

@@ -53,10 +53,10 @@ export default function FooterSection() {
             </p>
             <div className="space-y-2.5">
               {[
-                { label: "Benefits", id: "#benefits" },
-                { label: "Our Network", id: "#courses" },
-                { label: "How It Works", id: "#how-it-works" },
-                { label: "Get Your Card", id: "#pricing" },
+                { label: t("footer.benefits"), id: "#benefits" },
+                { label: t("footer.ourNetwork"), id: "#courses" },
+                { label: t("footer.howItWorks"), id: "#how-it-works" },
+                { label: t("footer.getYourCard"), id: "#pricing" },
               ].map((link) => (
                 <button
                   key={link.id}
@@ -82,12 +82,12 @@ export default function FooterSection() {
               className="text-xs font-semibold uppercase tracking-widest mb-4"
               style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
             >
-              Support
+              {t("footer.supportTitle")}
             </p>
             <div className="space-y-2.5">
               {[
-                { label: "FAQ", id: "#faq" },
-                { label: "Contact Us", id: "#faq" },
+                { label: t("footer.faq"), id: "#faq" },
+                { label: t("footer.contactUs"), id: "#faq" },
               ].map((link) => (
                 <button
                   key={link.label}
@@ -111,7 +111,7 @@ export default function FooterSection() {
                 onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.85)")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
               >
-                info@linksgolfpr.com
+                {t("footer.email")}
               </a>
             </div>
           </div>
@@ -125,10 +125,13 @@ export default function FooterSection() {
               {t("footer.legal")}
             </p>
             <div className="space-y-2.5">
-              {["Terms of Service", "Privacy Policy"].map((label) => (
+              {[
+                { label: t("footer.terms"), href: "#" },
+                { label: t("footer.privacy"), href: "#" },
+              ].map(({ label, href }) => (
                 <a
                   key={label}
-                  href="#"
+                  href={href}
                   className="block text-sm transition-colors duration-200"
                   style={{ color: "rgba(255,255,255,0.45)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                   onMouseEnter={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.85)")}
@@ -150,13 +153,13 @@ export default function FooterSection() {
             className="text-xs"
             style={{ color: "rgba(255,255,255,0.25)", fontFamily: "'Outfit', sans-serif" }}
           >
-            © 2026 Links Golf Membership. Puerto Rico residents only.
+            {t("footer.bottom.residency")}
           </p>
           <p
             className="text-xs"
             style={{ color: "rgba(255,255,255,0.2)", fontFamily: "'Outfit', sans-serif" }}
           >
-            Play More. Pay Less.
+            {t("footer.bottom.tagline")}
           </p>
         </div>
       </div>

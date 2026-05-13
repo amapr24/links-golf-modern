@@ -13,6 +13,7 @@ import {
 } from "./memberJwt";
 import { readMemberSessionFromRequest } from "./memberSessionCookie";
 import { fetchMemberWelcomeFields, markWelcomeEmailSentAtMember } from "./memberWelcomeFromDb";
+import { fetchMemberProfileForSession } from "./memberProfileFromDb";
 import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
 import {
   getRequestClientIp,
@@ -42,6 +43,16 @@ export const appRouter = router({
     /** Current member session from httpOnly cookie (server-verified JWT). */
     session: publicProcedure.query(async ({ ctx }) => {
       return readMemberSessionFromRequest(ctx.req);
+    }),
+
+    /**
+     * Member profile from Supabase `members` (service role), scoped to the session.
+     * Null when not logged in, or when service role / row is unavailable.
+     */
+    me: publicProcedure.query(async ({ ctx }) => {
+      const session = await readMemberSessionFromRequest(ctx.req);
+      if (!session) return null;
+      return fetchMemberProfileForSession(session.memberId, session.email);
     }),
 
     logout: publicProcedure.mutation(({ ctx }) => {

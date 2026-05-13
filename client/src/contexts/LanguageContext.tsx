@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
-type Language = "en" | "es";
+export type Language = "en" | "es";
 
 interface LanguageContextType {
   language: Language;
@@ -155,6 +155,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.contactUs": "Contact Us",
     "footer.email": "info@linksgolfpr.com",
     "footer.copyright": "© 2026 Links Golf. All rights reserved.",
+    "footer.supportTitle": "Support",
+    "footer.terms": "Terms of Service",
+    "footer.privacy": "Privacy Policy",
+    "footer.bottom.residency": "© 2026 Links Golf Membership. Puerto Rico residents only.",
+    "footer.bottom.tagline": "Play More. Pay Less.",
 
     // Dashboard
     "dashboard.welcome": "Welcome back,",
@@ -172,6 +177,23 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.logout": "Logout",
     "dashboard.active": "Active",
     "dashboard.pass.download": "Download pass",
+    "dashboard.loadingProfile": "Loading your membership…",
+    "dashboard.profileUnavailable":
+      "We couldn't load your membership details. The server may be missing SUPABASE_SERVICE_ROLE_KEY, or your record could not be found.",
+    "dashboard.retry": "Retry",
+    "dashboard.brandTitle": "Links Golf Member",
+    "dashboard.pass.memberNo": "Member No.",
+    "dashboard.pass.validUntil": "Valid Until",
+    "dashboard.pass.showAtProShop": "Show this at pro shop",
+    "dashboard.pass.badge": "Founding Member · 2026–27",
+    "dashboard.renewalReminder": "You'll receive a renewal reminder 30 days before expiration.",
+    "dashboard.coursesCount": "{{count}} courses",
+    "dashboard.viewAllCourses": "View all courses →",
+    "dashboard.needHelp": "Need Help?",
+    "dashboard.contactTeam": "Contact our support team",
+    "dashboard.editDetails": "Edit Details",
+    "dashboard.renewalCardTitle": "Renewal Date",
+    "dashboard.courseAccessTitle": "Course Access",
 
     // Login
     "login.title": "Welcome Back",
@@ -338,6 +360,11 @@ const translations: Record<Language, Record<string, string>> = {
     "footer.contactUs": "Contáctanos",
     "footer.email": "info@linksgolfpr.com",
     "footer.copyright": "© 2026 Links Golf. Todos los derechos reservados.",
+    "footer.supportTitle": "Soporte",
+    "footer.terms": "Términos del Servicio",
+    "footer.privacy": "Política de Privacidad",
+    "footer.bottom.residency": "© 2026 Links Golf Membership. Solo residentes de Puerto Rico.",
+    "footer.bottom.tagline": "Juega más. Paga menos.",
 
     // Dashboard
     "dashboard.welcome": "Bienvenido de vuelta,",
@@ -355,6 +382,23 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.logout": "Cerrar Sesión",
     "dashboard.active": "Activo",
     "dashboard.pass.download": "Descargar pase",
+    "dashboard.loadingProfile": "Cargando tu membresía…",
+    "dashboard.profileUnavailable":
+      "No pudimos cargar los datos de tu membresía. Puede faltar SUPABASE_SERVICE_ROLE_KEY en el servidor, o no encontramos tu registro.",
+    "dashboard.retry": "Reintentar",
+    "dashboard.brandTitle": "Miembro Links Golf",
+    "dashboard.pass.memberNo": "N.º de miembro",
+    "dashboard.pass.validUntil": "Válido hasta",
+    "dashboard.pass.showAtProShop": "Muéstralo en la pro shop",
+    "dashboard.pass.badge": "Miembro fundador · 2026–27",
+    "dashboard.renewalReminder": "Recibirás un recordatorio de renovación 30 días antes del vencimiento.",
+    "dashboard.coursesCount": "{{count}} campos",
+    "dashboard.viewAllCourses": "Ver todos los campos →",
+    "dashboard.needHelp": "¿Necesitas ayuda?",
+    "dashboard.contactTeam": "Contacta a nuestro equipo de soporte",
+    "dashboard.editDetails": "Editar datos",
+    "dashboard.renewalCardTitle": "Fecha de renovación",
+    "dashboard.courseAccessTitle": "Acceso a campos",
 
     // Login
     "login.title": "Bienvenido de Vuelta",
