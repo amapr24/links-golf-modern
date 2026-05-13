@@ -80,6 +80,13 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 ### Courses section
 - [ ] Group the "View Mode" (List/Map) and "Filter by Course Type" (All/Resort/Semi-Private/Public/Country Club) as two clearly labeled, separate control groups.
 - [ ] Verify the Map toggle loads a real, functional map. If not, build it or remove the toggle.
+
+### Courses map (pins / hover / coordinates) — prototype 2026-05-13
+
+- [x] **Pin hover feels late:** Native `title` tooltips have a long OS delay; replaced with an immediate in-map hover label (`CoursesMap.tsx` + `OverlayView` projection).
+- [x] **Hover label contrast / size:** Gray browser tooltip replaced with a high-contrast card (larger type, dark text on light surface, shadow).
+- [x] **Wrong pin / coordinate audit:** `club_deportivo_oeste` was west in the water (`lng -67.2`); corrected to published clubhouse area (~18.099°N, -67.188°W). Also updated several rounded placeholders (`fort_buchanan`, `el_legado`, `rio_bayamon`, `costa_caribe`) against published / directory coordinates in `courseCoordinates.ts`.
+- [ ] **Follow-up:** Spot-check remaining courses on satellite (especially resorts with large properties) and document a single “source of truth” (e.g. clubhouse vs. 1st tee) for future edits.
 - [ ] Make course cards clickable to a per-course detail view containing: hero photo, location, course type, hours, standard green fee range, example dollar savings, official website link, and any booking flow.
 - [ ] Give flagship courses (TPC Dorado Beach, Royal Isabela) a featured/hero treatment instead of an identical grid tile.
 - [ ] Add `aria-pressed` (or equivalent) to the active filter pill so screen-reader users can identify the current filter.
