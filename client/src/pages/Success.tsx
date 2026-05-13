@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+
 import { useLocation } from "wouter";
 import { Check, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -6,21 +6,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 export default function Success() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
-  const [countdown, setCountdown] = useState(5);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown((prev) => {
-        if (prev <= 1) {
-          setLocation("/dashboard");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [setLocation]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[oklch(0.98_0.01_145)] to-[oklch(0.95_0.02_145)]">
@@ -95,16 +80,7 @@ export default function Success() {
           <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
         </button>
 
-        {/* Auto-redirect countdown */}
-        <p
-          className="text-xs mt-6"
-          style={{
-            fontFamily: "'Outfit', sans-serif",
-            color: "oklch(0.45 0.06 145 / 0.6)",
-          }}
-        >
-          Redirecting to dashboard in {countdown}s...
-        </p>
+
       </div>
     </div>
   );

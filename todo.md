@@ -93,3 +93,4 @@
 - [x] Add missing translation keys: pricing.annualMembership, pricing.paymentMethodDesc, pricing.subscribeNow, pricing.buyOnceNow, pricing.securedByStripe
 - [x] Fix: Create success page or handle Stripe redirect properly (404 after checkout success)
 - [x] Remove redundant "Select your payment method" section from payment step (Stripe handles this)
+- [x] Remove auto-redirect from success page (keep manual button click only)
