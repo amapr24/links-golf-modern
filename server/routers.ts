@@ -12,7 +12,11 @@ import {
   signMemberSessionToken,
 } from "./memberJwt";
 import { readMemberSessionFromRequest } from "./memberSessionCookie";
-import { fetchMemberWelcomeFields, markWelcomeEmailSentAtMember } from "./memberWelcomeFromDb";
+import {
+  fetchMemberWelcomeFields,
+  markWelcomeEmailSentAtMember,
+  resolveMemberIdFromEmail,
+} from "./memberWelcomeFromDb";
 import { fetchMemberProfileForSession } from "./memberProfileFromDb";
 import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
 import {
@@ -115,7 +119,6 @@ export const appRouter = router({
         z.object({
           email: z.string().email(),
           otp: z.string().length(6),
-          memberId: z.string().uuid(),
         })
       )
       .mutation(async ({ input, ctx }) => {
@@ -136,8 +139,17 @@ export const appRouter = router({
           }
 
           const emailNorm = input.email.toLowerCase();
+          const memberId = await resolveMemberIdFromEmail(emailNorm);
+          if (!memberId) {
+            return {
+              success: false,
+              error:
+                "No member record found for this email. Please sign up first.",
+            };
+          }
+
           const welcome = await fetchMemberWelcomeFields(
-            input.memberId,
+            memberId,
             emailNorm
           );
           if (welcome) {
@@ -151,14 +163,14 @@ export const appRouter = router({
                 welcome.memberNumber
               );
               if (mailed) {
-                await markWelcomeEmailSentAtMember(input.memberId);
+                await markWelcomeEmailSentAtMember(memberId);
                 await markWelcomeEmailSent(emailNorm);
               }
             }
           }
 
           const token = await signMemberSessionToken({
-            sub: input.memberId,
+            sub: memberId,
             email: emailNorm,
           });
           const cookieOpts = getMemberSessionCookieOptions(ctx.req);

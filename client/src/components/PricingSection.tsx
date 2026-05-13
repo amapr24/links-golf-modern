@@ -222,7 +222,7 @@ export default function PricingSection() {
         }}
       />
 
-      <div className="relative z-10 container py-20 md:py-28">
+      <div className="marketing-section-inner">
         <div className="text-center mb-14">
           <p className="section-label mb-4 text-white/40">04 · Join Now</p>
           <h2

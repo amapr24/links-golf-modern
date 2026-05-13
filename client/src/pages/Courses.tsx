@@ -6,9 +6,12 @@
 
 import { useState, useMemo } from "react";
 import { Search, ChevronUp, ChevronDown, MapPin } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { partnerCourseName } from "@/lib/partnerCourseName";
 
 interface Course {
   id: number;
+  slug: string;
   name: string;
   municipio: string;
   type: "Resort" | "Semi-Private" | "Public" | "Country Club";
@@ -17,27 +20,28 @@ interface Course {
 }
 
 const COURSES: Course[] = [
-  { id: 1, name: "TPC Dorado Beach Resort & Club", municipio: "Dorado", type: "Resort", holes: 72, discount: 25 },
-  { id: 2, name: "Bahia Beach Resort & Golf Club", municipio: "Rio Grande", type: "Resort", holes: 18, discount: 20 },
-  { id: 3, name: "El Conquistador Resort", municipio: "Las Croabas", type: "Resort", holes: 18, discount: 20 },
-  { id: 4, name: "El Legado Golf Resort", municipio: "Guayama", type: "Resort", holes: 18, discount: 20 },
-  { id: 5, name: "Dorado del Mar Beach & Golf Resort", municipio: "Dorado", type: "Resort", holes: 18, discount: 20 },
-  { id: 6, name: "Palmas Del Mar Country Club", municipio: "Humacao", type: "Country Club", holes: 36, discount: 20 },
-  { id: 7, name: "Royal Isabela Golf Course", municipio: "Isabela", type: "Resort", holes: 18, discount: 20 },
-  { id: 8, name: "Wyndham Grand Rio Mar", municipio: "Rio Grande", type: "Resort", holes: 36, discount: 20 },
-  { id: 9, name: "Caguas Real Golf & Country Club", municipio: "Caguas", type: "Semi-Private", holes: 18, discount: 15 },
-  { id: 10, name: "Club Deportivo del Oeste", municipio: "Cabo Rojo", type: "Public", holes: 18, discount: 15 },
-  { id: 11, name: "Coco Beach Golf & Country Club", municipio: "Rio Grande", type: "Semi-Private", holes: 36, discount: 15 },
-  { id: 12, name: "Costa Caribe Golf Club", municipio: "Ponce", type: "Semi-Private", holes: 27, discount: 15 },
-  { id: 13, name: "Fort Buchanan Golf Course", municipio: "Fort Buchanan", type: "Public", holes: 9, discount: 15 },
-  { id: 14, name: "Punta Borinquen Golf Course", municipio: "Ramey Base", type: "Semi-Private", holes: 18, discount: 15 },
-  { id: 15, name: "Rio Bayamon Golf Course", municipio: "Bayamon", type: "Public", holes: 18, discount: 15 },
+  { id: 1, slug: "tpc_dorado_beach", name: "TPC Dorado Beach Resort & Club", municipio: "Dorado", type: "Resort", holes: 72, discount: 25 },
+  { id: 2, slug: "bahia_beach", name: "Bahia Beach Resort & Golf Club", municipio: "Rio Grande", type: "Resort", holes: 18, discount: 20 },
+  { id: 3, slug: "el_conquistador", name: "El Conquistador Resort", municipio: "Las Croabas", type: "Resort", holes: 18, discount: 20 },
+  { id: 4, slug: "el_legado", name: "El Legado Golf Resort", municipio: "Guayama", type: "Resort", holes: 18, discount: 20 },
+  { id: 5, slug: "dorado_del_mar", name: "Dorado del Mar Beach & Golf Resort", municipio: "Dorado", type: "Resort", holes: 18, discount: 20 },
+  { id: 6, slug: "palmas_del_mar", name: "Palmas Del Mar Country Club", municipio: "Humacao", type: "Country Club", holes: 36, discount: 20 },
+  { id: 7, slug: "royal_isabela", name: "Royal Isabela Golf Course", municipio: "Isabela", type: "Resort", holes: 18, discount: 20 },
+  { id: 8, slug: "wyndham_rio_mar", name: "Wyndham Grand Rio Mar", municipio: "Rio Grande", type: "Resort", holes: 36, discount: 20 },
+  { id: 9, slug: "caguas_real", name: "Caguas Real Golf & Country Club", municipio: "Caguas", type: "Semi-Private", holes: 18, discount: 15 },
+  { id: 10, slug: "club_deportivo_oeste", name: "Club Deportivo del Oeste", municipio: "Cabo Rojo", type: "Public", holes: 18, discount: 15 },
+  { id: 11, slug: "coco_beach", name: "Coco Beach Golf & Country Club", municipio: "Rio Grande", type: "Semi-Private", holes: 36, discount: 15 },
+  { id: 12, slug: "costa_caribe", name: "Costa Caribe Golf Club", municipio: "Ponce", type: "Semi-Private", holes: 27, discount: 15 },
+  { id: 13, slug: "fort_buchanan", name: "Fort Buchanan Golf Course", municipio: "Fort Buchanan", type: "Public", holes: 9, discount: 15 },
+  { id: 14, slug: "punta_borinquen", name: "Punta Borinquen Golf Course", municipio: "Ramey Base", type: "Semi-Private", holes: 18, discount: 15 },
+  { id: 15, slug: "rio_bayamon", name: "Rio Bayamon Golf Course", municipio: "Bayamon", type: "Public", holes: 18, discount: 15 },
 ];
 
 type SortField = "name" | "municipio" | "type" | "holes" | "discount";
 type SortDirection = "asc" | "desc";
 
 export default function Courses() {
+  const { t, language } = useLanguage();
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | Course["type"]>("all");
   const [sortField, setSortField] = useState<SortField>("name");
@@ -45,15 +49,24 @@ export default function Courses() {
 
   const courseTypes: ("all" | Course["type"])[] = ["all", "Resort", "Semi-Private", "Public", "Country Club"];
 
+  const courseRows = useMemo(
+    () =>
+      COURSES.map((c) => ({
+        ...c,
+        displayName: partnerCourseName(c.slug, c.name, language, t),
+      })),
+    [language, t],
+  );
+
   const filtered = useMemo(() => {
-    let result = COURSES;
+    let result = courseRows;
 
     // Search filter
     if (search) {
       const query = search.toLowerCase();
       result = result.filter(
         (c) =>
-          c.name.toLowerCase().includes(query) ||
+          c.displayName.toLowerCase().includes(query) ||
           c.municipio.toLowerCase().includes(query)
       );
     }
@@ -64,9 +77,11 @@ export default function Courses() {
     }
 
     // Sort
-    result.sort((a, b) => {
-      let aVal = a[sortField];
-      let bVal = b[sortField];
+    result = [...result].sort((a, b) => {
+      let aVal: string | number =
+        sortField === "name" ? a.displayName.toLowerCase() : a[sortField];
+      let bVal: string | number =
+        sortField === "name" ? b.displayName.toLowerCase() : b[sortField];
 
       if (typeof aVal === "string") {
         aVal = aVal.toLowerCase();
@@ -79,7 +94,7 @@ export default function Courses() {
     });
 
     return result;
-  }, [search, typeFilter, sortField, sortDirection]);
+  }, [search, typeFilter, sortField, sortDirection, courseRows]);
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -382,7 +397,7 @@ export default function Courses() {
                       className="px-4 py-4 text-sm font-semibold"
                       style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      {course.name}
+                      {course.displayName}
                     </td>
                     <td
                       className="px-4 py-4 text-sm"
@@ -459,7 +474,7 @@ export default function Courses() {
             onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
             onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
           >
-            Get your membership →
+            {t("nav.getCard")}
           </a>
         </div>
       </main>

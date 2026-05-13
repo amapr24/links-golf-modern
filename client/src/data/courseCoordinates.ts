@@ -1,9 +1,11 @@
 /**
  * Course coordinates for Puerto Rico golf courses
  * Used for interactive map display in CoursesSection
+ * `slug` matches `partnerCourses` for localized labels.
  */
 
 export interface CourseCoordinate {
+  slug: string;
   name: string;
   location: string;
   lat: number;
@@ -13,8 +15,8 @@ export interface CourseCoordinate {
 }
 
 export const courseCoordinates: CourseCoordinate[] = [
-  // Resort Courses
   {
+    slug: "tpc_dorado_beach",
     name: "TPC Dorado Beach",
     location: "Dorado",
     lat: 18.4606,
@@ -23,6 +25,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 25,
   },
   {
+    slug: "royal_isabela",
     name: "Royal Isabela",
     location: "Isabela",
     lat: 18.4833,
@@ -31,6 +34,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "bahia_beach",
     name: "Bahia Beach",
     location: "Rio Grande",
     lat: 18.40884,
@@ -39,6 +43,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "wyndham_rio_mar",
     name: "Wyndham Rio Mar",
     location: "Rio Grande",
     lat: 18.38265,
@@ -47,6 +52,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "el_conquistador",
     name: "El Conquistador",
     location: "Las Croabas",
     lat: 18.35504,
@@ -55,6 +61,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "dorado_del_mar",
     name: "Dorado del Mar",
     location: "Dorado",
     lat: 18.4556,
@@ -63,6 +70,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "el_legado",
     name: "El Legado",
     location: "Guayama",
     lat: 17.9667,
@@ -71,6 +79,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 20,
   },
   {
+    slug: "palmas_del_mar",
     name: "Palmas del Mar",
     location: "Humacao",
     lat: 18.2333,
@@ -78,9 +87,8 @@ export const courseCoordinates: CourseCoordinate[] = [
     tier: "resort",
     discount: 20,
   },
-
-  // Club Courses
   {
+    slug: "caguas_real",
     name: "Caguas Real",
     location: "Caguas",
     lat: 18.19367,
@@ -89,6 +97,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "coco_beach",
     name: "Coco Beach",
     location: "Rio Grande",
     lat: 18.40417,
@@ -97,6 +106,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "club_deportivo_oeste",
     name: "Club Deportivo del Oeste",
     location: "Cabo Rojo",
     lat: 18.0944,
@@ -105,6 +115,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "fort_buchanan",
     name: "Fort Buchanan",
     location: "Guaynabo",
     lat: 18.3667,
@@ -113,6 +124,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "rio_bayamon",
     name: "Rio Bayamon",
     location: "Bayamón",
     lat: 18.3833,
@@ -121,6 +133,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "punta_borinquen",
     name: "Punta Borinquen",
     location: "Aguadilla",
     lat: 18.4833,
@@ -129,6 +142,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     discount: 15,
   },
   {
+    slug: "costa_caribe",
     name: "Costa Caribe",
     location: "Ponce",
     lat: 17.9833,

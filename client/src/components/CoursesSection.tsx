@@ -5,9 +5,10 @@
  */
 
 import { useLayoutEffect, useState } from "react";
-import { MapPin, ArrowRight, Map as MapIcon, List } from "lucide-react";
+import { MapPin, Map as MapIcon, List } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { partnerCourses } from "@/data/partnerCourses";
+import { partnerCourseName } from "@/lib/partnerCourseName";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
 
@@ -20,7 +21,7 @@ const discountColor = (d: number) => {
 };
 
 export default function CoursesSection() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [filter, setFilter] = useState<"all" | "resort" | "club">("all");
   const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
@@ -69,7 +70,7 @@ export default function CoursesSection() {
         </div>
       </div>
 
-      <div className="container pb-20">
+      <div className="container pb-20 md:pb-28">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-8 pt-4">
           <p
             className="text-sm fade-up"
@@ -168,9 +169,10 @@ export default function CoursesSection() {
         <div className="hidden lg:grid grid-cols-3 gap-3">
           {filtered.map((course, i) => {
             const colors = discountColor(course.discount);
+            const displayName = partnerCourseName(course.slug, course.name, language, t);
             return (
               <div
-                key={course.name}
+                key={course.slug}
                 className="course-card fade-up flex items-center justify-between gap-4"
                 style={{ transitionDelay: `${i * 40}ms` }}
               >
@@ -179,7 +181,7 @@ export default function CoursesSection() {
                     className="font-semibold text-sm mb-0.5 truncate"
                     style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    {course.name}
+                    {displayName}
                   </div>
                   <div
                     className="flex items-center gap-1 text-xs"
@@ -217,9 +219,10 @@ export default function CoursesSection() {
             <div className="flex gap-3 min-w-min">
               {filtered.map((course, i) => {
                 const colors = discountColor(course.discount);
+                const displayName = partnerCourseName(course.slug, course.name, language, t);
                 return (
                   <div
-                    key={course.name}
+                    key={course.slug}
                     className="flex-shrink-0 w-56 course-card fade-up flex items-center justify-between gap-4 snap-start"
                     style={{ transitionDelay: `${i * 40}ms` }}
                   >
@@ -228,7 +231,7 @@ export default function CoursesSection() {
                         className="font-semibold text-sm mb-0.5 truncate"
                         style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                       >
-                        {course.name}
+                        {displayName}
                       </div>
                       <div
                         className="flex items-center gap-1 text-xs"
@@ -279,7 +282,7 @@ export default function CoursesSection() {
             </p>
             <a
               href="/courses"
-              className="courses-directory-link fairway-text-control inline-flex text-sm font-medium w-fit rounded-sm underline-offset-4 decoration-1 hover:underline"
+              className="courses-directory-link fairway-text-control md:hidden inline-flex text-sm font-medium w-fit rounded-sm underline-offset-4 decoration-1 hover:underline"
               style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
             >
               {t("courses.viewAll")}
@@ -290,7 +293,7 @@ export default function CoursesSection() {
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
             className="btn-fairway text-xs py-3 px-6 inline-flex items-center gap-2 flex-shrink-0"
           >
-            {t("nav.getCard")} <ArrowRight size={14} />
+            {t("nav.getCard")}
           </button>
         </div>
       </div>

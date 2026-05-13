@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useLocation } from "wouter";
-import { Mail, ArrowRight, Loader2 } from "lucide-react";
+import { Mail, Loader2 } from "lucide-react";
 import { isSupabaseConfigured, supabase } from "@/lib/supabase";
 import { trpc } from "@/lib/trpc";
 
@@ -57,7 +57,6 @@ export default function Login() {
       setMemberProfile(member as MemberRow);
       setMemberName(`${member.first_name} ${member.last_name}`);
       localStorage.setItem("login_email", email);
-      localStorage.setItem("login_member_id", member.id);
 
       const sendOtpMutation = trpc.member.sendOtp.useMutation();
       
@@ -92,8 +91,7 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const memberId = localStorage.getItem("login_member_id");
-      if (!memberId || !memberProfile) {
+      if (!memberProfile) {
         setError(t("login.error") || "An error occurred. Please try again.");
         setLoading(false);
         return;
@@ -102,7 +100,6 @@ export default function Login() {
       const result = await verifyOtpMutation.mutateAsync({
         email: email.toLowerCase(),
         otp,
-        memberId,
       });
 
       if (!result.success) {
@@ -115,7 +112,6 @@ export default function Login() {
       await trpcUtils.member.me.invalidate();
 
       localStorage.removeItem("login_email");
-      localStorage.removeItem("login_member_id");
 
       setStep("success");
 
@@ -197,10 +193,7 @@ export default function Login() {
                   {t("login.sending") || "Sending..."}
                 </>
               ) : (
-                <>
-                  {t("login.sendOtp") || "Send Verification Code"}
-                  <ArrowRight size={18} />
-                </>
+                <>{t("login.sendOtp") || "Send Verification Code"}</>
               )}
             </button>
 
@@ -257,10 +250,7 @@ export default function Login() {
                   {t("login.verifying") || "Verifying..."}
                 </>
               ) : (
-                <>
-                  {t("login.verify") || "Verify & Login"}
-                  <ArrowRight size={18} />
-                </>
+                <>{t("login.verify") || "Verify & Login"}</>
               )}
             </button>
 

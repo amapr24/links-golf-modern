@@ -6,7 +6,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { ArrowRight, MapPin } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
@@ -129,7 +129,6 @@ export default function HeroSection() {
           >
             <button onClick={scrollToPricing} className="btn-fairway text-sm py-4 px-7">
               {t("hero.cta")}
-              <ArrowRight size={15} />
             </button>
             <button onClick={scrollToCourses} className="btn-outline-white text-sm py-4 px-7">
               {t("hero.viewCourses")}

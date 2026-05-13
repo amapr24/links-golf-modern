@@ -45,7 +45,7 @@ export default function FaqSection() {
             "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.8) 100%)",
         }}
       />
-      <div className="container relative z-10 py-20 md:py-28">
+      <div className="marketing-section-inner">
         <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
           {/* Left: heading */}
           <div className="md:sticky md:top-24">

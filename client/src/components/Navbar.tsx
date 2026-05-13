@@ -83,26 +83,30 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
-            <LanguageToggle />
+          {/* Desktop CTA — login before language so hierarchy reads: auth → utility → primary */}
+          <div className="hidden md:flex items-center gap-3">
             {hasMemberSession ? (
-              <button
-                type="button"
-                onClick={() => navigate("/dashboard")}
-                className="btn-fairway text-sm py-2.5 px-5"
-              >
-                {t("nav.dashboard")}
-              </button>
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate("/dashboard")}
+                  className="btn-fairway text-sm py-2.5 px-5"
+                >
+                  {t("nav.dashboard")}
+                </button>
+                <LanguageToggle variant="nav" />
+              </>
             ) : (
               <>
                 <button
                   type="button"
                   onClick={() => (window.location.href = getLoginUrl())}
-                  className="text-white/80 hover:text-white text-sm py-2.5 px-5 font-medium transition-colors"
+                  className="text-white py-2.5 px-4 text-base font-semibold tracking-wide transition-colors hover:text-white/90"
+                  style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "0.04em" }}
                 >
                   {t("nav.login")}
                 </button>
+                <LanguageToggle variant="nav" />
                 <button
                   type="button"
                   onClick={() => handleNavClick("#pricing")}
@@ -160,18 +164,22 @@ export default function Navbar() {
               </button>
             ))}
             <div className="pt-8 w-full space-y-4">
-              <LanguageToggle />
               {hasMemberSession ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMenuOpen(false);
-                    navigate("/dashboard");
-                  }}
-                  className="btn-fairway w-full text-base py-4"
-                >
-                  {t("nav.dashboard")}
-                </button>
+                <>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      navigate("/dashboard");
+                    }}
+                    className="btn-fairway w-full text-base py-4"
+                  >
+                    {t("nav.dashboard")}
+                  </button>
+                  <div className="flex justify-center pt-2">
+                    <LanguageToggle variant="menu" />
+                  </div>
+                </>
               ) : (
                 <>
                   <button
@@ -180,7 +188,8 @@ export default function Navbar() {
                       setMenuOpen(false);
                       window.location.href = getLoginUrl();
                     }}
-                    className="text-white/90 hover:text-white text-base py-4 font-medium transition-colors block w-full text-left"
+                    className="text-white hover:text-white/95 text-lg py-3 font-semibold transition-colors block w-full text-left tracking-wide"
+                    style={{ fontFamily: "'Outfit', sans-serif" }}
                   >
                     {t("nav.login")}
                   </button>
@@ -191,6 +200,9 @@ export default function Navbar() {
                   >
                     {t("nav.getCard")} — $199/yr
                   </button>
+                  <div className="flex justify-center pt-2">
+                    <LanguageToggle variant="menu" />
+                  </div>
                 </>
               )}
             </div>

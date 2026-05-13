@@ -33,6 +33,26 @@ export type MemberWelcomeFields = {
 };
 
 /**
+ * Resolve member UUID from normalized email (service role).
+ * Used after OTP verify so the session is never bound to a client-supplied id.
+ */
+export async function resolveMemberIdFromEmail(
+  email: string
+): Promise<string | null> {
+  const supabase = getAdminClient();
+  if (!supabase) return null;
+  const norm = email.trim().toLowerCase();
+  const { data, error } = await supabase
+    .from("members")
+    .select("id")
+    .eq("email", norm)
+    .maybeSingle();
+
+  if (error || !data?.id) return null;
+  return data.id as string;
+}
+
+/**
  * Loads member display fields for the welcome email using the service role.
  * Returns null when Supabase admin is not configured or the row does not match email.
  */

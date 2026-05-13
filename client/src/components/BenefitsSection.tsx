@@ -66,7 +66,7 @@ export default function BenefitsSection() {
         }}
       />
 
-      <div className="container py-20 md:py-28 relative z-10">
+      <div className="marketing-section-inner">
         <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
           {/* Left: Text panel */}
           <div>

@@ -22,9 +22,14 @@ const welcomeDbMocks = vi.hoisted(() => ({
   markWelcomeEmailSentAtMember: vi.fn(async () => true),
 }));
 
+const resolveMemberIdMock = vi.hoisted(() =>
+  vi.fn(async () => TEST_MEMBER_ID),
+);
+
 vi.mock("./memberWelcomeFromDb", () => ({
   fetchMemberWelcomeFields: welcomeDbMocks.fetchMemberWelcomeFields,
   markWelcomeEmailSentAtMember: welcomeDbMocks.markWelcomeEmailSentAtMember,
+  resolveMemberIdFromEmail: resolveMemberIdMock,
 }));
 
 describe("member.verifyOtp", () => {
@@ -42,6 +47,7 @@ describe("member.verifyOtp", () => {
       welcomeEmailSentAt: null,
     }));
     welcomeDbMocks.markWelcomeEmailSentAtMember.mockClear();
+    resolveMemberIdMock.mockImplementation(async () => TEST_MEMBER_ID);
     Object.keys(cookies).forEach(k => delete cookies[k]);
     caller = appRouter.createCaller({
       req: {
@@ -60,11 +66,22 @@ describe("member.verifyOtp", () => {
     });
   });
 
+  it("rejects verify when no member row exists for the email", async () => {
+    resolveMemberIdMock.mockResolvedValueOnce(null);
+    await caller.member.sendOtp({ email: "orphan@example.com" });
+    const otp = peekOtpForTests("orphan@example.com")!;
+    const result = await caller.member.verifyOtp({
+      email: "orphan@example.com",
+      otp,
+    });
+    expect(result.success).toBe(false);
+    expect(result.error).toContain("No member record");
+  });
+
   it("rejects invalid OTP format", async () => {
     const result = await caller.member.verifyOtp({
       email: "test@example.com",
       otp: "abcdef",
-      memberId: TEST_MEMBER_ID,
     });
     expect(result.success).toBe(false);
     expect(result.error).toBe("Invalid OTP format.");
@@ -74,7 +91,6 @@ describe("member.verifyOtp", () => {
     const result = await caller.member.verifyOtp({
       email: "nobody@example.com",
       otp: "123456",
-      memberId: TEST_MEMBER_ID,
     });
     expect(result.success).toBe(false);
     expect(result.error).toContain("Invalid or expired");
@@ -89,14 +105,12 @@ describe("member.verifyOtp", () => {
     const ok = await caller.member.verifyOtp({
       email: "member@example.com",
       otp: otp!,
-      memberId: TEST_MEMBER_ID,
     });
     expect(ok.success).toBe(true);
 
     const replay = await caller.member.verifyOtp({
       email: "member@example.com",
       otp: otp!,
-      memberId: TEST_MEMBER_ID,
     });
     expect(replay.success).toBe(false);
   });
@@ -108,14 +122,12 @@ describe("member.verifyOtp", () => {
     const wrong = await caller.member.verifyOtp({
       email: "two@example.com",
       otp: "000000",
-      memberId: TEST_MEMBER_ID,
     });
     expect(wrong.success).toBe(false);
 
     const right = await caller.member.verifyOtp({
       email: "two@example.com",
       otp,
-      memberId: TEST_MEMBER_ID,
     });
     expect(right.success).toBe(true);
   });
@@ -125,7 +137,6 @@ describe("member.verifyOtp", () => {
       caller.member.verifyOtp({
         email: "z@example.com",
         otp: "12345",
-        memberId: TEST_MEMBER_ID,
       })
     ).rejects.toBeDefined();
   });
@@ -136,7 +147,6 @@ describe("member.verifyOtp", () => {
     await caller.member.verifyOtp({
       email: "once@example.com",
       otp: otp1,
-      memberId: TEST_MEMBER_ID,
     });
     expect(emailMocks.sendWelcomeEmail).toHaveBeenCalledTimes(1);
 
@@ -145,7 +155,6 @@ describe("member.verifyOtp", () => {
     await caller.member.verifyOtp({
       email: "once@example.com",
       otp: otp2,
-      memberId: TEST_MEMBER_ID,
     });
     expect(emailMocks.sendWelcomeEmail).toHaveBeenCalledTimes(1);
   });
@@ -161,7 +170,6 @@ describe("member.verifyOtp", () => {
     await caller.member.verifyOtp({
       email: "dbdone@example.com",
       otp,
-      memberId: TEST_MEMBER_ID,
     });
     expect(emailMocks.sendWelcomeEmail).not.toHaveBeenCalled();
     expect(welcomeDbMocks.markWelcomeEmailSentAtMember).not.toHaveBeenCalled();
@@ -173,7 +181,6 @@ describe("member.verifyOtp", () => {
     await caller.member.verifyOtp({
       email: "markdb@example.com",
       otp,
-      memberId: TEST_MEMBER_ID,
     });
     expect(welcomeDbMocks.markWelcomeEmailSentAtMember).toHaveBeenCalledWith(
       TEST_MEMBER_ID
