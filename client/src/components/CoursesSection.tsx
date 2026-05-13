@@ -42,6 +42,12 @@ export default function CoursesSection() {
 
   return (
     <section id="courses" className="relative overflow-x-hidden bg-[#F7F3EC]">
+      {/* Bottom fade: cream → dark green (into How It Works) */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 z-10"
+        style={{ background: "linear-gradient(to bottom, transparent 0%, oklch(0.13 0.05 145) 100%)" }}
+        aria-hidden
+      />
       <div
         className="w-full h-56 md:h-72 bg-cover bg-center relative overflow-hidden"
         style={{ backgroundImage: `url(${AERIAL_IMAGE})` }}

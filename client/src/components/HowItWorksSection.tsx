@@ -79,6 +79,18 @@ export default function HowItWorksSection() {
         className="absolute inset-0"
         style={{ background: "linear-gradient(135deg, oklch(0.13 0.05 145) 0%, oklch(0.18 0.07 145 / 0.8) 100%)" }}
       />
+      {/* Top fade: dark green blends seamlessly from Courses section */}
+      <div
+        className="pointer-events-none absolute top-0 left-0 right-0 h-20"
+        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
+        aria-hidden
+      />
+      {/* Bottom fade: dark green → into Pricing aerial image */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32"
+        style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 100%)" }}
+        aria-hidden
+      />
 
       <div className="container relative z-10 py-20 md:py-28">
         <div className="text-center mb-14">

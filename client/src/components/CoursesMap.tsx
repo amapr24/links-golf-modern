@@ -378,8 +378,8 @@ export function CoursesMap({ filter }: CoursesMapProps) {
               aria-hidden
             >
               <div
-                className="flex items-center gap-1.5 rounded-full px-3 py-0.5"
-                style={{ background: "oklch(0.97 0.02 85 / 0.9)" }}
+                className="flex items-center gap-1.5 px-2 py-0.5"
+                style={{ background: "transparent" }}
               >
                 <ChevronsDown
                   size={14}

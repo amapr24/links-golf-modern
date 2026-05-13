@@ -216,6 +216,12 @@ export default function PricingSection() {
       className="relative"
       style={pricingBackgroundStyle}
     >
+      {/* Top fade: dark green from How It Works into aerial image */}
+      <div
+        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-10"
+        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
+        aria-hidden
+      />
       {/* Light overlay - reveals image clearly */}
       <div
         style={{

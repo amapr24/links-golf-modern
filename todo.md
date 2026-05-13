@@ -112,3 +112,9 @@
 - [x] Make pills narrower
 - [x] Simplify map hover tooltip to show only course name
 - [x] Add mobile padding so section doesn't span full screen width
+
+## Design Polish (Current Sprint)
+- [x] Smooth background transitions between Benefits, Courses, How It Works, and Pricing sections
+- [x] Redesign Why Join (Benefits) section — layout, typography, visual style
+- [x] Remove redundant "15 courses" mentions in Courses section header/subtext
+- [x] Make courses pill list scroll indicator background fully transparent

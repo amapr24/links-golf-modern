@@ -50,6 +50,7 @@ const translations: Record<Language, Record<string, string>> = {
     "benefits.card.body": "Photo-verified, non-transferable ID. No physical card needed.",
     "benefits.network.highlight": "Large network",
     "benefits.network.title": "One membership, full network access.",
+    "benefits.network.body": "15 partner courses across Puerto Rico — from Dorado to Humacao.",
     "benefits.price.highlight": "NO BLACKOUT DATES",
     "benefits.price.title": "Play When You Want",
     "benefits.price.body": "Play whenever you want—weekdays, weekends, holidays.",
@@ -60,9 +61,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Courses
     "courses.label": "OUR NETWORK",
-    "courses.heading": "15 Partner Courses",
+    "courses.heading": "Our Partner Courses",
     "courses.description": "Play at Puerto Rico's finest courses with your membership.",
-    "courses.bottomText": "Explore all 15 courses in our network.",
+    "courses.bottomText": "Explore all courses in our network.",
     "courses.viewAll": "View full course directory",
     "courses.filter.all": "ALL",
     "courses.filter.resort": "RESORT",
@@ -363,6 +364,7 @@ const translations: Record<Language, Record<string, string>> = {
     "benefits.card.body": "ID verificado con foto, no transferible. No se necesita tarjeta física.",
     "benefits.network.highlight": "Gran red",
     "benefits.network.title": "Una membresía, acceso a toda la red.",
+    "benefits.network.body": "15 campos asociados en toda Puerto Rico — desde Dorado hasta Humacao.",
     "benefits.price.highlight": "SIN FECHAS BLOQUEADAS",
     "benefits.price.title": "Juega Cuando Quieras",
     "benefits.price.body": "Juega cuando quieras — entre semana, fines de semana, días festivos.",
@@ -373,9 +375,9 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Courses
     "courses.label": "NUESTRA RED",
-    "courses.heading": "15 Campos Asociados",
+    "courses.heading": "Nuestros Campos Asociados",
     "courses.description": "Juega en los mejores campos de Puerto Rico con tu membresía.",
-    "courses.bottomText": "Explora los 15 campos en nuestra red.",
+    "courses.bottomText": "Explora todos los campos en nuestra red.",
     "courses.viewAll": "Ver directorio completo de campos",
     "courses.filter.all": "TODOS",
     "courses.filter.resort": "RESORT",
