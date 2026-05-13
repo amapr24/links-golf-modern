@@ -273,6 +273,90 @@ export const appRouter = router({
       }),
 
     /**
+     * Create a member session after successful checkout
+     * Verifies the Stripe checkout session was completed before creating session
+     * Sets the member session cookie and returns member profile
+     */
+    createSessionAfterCheckout: publicProcedure
+      .input(
+        z.object({
+          memberId: z.number(),
+          email: z.string().email(),
+          checkoutSessionId: z.string(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const memberId = input.memberId.toString();
+          const emailNorm = input.email.toLowerCase();
+
+          // Verify member exists
+          const member = await getMemberByUserId(input.memberId);
+          if (!member) {
+            return {
+              success: false,
+              error: "Member not found.",
+            };
+          }
+
+          // Verify Stripe checkout session was completed
+          const Stripe = (await import('stripe')).default;
+          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+          const checkoutSession = await stripe.checkout.sessions.retrieve(input.checkoutSessionId);
+          
+          if (!checkoutSession) {
+            return {
+              success: false,
+              error: "Checkout session not found.",
+            };
+          }
+
+          if (checkoutSession.payment_status !== "paid") {
+            return {
+              success: false,
+              error: "Payment not completed. Please try again.",
+            };
+          }
+
+          // Verify the checkout session belongs to this member
+          if (checkoutSession.client_reference_id !== input.memberId.toString()) {
+            console.error(`[createSessionAfterCheckout] Session mismatch: ${checkoutSession.client_reference_id} !== ${input.memberId}`);
+            return {
+              success: false,
+              error: "Session verification failed.",
+            };
+          }
+
+          // Create session token
+          const token = await signMemberSessionToken({
+            sub: memberId,
+            email: emailNorm,
+          });
+
+          // Set session cookie
+          const cookieOpts = getMemberSessionCookieOptions(ctx.req);
+          ctx.res.cookie(MEMBER_SESSION_COOKIE, token, {
+            ...cookieOpts,
+            maxAge: MEMBER_SESSION_MAX_AGE_SEC * 1000,
+          });
+
+          // Fetch and return member profile
+          const profile = await fetchMemberProfileForSession(memberId, emailNorm);
+
+          return {
+            success: true,
+            profile,
+          };
+        } catch (error) {
+          console.error("[createSessionAfterCheckout] Error:", error);
+          return {
+            success: false,
+            error: "Failed to create session. Please try again.",
+          };
+        }
+      }),
+
+    /**
      * Get payment history for the current member
      * Requires member session (logged in)
      */

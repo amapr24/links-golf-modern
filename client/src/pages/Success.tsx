@@ -1,58 +1,74 @@
-
+import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
-import { Check, ArrowRight } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trpc } from "@/lib/trpc";
 
 export default function Success() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
+  const [isCreatingSession, setIsCreatingSession] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const createSessionMutation = trpc.member.createSessionAfterCheckout.useMutation();
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[oklch(0.98_0.01_145)] to-[oklch(0.95_0.02_145)]">
-      <div className="text-center max-w-md mx-auto px-4">
-        {/* Success Icon */}
-        <div className="mb-8 flex justify-center">
-          <div className="relative">
-            <div
-              className="w-20 h-20 rounded-full flex items-center justify-center animate-pulse"
-              style={{ background: "oklch(0.42 0.14 145)" }}
-            >
-              <Check className="w-10 h-10 text-white" strokeWidth={3} />
-            </div>
+  useEffect(() => {
+    const createSession = async () => {
+      try {
+        // Get member info and checkout session ID from localStorage
+        const memberId = localStorage.getItem("checkout_member_id");
+        const email = localStorage.getItem("checkout_member_email");
+        const checkoutSessionId = localStorage.getItem("checkout_session_id");
+
+        if (!memberId || !email || !checkoutSessionId) {
+          setError("Missing checkout information. Please contact support.");
+          setIsCreatingSession(false);
+          return;
+        }
+
+        // Create session and set cookie
+        const result = await createSessionMutation.mutateAsync({
+          memberId: parseInt(memberId, 10),
+          email,
+          checkoutSessionId,
+        });
+
+        if (result.success) {
+          // Clear localStorage
+          localStorage.removeItem("checkout_member_id");
+          localStorage.removeItem("checkout_member_email");
+          localStorage.removeItem("checkout_session_id");
+          // Redirect to dashboard
+          setLocation("/dashboard");
+        } else {
+          setError(result.error || "Failed to create session");
+          setIsCreatingSession(false);
+        }
+      } catch (err) {
+        console.error("[Success] Error creating session:", err);
+        setError("An error occurred. Please try again.");
+        setIsCreatingSession(false);
+      }
+    };
+
+    createSession();
+  }, [createSessionMutation, setLocation]);
+
+  if (isCreatingSession) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[oklch(0.98_0.01_145)] to-[oklch(0.95_0.02_145)]">
+        <div className="text-center max-w-md mx-auto px-4">
+          <div className="mb-8 flex justify-center">
+            <Loader2 className="w-12 h-12 animate-spin" style={{ color: "oklch(0.42 0.14 145)" }} />
           </div>
-        </div>
-
-        {/* Heading */}
-        <h1
-          className="text-3xl font-semibold mb-3"
-          style={{
-            fontFamily: "'Cormorant Garamond', serif",
-            color: "oklch(0.13 0.05 145)",
-          }}
-        >
-          {t("pricing.success")}
-        </h1>
-
-        {/* Description */}
-        <p
-          className="text-base mb-6"
-          style={{
-            fontFamily: "'Outfit', sans-serif",
-            color: "oklch(0.45 0.06 145)",
-            lineHeight: 1.6,
-          }}
-        >
-          {t("pricing.successDesc")}
-        </p>
-
-        {/* Redirect Info */}
-        <div
-          className="p-4 rounded-lg mb-8"
-          style={{
-            background: "white",
-            border: "1px solid oklch(0.88 0.02 85)",
-          }}
-        >
+          <h1
+            className="text-2xl font-semibold mb-3"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              color: "oklch(0.13 0.05 145)",
+            }}
+          >
+            Setting up your membership...
+          </h1>
           <p
             className="text-sm"
             style={{
@@ -60,28 +76,50 @@ export default function Success() {
               color: "oklch(0.45 0.06 145)",
             }}
           >
-            {t("pricing.checkEmail")}
+            Redirecting to your dashboard...
           </p>
         </div>
-
-        {/* CTA Button */}
-        <button
-          onClick={() => setLocation("/dashboard")}
-          className="w-full px-6 py-3 rounded-sm font-medium transition-all duration-200 flex items-center justify-center gap-2 group"
-          style={{
-            fontFamily: "'Outfit', sans-serif",
-            background: "oklch(0.42 0.14 145)",
-            color: "white",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.9")}
-          onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
-        >
-          {t("pricing.goToDashboard")}
-          <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-        </button>
-
-
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[oklch(0.98_0.01_145)] to-[oklch(0.95_0.02_145)]">
+        <div className="text-center max-w-md mx-auto px-4">
+          <h1
+            className="text-2xl font-semibold mb-3"
+            style={{
+              fontFamily: "'Cormorant Garamond', serif",
+              color: "oklch(0.13 0.05 145)",
+            }}
+          >
+            Something went wrong
+          </h1>
+          <p
+            className="text-sm mb-6"
+            style={{
+              fontFamily: "'Outfit', sans-serif",
+              color: "rgb(220, 38, 38)",
+            }}
+          >
+            {error}
+          </p>
+          <button
+            onClick={() => setLocation("/")}
+            className="w-full px-6 py-3 rounded-sm font-medium transition-all duration-200"
+            style={{
+              fontFamily: "'Outfit', sans-serif",
+              background: "oklch(0.42 0.14 145)",
+              color: "white",
+            }}
+          >
+            Go Home
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return null;
 }

@@ -195,12 +195,18 @@ export default function PricingSection() {
       const origin = window.location.origin;
       const successUrl = `${origin}/success`;
       const cancelUrl = `${origin}/pricing`;
+      const memberIdNum = parseInt(memberId, 10);
+
+      // Store member info in localStorage for the success page
+      localStorage.setItem("checkout_member_id", memberIdNum.toString());
+      localStorage.setItem("checkout_member_email", signupEmail);
+      // Note: checkout_session_id will be set after receiving the response
 
       const result = await createCheckoutMutation.mutateAsync({
         paymentType,
         successUrl,
         cancelUrl,
-        memberId: parseInt(memberId, 10),
+        memberId: memberIdNum,
         memberEmail: signupEmail,
         memberName: `${signupFirstName} ${signupLastName}`.trim(),
       });
@@ -210,6 +216,9 @@ export default function PricingSection() {
         setIsSubmitting(false);
         return;
       }
+
+      // Store the checkout session ID for verification on success
+      localStorage.setItem("checkout_session_id", result.sessionId || "");
 
       toast.info("Redirecting to checkout...");
       // Open Stripe checkout in a new window

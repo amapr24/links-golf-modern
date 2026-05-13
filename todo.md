@@ -94,3 +94,5 @@
 - [x] Fix: Create success page or handle Stripe redirect properly (404 after checkout success)
 - [x] Remove redundant "Select your payment method" section from payment step (Stripe handles this)
 - [x] Remove auto-redirect from success page (keep manual button click only)
+- [x] Auto-login after checkout: create session and redirect to dashboard
+- [x] Secure auto-login: verify Stripe checkout session before creating member session
