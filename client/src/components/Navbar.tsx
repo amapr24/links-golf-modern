@@ -64,7 +64,7 @@ export default function Navbar() {
                 <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
               </svg>
             </div>
-            <span className="font-semibold text-white text-sm tracking-wide" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <span className="font-semibold text-white text-base tracking-wide" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Links Golf
             </span>
           </a>
@@ -75,7 +75,7 @@ export default function Navbar() {
               <button
                 key={link.href}
                 onClick={() => handleNavClick(link.href)}
-                className="text-white/80 hover:text-white text-sm font-medium tracking-wide transition-colors duration-200"
+                className="text-white/80 hover:text-white text-base font-medium tracking-wide transition-colors duration-200"
                 style={{ fontFamily: "'Outfit', sans-serif", letterSpacing: "0.04em" }}
               >
                 {link.label}
@@ -90,7 +90,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={() => navigate("/dashboard")}
-                className="btn-fairway text-xs py-2.5 px-5"
+                className="btn-fairway text-sm py-2.5 px-5"
               >
                 {t("nav.dashboard")}
               </button>
@@ -99,14 +99,14 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => (window.location.href = getLoginUrl())}
-                  className="text-white/80 hover:text-white text-xs py-2.5 px-5 font-medium transition-colors"
+                  className="text-white/80 hover:text-white text-sm py-2.5 px-5 font-medium transition-colors"
                 >
                   {t("nav.login")}
                 </button>
                 <button
                   type="button"
                   onClick={() => handleNavClick("#pricing")}
-                  className="btn-fairway text-xs py-2.5 px-5"
+                  className="btn-fairway text-sm py-2.5 px-5"
                 >
                   {t("nav.getCard")}
                 </button>
@@ -137,7 +137,7 @@ export default function Navbar() {
       >
         <div className="flex flex-col h-full">
           <div className="flex items-center justify-between px-6 h-16">
-            <span className="font-semibold text-white text-sm tracking-wide" style={{ fontFamily: "'Outfit', sans-serif" }}>
+            <span className="font-semibold text-white text-base tracking-wide" style={{ fontFamily: "'Outfit', sans-serif" }}>
               Links Golf
             </span>
             <button
@@ -168,7 +168,7 @@ export default function Navbar() {
                     setMenuOpen(false);
                     navigate("/dashboard");
                   }}
-                  className="btn-fairway w-full text-sm py-4"
+                  className="btn-fairway w-full text-base py-4"
                 >
                   {t("nav.dashboard")}
                 </button>
@@ -180,14 +180,14 @@ export default function Navbar() {
                       setMenuOpen(false);
                       window.location.href = getLoginUrl();
                     }}
-                    className="text-white/90 hover:text-white text-sm py-4 font-medium transition-colors block w-full text-left"
+                    className="text-white/90 hover:text-white text-base py-4 font-medium transition-colors block w-full text-left"
                   >
                     {t("nav.login")}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleNavClick("#pricing")}
-                    className="btn-fairway w-full text-sm py-4"
+                    className="btn-fairway w-full text-base py-4"
                   >
                     {t("nav.getCard")} — $199/yr
                   </button>

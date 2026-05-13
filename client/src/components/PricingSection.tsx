@@ -541,10 +541,12 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={() => setStep(3)}
-                    className="btn-fairway w-full text-sm py-3.5 mt-2"
+                    className="btn-fairway w-full text-xs sm:text-sm py-3.5 mt-2 flex items-center justify-center gap-2 text-center leading-snug"
                   >
-                    PAY $199 & GET MY CARD <ArrowRight size={14} />
+                    <span>{t("pricing.payNow")}</span>
+                    <ArrowRight size={14} className="shrink-0" aria-hidden />
                   </button>
                   <p
                     className="text-xs text-center"

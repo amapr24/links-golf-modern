@@ -41,7 +41,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
             {t("pricing.price")}
           </div>
           <div
-            className="text-white/40 text-xs"
+            className="text-white/40 text-sm"
             style={{ fontFamily: "'Outfit', sans-serif" }}
           >
             {t("sticky.subline", { count: PARTNER_COURSE_COUNT })}
@@ -50,7 +50,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
         <button
           type="button"
           onClick={scrollToPricing}
-          className="btn-fairway text-xs py-3 px-6 flex-shrink-0"
+          className="btn-fairway text-sm py-3 px-6 flex-shrink-0 leading-snug text-center"
         >
           {t("nav.getCard")}
         </button>
