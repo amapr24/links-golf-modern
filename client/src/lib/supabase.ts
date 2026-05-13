@@ -1,4 +1,5 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { MEMBER_POLICIES_ACCEPTED_VERSION } from "@shared/const";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
@@ -93,6 +94,8 @@ export async function saveMemberSignup(data: MemberSignupData) {
           address: data.address || null,
           photo_url: photoUrl || null,
           created_at: new Date().toISOString(),
+          policies_accepted_version: MEMBER_POLICIES_ACCEPTED_VERSION,
+          policies_accepted_at: new Date().toISOString(),
         },
       ])
       .select();

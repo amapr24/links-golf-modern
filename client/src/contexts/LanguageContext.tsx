@@ -210,12 +210,16 @@ const translations: Record<Language, Record<string, string>> = {
 
     "legal.sectionLabel": "LEGAL",
     "legal.backToHome": "← Back to home",
+    "legal.footerOperatorTitle": "Legal entity",
+    "legal.footerOperatorBody":
+      "Registered legal name and principal mailing address will appear here after corporate formation and counsel review.",
+    "legal.footerOperatorNote": "This site and these policies remain drafts until final sign-off.",
 
     "legal.refund.title": "Refunds & cancellations",
     "legal.refund.subtitle": "Last updated May 13, 2026. Confirm final language with qualified counsel before relying on this draft with customers.",
     "legal.refund.p1": "Links Golf Membership is an annual membership for eligible Puerto Rico residents. This page summarizes how refunds, choosing not to renew, and billing questions are handled.",
-    "legal.refund.p2": "Cooling-off period: You may request a full refund of the membership fee paid within fourteen (14) calendar days of the successful payment date, only if you have not yet used your membership to obtain a discounted green fee at any partner course. Email info@linksgolfpr.com from the address on your account with the subject line \"Membership refund request\" and include your full name as shown on the membership.",
-    "legal.refund.p3": "After the fourteen-day period, or after you have redeemed any member discount at a partner course, fees are non-refundable except where required or limited by applicable law.",
+    "legal.refund.p2": "Cooling-off period: You may request a full refund of the membership fee paid within fourteen (14) calendar days of the successful payment date, only if you have not yet redeemed the published Links Golf member discount on a green fee at any partner course. For this rule, \"used\" means the partner course posted your member-priced green fee; complimentary rounds, practice-only visits without that member-priced green fee, or pro shop purchases alone do not count. Email info@linksgolfpr.com from the address on your account with the subject line \"Membership refund request\" and include your full name as shown on the membership.",
+    "legal.refund.p3": "After the fourteen-day period, or once you have redeemed the published member discount on a green fee at any partner course, fees are non-refundable except where required or limited by applicable law.",
     "legal.refund.p4": "Non-renewal: If you do not wish to continue in a future year, simply do not renew. Benefits you have already paid for remain available through the expiration date shown on your digital pass.",
     "legal.refund.p5": "Billing disputes: If you believe a charge is incorrect, contact info@linksgolfpr.com before initiating a payment dispute so we can investigate.",
     "legal.refund.p6": "We may update this policy; the \"Last updated\" line above will change when we do. Continued use of the membership after updates constitutes your acknowledgment of the updated policy only to the extent permitted by law.",
@@ -512,12 +516,16 @@ const translations: Record<Language, Record<string, string>> = {
 
     "legal.sectionLabel": "LEGAL",
     "legal.backToHome": "← Volver al inicio",
+    "legal.footerOperatorTitle": "Entidad legal",
+    "legal.footerOperatorBody":
+      "El nombre legal registrado y la dirección postal principal aparecerán aquí tras la constitución societaria y revisión legal.",
+    "legal.footerOperatorNote": "Este sitio y estas políticas siguen siendo borradores hasta la aprobación final.",
 
     "legal.refund.title": "Reembolsos y cancelaciones",
     "legal.refund.subtitle": "Última actualización: 13 de mayo de 2026. Confirma el texto final con asesoría legal calificada antes de publicarlo como versión definitiva.",
     "legal.refund.p1": "Links Golf Membership es una membresía anual para residentes elegibles de Puerto Rico. Esta página resume reembolsos, no renovación y consultas de facturación.",
-    "legal.refund.p2": "Plazo de desistimiento: puedes solicitar el reembolso íntegro de la cuota pagada dentro de catorce (14) días naturales desde la fecha de pago exitoso, solo si aún no has usado tu membresía para obtener tarifa de green con descuento en ningún campo asociado. Envía un correo a info@linksgolfpr.com desde la dirección de tu cuenta con asunto \"Solicitud de reembolso de membresía\" e incluye tu nombre completo tal como aparece en la membresía.",
-    "legal.refund.p3": "Pasados los catorce días, o después de canjear cualquier descuento de miembro en un campo asociado, las cuotas no son reembolsables salvo que la ley aplicable exija o limite lo contrario.",
+    "legal.refund.p2": "Plazo de desistimiento: puedes solicitar el reembolso íntegro de la cuota pagada dentro de catorce (14) días naturales desde la fecha de pago exitoso, solo si aún no has canjeado el descuento publicado de Links Golf en la tarifa de green en ningún campo asociado. A estos efectos, \"usada\" significa que el campo registró tu green fee con tarifa de miembro; rondas de cortesía, visitas solo de práctica sin ese green fee con tarifa de miembro, o compras únicamente en la pro shop no cuentan. Envía un correo a info@linksgolfpr.com desde la dirección de tu cuenta con asunto \"Solicitud de reembolso de membresía\" e incluye tu nombre completo tal como aparece en la membresía.",
+    "legal.refund.p3": "Pasados los catorce días, o una vez que hayas canjeado el descuento publicado de miembro en la tarifa de green en cualquier campo asociado, las cuotas no son reembolsables salvo que la ley aplicable exija o limite lo contrario.",
     "legal.refund.p4": "No renovación: si no deseas continuar el año siguiente, simplemente no renueves. Los beneficios ya pagados siguen vigentes hasta la fecha de vencimiento indicada en tu pase digital.",
     "legal.refund.p5": "Disputas de cargo: si crees que un cargo es incorrecto, contacta info@linksgolfpr.com antes de iniciar una disputa con el banco para que podamos investigar.",
     "legal.refund.p6": "Podemos actualizar esta política; la fecha de \"Última actualización\" cambiará cuando lo hagamos. El uso continuado de la membresía tras cambios constituye tu reconocimiento de la política actualizada en la medida que permita la ley.",

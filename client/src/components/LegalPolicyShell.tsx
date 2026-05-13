@@ -79,6 +79,40 @@ export function LegalPolicyShell({
             </p>
           ))}
         </div>
+        <div
+          className="mt-12 rounded-sm p-5"
+          style={{
+            background: "oklch(0.96 0.01 85)",
+            border: "1px solid oklch(0.88 0.02 85)",
+          }}
+        >
+          <p
+            className="text-xs font-semibold uppercase tracking-widest mb-2"
+            style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+          >
+            {t("legal.footerOperatorTitle")}
+          </p>
+          <p
+            className="text-sm leading-relaxed mb-2"
+            style={{
+              color: "oklch(0.35 0.05 145)",
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            {t("legal.footerOperatorBody")}
+          </p>
+          <p
+            className="text-xs leading-relaxed"
+            style={{
+              color: "oklch(0.5 0.05 145)",
+              fontFamily: "'Outfit', sans-serif",
+              fontWeight: 300,
+            }}
+          >
+            {t("legal.footerOperatorNote")}
+          </p>
+        </div>
         <p className="mt-14">
           <Link
             href="/"
