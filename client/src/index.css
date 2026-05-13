@@ -303,6 +303,16 @@
     transform: translateY(0);
   }
 
+  /* Hero photo: mobile crop only — avoid transform-origin with scaleX(-1) (clips under section overflow-hidden). */
+  .hero-bg-photo {
+    background-position: center center;
+  }
+  @media (max-width: 639px) {
+    .hero-bg-photo {
+      background-position: 68% 42%;
+    }
+  }
+
   .filter-pill:focus-visible {
     outline: 2px solid oklch(0.42 0.14 145);
     outline-offset: 2px;

@@ -35,10 +35,10 @@ export default function HeroSection() {
     >
       {/* Background image */}
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-[8000ms] ease-out"
+        className="hero-bg-photo absolute inset-0 bg-cover bg-no-repeat transition-transform duration-[8000ms] ease-out"
         style={{
           backgroundImage: `url(${HERO_IMAGE})`,
-          transform: loaded ? "scale(1.03)" : "scale(1.08)",
+          transform: loaded ? "scaleX(-1) scale(1.03)" : "scaleX(-1) scale(1.08)",
         }}
       />
 
