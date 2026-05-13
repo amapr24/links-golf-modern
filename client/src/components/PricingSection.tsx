@@ -1,12 +1,14 @@
 /*
  * PricingSection — Links Golf Membership
  * Design: Dark full-width panel, centered conversion card
- * Multi-step form: Player Details → Payment → Digital ID
+ * Multi-step form: Player Details → Stripe Checkout → Digital ID
  */
 
 import { useState, useRef, useEffect } from "react";
-import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Smartphone } from "lucide-react";
+import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Smartphone, Loader2 } from "lucide-react";
 import { Link } from "wouter";
+import { toast } from "sonner";
+import { trpc } from "@/lib/trpc";
 import {
   activateMembership,
   isSupabaseConfigured,
@@ -174,6 +176,47 @@ export default function PricingSection() {
       console.error("Error saving member:", err);
       setError("Failed to save your information. Please try again.");
     } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleStartCheckout = async (paymentType: "subscription" | "one-time") => {
+    setError("");
+    setIsSubmitting(true);
+
+    try {
+      if (!memberId || !signupEmail) {
+        setError("Please complete your profile before proceeding to checkout.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      const origin = window.location.origin;
+      const successUrl = `${origin}/pricing?success=true`;
+      const cancelUrl = `${origin}/pricing`;
+
+      const result = await trpc.member.createCheckout.mutate({
+        paymentType,
+        successUrl,
+        cancelUrl,
+        memberId: parseInt(memberId, 10),
+        memberEmail: signupEmail,
+        memberName: `${signupFirstName} ${signupLastName}`.trim(),
+      });
+
+      if (!result.success || !result.url) {
+        setError(result.error || "Failed to create checkout session");
+        setIsSubmitting(false);
+        return;
+      }
+
+      toast.info("Redirecting to checkout...");
+      // Open Stripe checkout in a new window
+      window.open(result.url, "_blank");
+      setIsSubmitting(false);
+    } catch (err) {
+      console.error("Error starting checkout:", err);
+      setError("Failed to start checkout. Please try again.");
       setIsSubmitting(false);
     }
   };
@@ -571,7 +614,7 @@ export default function PricingSection() {
                       className="font-semibold text-lg"
                       style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
                     >
-                      Payment
+                      {t("pricing.payment")}
                     </h3>
                   </div>
                   <div
@@ -588,57 +631,58 @@ export default function PricingSection() {
                       className="text-xs uppercase tracking-widest"
                       style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Annual Membership
+                      {t("pricing.annualMembership")}
                     </div>
                   </div>
-                  <div className="space-y-3">
-                    <div>
-                      <label style={labelStyle}>Card Number</label>
-                      <input
-                        type="text"
-                        placeholder="1234 5678 9012 3456"
-                        className={inputClass}
-                        style={inputStyle}
-                      />
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <label style={labelStyle}>Expiry</label>
-                        <input
-                          type="text"
-                          placeholder="MM / YY"
-                          className={inputClass}
-                          style={inputStyle}
-                        />
-                      </div>
-                      <div>
-                        <label style={labelStyle}>CVV</label>
-                        <input
-                          type="text"
-                          placeholder="•••"
-                          className={inputClass}
-                          style={inputStyle}
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label style={labelStyle}>Name on Card</label>
-                      <input
-                        type="text"
-                        placeholder="Juan Pérez"
-                        className={inputClass}
-                        style={inputStyle}
-                      />
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => setStep(3)}
-                    className="btn-fairway w-full text-xs sm:text-sm py-3.5 mt-2 flex items-center justify-center gap-2 text-center leading-snug"
+
+                  <div
+                    className="rounded-sm p-4"
+                    style={{ background: "oklch(0.42 0.14 145 / 0.08)", border: "1px solid oklch(0.42 0.14 145 / 0.25)" }}
                   >
-                    <span>{t("pricing.payNow")}</span>
-                    <ArrowRight size={14} className="shrink-0" aria-hidden />
-                  </button>
+                    <p
+                      className="text-sm"
+                      style={{ color: "oklch(0.2 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.paymentMethodDesc")}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      type="button"
+                      onClick={() => handleStartCheckout("subscription")}
+                      disabled={isSubmitting}
+                      className="btn-fairway w-full text-xs sm:text-sm py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Wallet size={14} />}
+                      <span>{t("pricing.subscribeNow")}</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleStartCheckout("one-time")}
+                      disabled={isSubmitting}
+                      className="w-full text-xs sm:text-sm py-3.5 rounded-sm border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      style={{
+                        borderColor: "oklch(0.42 0.14 145)",
+                        color: "oklch(0.42 0.14 145)",
+                        fontFamily: "'Outfit', sans-serif",
+                        fontWeight: 500,
+                      }}
+                    >
+                      {isSubmitting ? <Loader2 size={14} className="animate-spin inline mr-2" /> : null}
+                      {t("pricing.buyOnceNow")}
+                    </button>
+                  </div>
+
+                  {error && (
+                    <div
+                      className="p-3 rounded-sm text-sm text-center"
+                      style={{ background: "rgba(220, 38, 38, 0.1)", color: "rgb(220, 38, 38)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {error}
+                    </div>
+                  )}
+
                   <p
                     className="text-xs text-center leading-relaxed"
                     style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
@@ -653,7 +697,7 @@ export default function PricingSection() {
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    🔒 Secured by SSL encryption
+                    🔒 {t("pricing.securedByStripe")}
                   </p>
                 </div>
               )}
@@ -698,121 +742,69 @@ export default function PricingSection() {
                     </h4>
                     <p
                       className="text-sm mb-3"
-                      style={{ color: "oklch(0.5 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      {t("pricing.postPhotoBody")}
+                      {t("pricing.postPhotoDesc")}
                     </p>
-                    <input
-                      ref={postPhotoRef}
-                      type="file"
-                      accept="image/*"
-                      capture="user"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        setPostPhotoName(file?.name ?? "");
-                        setPostPhotoFile(file ?? null);
-                        setPhotoSaved(false);
-                        setPhotoPreviewUrl((prev) => {
-                          if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
-                          return file ? URL.createObjectURL(file) : null;
-                        });
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => postPhotoRef.current?.click()}
-                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-sm border-2 border-dashed text-sm font-medium transition-all duration-200 hover:border-[oklch(0.42_0.14_145)] hover:bg-[oklch(0.42_0.14_145_/_0.04)]"
-                      style={{
-                        borderColor: postPhotoName ? "oklch(0.42 0.14 145)" : "oklch(0.85 0.03 145)",
-                        color: postPhotoName ? "oklch(0.42 0.14 145)" : "oklch(0.55 0.06 145)",
-                        fontFamily: "'Outfit', sans-serif",
-                      }}
-                    >
-                      <Camera size={16} aria-hidden />
-                      {postPhotoName || t("pricing.takeUploadPhoto")}
-                    </button>
-                    <p
-                      className="text-xs mt-1.5 mb-3"
-                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.postPhotoFooter")}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={handleSavePhoto}
-                      disabled={isSavingPhoto || !postPhotoFile}
-                      className="btn-fairway w-full text-sm py-3 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isSavingPhoto ? t("pricing.savingPhoto") : t("pricing.savePhoto")}
-                    </button>
-                  </div>
-
-                  {error && (
-                    <div
-                      className="p-3 rounded-sm text-sm text-center"
-                      style={{
-                        background: "rgba(220, 38, 38, 0.1)",
-                        color: "rgb(220, 38, 38)",
-                        fontFamily: "'Outfit', sans-serif",
-                      }}
-                    >
-                      {error}
-                    </div>
-                  )}
-
-                  <div className="space-y-2">
-                    <button
-                      type="button"
-                      disabled={!photoSaved}
-                      className="w-full min-h-[48px] py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 touch-manipulation"
-                      style={{
-                        background: "black",
-                        color: "white",
-                        fontFamily: "'Outfit', sans-serif",
-                      }}
-                    >
-                      <Wallet className="h-5 w-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
-                      {t("pricing.addAppleWallet")}
-                    </button>
-                    <button
-                      type="button"
-                      disabled={!photoSaved}
-                      className="w-full min-h-[48px] py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 touch-manipulation"
-                      style={{
-                        background: "oklch(0.42 0.14 145)",
-                        color: "white",
-                        fontFamily: "'Outfit', sans-serif",
-                      }}
-                    >
-                      <Smartphone className="h-5 w-5 shrink-0 opacity-95" strokeWidth={2} aria-hidden />
-                      {t("pricing.addGoogleWallet")}
-                    </button>
-                    {!photoSaved && (
-                      <p
-                        className="text-xs text-center"
-                        style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                    <div className="flex gap-3">
+                      <input
+                        ref={postPhotoRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.currentTarget.files?.[0];
+                          if (file) {
+                            setPostPhotoFile(file);
+                            setPostPhotoName(file.name);
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setPhotoPreviewUrl(event.target?.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => postPhotoRef.current?.click()}
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-sm border"
+                        style={{
+                          borderColor: "oklch(0.88 0.02 85)",
+                          color: "oklch(0.42 0.14 145)",
+                          fontFamily: "'Outfit', sans-serif",
+                          fontWeight: 500,
+                        }}
                       >
-                        {t("pricing.walletDisabledHint")}
-                      </p>
-                    )}
+                        <Camera size={14} />
+                        {postPhotoName || t("pricing.choosePhoto")}
+                      </button>
+                      {postPhotoFile && !photoSaved && (
+                        <button
+                          type="button"
+                          onClick={handleSavePhoto}
+                          disabled={isSavingPhoto}
+                          className="flex-1 btn-fairway text-sm py-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          {isSavingPhoto ? t("pricing.saving") : t("pricing.save")}
+                        </button>
+                      )}
+                      {photoSaved && (
+                        <div
+                          className="flex-1 flex items-center justify-center rounded-sm"
+                          style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
+                        >
+                          <Check size={16} style={{ color: "oklch(0.42 0.14 145)" }} />
+                        </div>
+                      )}
+                    </div>
                   </div>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      window.location.href = "/dashboard";
-                    }}
-                    className="btn-fairway w-full text-sm py-3.5"
-                  >
-                    {t("pricing.goToDashboard")}
-                  </button>
 
                   <p
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    {t("pricing.checkEmail")}
+                    {t("pricing.nextSteps")}
                   </p>
                 </div>
               )}

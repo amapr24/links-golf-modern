@@ -195,7 +195,7 @@ export const appRouter = router({
 
     /**
      * Create a Stripe Checkout Session for membership purchase
-     * Requires member session (logged in)
+     * Can be called from the pricing signup flow (public) or from an authenticated session
      */
     createCheckout: publicProcedure
       .input(
@@ -203,33 +203,50 @@ export const appRouter = router({
           paymentType: z.enum(["subscription", "one-time"]),
           successUrl: z.string().url(),
           cancelUrl: z.string().url(),
+          // Optional: if provided, use this member ID directly (from pricing signup)
+          memberId: z.number().optional(),
+          memberEmail: z.string().email().optional(),
+          memberName: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
         try {
-          const session = await readMemberSessionFromRequest(ctx.req);
-          if (!session) {
-            return {
-              success: false,
-              error: "Not authenticated. Please log in first.",
-            };
-          }
+          let userId: number;
+          let userEmail: string;
+          let userName: string;
 
-          const profile = await fetchMemberProfileForSession(
-            session.memberId,
-            session.email
-          );
-          if (!profile) {
+          // Try to use existing member session first
+          const session = await readMemberSessionFromRequest(ctx.req);
+          if (session) {
+            const profile = await fetchMemberProfileForSession(
+              session.memberId,
+              session.email
+            );
+            if (!profile) {
+              return {
+                success: false,
+                error: "Member profile not found.",
+              };
+            }
+            userId = session.memberId;
+            userEmail = session.email;
+            userName = profile.displayName || "Member";
+          } else if (input.memberId && input.memberEmail) {
+            // Fall back to provided member info (from pricing signup)
+            userId = input.memberId;
+            userEmail = input.memberEmail;
+            userName = input.memberName || "Member";
+          } else {
             return {
               success: false,
-              error: "Member profile not found.",
+              error: "Authentication required. Please provide member information.",
             };
           }
 
           const checkoutSession = await createCheckoutSession({
-            userId: session.memberId,
-            userEmail: session.email,
-            userName: profile.displayName || "Member",
+            userId,
+            userEmail,
+            userName,
             paymentType: input.paymentType,
             successUrl: input.successUrl,
             cancelUrl: input.cancelUrl,

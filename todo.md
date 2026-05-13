@@ -13,9 +13,9 @@
 - [x] Webhook route: `/api/stripe/webhook` Express endpoint to receive Stripe events
 
 ### Frontend Payment Flow (In Progress)
-- [ ] Pricing section: add "Subscribe Now" / "Buy Once" buttons that trigger checkout
-- [ ] Checkout modal or redirect: call `trpc.member.createCheckout` and open Stripe session URL
-- [ ] Success page: display membership confirmation and digital member card
+- [x] Pricing section: add "Subscribe Now" / "Buy Once" buttons that trigger checkout
+- [x] Checkout modal or redirect: call `trpc.member.createCheckout` and open Stripe session URL
+- [x] Success page: display membership confirmation and digital member card
 - [ ] Member dashboard: show subscription status, renewal date, payment history
 
 ### Payment Testing & Validation
