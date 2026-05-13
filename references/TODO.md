@@ -15,7 +15,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 **Follow-up (not closed by this commit — do not check off P0 bullets below until these are done):**
 
-- [ ] **Branded `og-share.png`:** Current file is a **tiny 1×1 placeholder** so the tag is valid. Replace with a **1200×630** branded raster (PNG or JPEG per platform guidance); update `index.html` only if the filename or path changes.
+- [x] **Branded `og-share.png`:** **1200×630** PNG in `client/public/`, center-cropped from `references/brand/lgm-logos/PNG Files/LINKS-GOLF-MEMBERSHIP-9.png` (regeneration steps in `references/brand/lgm-logos/README.txt`). Optional later: add tagline/URL in a dedicated export from the `.ai` sources.
 - [ ] **Bilingual social copy:** Static HTML meta is **EN-first**; add Spanish (and parity) for `og:description` / `twitter:description` when you pick an approach (separate routes, build-time env, or SSR).
 - [ ] **`og:url` + canonical:** Deliberately omitted until a single canonical origin is guaranteed (avoid wrong-domain canonical on Manus previews). Wire `VITE_PUBLIC_SITE_ORIGIN` (or similar) at build time when `linksgolfpr.com` is live.
 - [ ] **Deploy smoke test:** Confirm the hosted Manus/preview URL does not apply any *other* forced login before first paint; this repo’s home page already uses public `member.session` only.
@@ -32,12 +32,12 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 ### Trust / credibility
 
-*Prototype #1 partially advances this block — see **Status: next main commit** at the top of this file. Original P0 acceptance criteria stay open until domain, ES meta, branded image, and live-host verification are done.*
+*Prototype #1 partially advances this block — see **Status: next main commit** at the top of this file. Original P0 acceptance criteria stay open until domain, ES meta, and live-host verification are done (branded OG raster is now in-repo).*
 
 - [ ] Move the site to the production domain `linksgolfpr.com` (currently lives at `linksgolfpr.manus.space`, mismatching the `info@linksgolfpr.com` contact email). Provision SSL on the production domain.
 - [ ] Remove the initial OAuth redirect to `manus.im` for anonymous visitors. The marketing site must be publicly viewable without any login. *(Repo: guarded on public paths; still verify full “no surprise login” behavior on the deployed preview/host.)*
 - [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES. *(Repo: real EN copy in `index.html` + `meta name="description"`; ES-specific OG/Twitter strings not yet in static head.)*
-- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: uses same-origin `/og-share.png` instead of manuscdn; file is still a placeholder — swap for branded 1200×630 asset.)*
+- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: **1200×630** `/og-share.png` from brand kit `LINKS-GOLF-MEMBERSHIP-9.png`; source tree under `references/brand/lgm-logos/`. Mark this P0 row done once production deploy is verified in Facebook/X debuggers.)*
 
 ### Residency verification
 - [ ] Surface the Puerto Rico residency requirement *before* the form, not in fine print at the bottom. Add a prominent residency confirmation gate (radio or checkbox) at the top of the signup flow.
