@@ -14,12 +14,16 @@ export default function Success() {
   useEffect(() => {
     const createSession = async () => {
       try {
-        // Get member info and checkout session ID from localStorage
-        const memberId = localStorage.getItem("checkout_member_id");
-        const email = localStorage.getItem("checkout_member_email");
-        const checkoutSessionId = localStorage.getItem("checkout_session_id");
+        // Get checkout data from URL query parameters
+        const params = new URLSearchParams(window.location.search);
+        const sessionId = params.get("sessionId");
+        const memberId = params.get("memberId");
+        const email = params.get("email");
 
-        if (!memberId || !email || !checkoutSessionId) {
+        console.log("[Success] Received params:", { sessionId, memberId, email });
+
+        if (!memberId || !email || !sessionId) {
+          console.error("[Success] Missing parameters:", { sessionId, memberId, email });
           setError("Missing checkout information. Please contact support.");
           setIsCreatingSession(false);
           return;
@@ -29,14 +33,12 @@ export default function Success() {
         const result = await createSessionMutation.mutateAsync({
           memberId: parseInt(memberId, 10),
           email,
-          checkoutSessionId,
+          checkoutSessionId: sessionId,
         });
 
+        console.log("[Success] Session creation result:", result);
+
         if (result.success) {
-          // Clear localStorage
-          localStorage.removeItem("checkout_member_id");
-          localStorage.removeItem("checkout_member_email");
-          localStorage.removeItem("checkout_session_id");
           // Redirect to dashboard
           setLocation("/dashboard");
         } else {

@@ -193,18 +193,12 @@ export default function PricingSection() {
       }
 
       const origin = window.location.origin;
-      const successUrl = `${origin}/success`;
       const cancelUrl = `${origin}/pricing`;
       const memberIdNum = parseInt(memberId, 10);
 
-      // Store member info in localStorage for the success page
-      localStorage.setItem("checkout_member_id", memberIdNum.toString());
-      localStorage.setItem("checkout_member_email", signupEmail);
-      // Note: checkout_session_id will be set after receiving the response
-
       const result = await createCheckoutMutation.mutateAsync({
         paymentType,
-        successUrl,
+        successUrl: `${origin}/success`,
         cancelUrl,
         memberId: memberIdNum,
         memberEmail: signupEmail,
@@ -217,8 +211,9 @@ export default function PricingSection() {
         return;
       }
 
-      // Store the checkout session ID for verification on success
-      localStorage.setItem("checkout_session_id", result.sessionId || "");
+      // Build the success URL with the session ID and member info as query parameters
+      // This way it's available in the new window that Stripe redirects to
+      const successUrlWithParams = `${origin}/success?sessionId=${encodeURIComponent(result.sessionId || "")}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
 
       toast.info("Redirecting to checkout...");
       // Open Stripe checkout in a new window
