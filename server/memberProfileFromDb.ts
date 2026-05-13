@@ -90,3 +90,39 @@ export async function fetchMemberProfileForSession(
     photoUrl: row.photo_url?.trim() || null,
   };
 }
+
+/**
+ * Sets membership activation window on Supabase after Stripe confirms payment.
+ * Call only after checkout session is verified; member id is Supabase `members.id`.
+ */
+export async function activateSupabaseMemberAfterPaidCheckout(opts: {
+  memberId: string;
+  activatedAtIso: string;
+  expiresAtIso: string;
+}): Promise<boolean> {
+  const url =
+    process.env.SUPABASE_URL?.trim() || process.env.VITE_SUPABASE_URL?.trim();
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY?.trim();
+  if (!url || !key) {
+    console.warn("[activateSupabaseMemberAfterPaidCheckout] Supabase admin not configured");
+    return false;
+  }
+
+  const supabase = createClient(url, key, {
+    auth: { persistSession: false, autoRefreshToken: false },
+  });
+
+  const { error } = await supabase
+    .from("members")
+    .update({
+      activated_at: opts.activatedAtIso,
+      expires_at: opts.expiresAtIso,
+    })
+    .eq("id", opts.memberId);
+
+  if (error) {
+    console.error("[activateSupabaseMemberAfterPaidCheckout]", error);
+    return false;
+  }
+  return true;
+}

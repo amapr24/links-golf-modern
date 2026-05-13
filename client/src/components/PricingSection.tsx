@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { isSupabaseConfigured, saveMemberSignup, classifyMemberSignupError } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { formatNanpPhoneForStorage } from "@shared/phoneNanp";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -69,6 +70,13 @@ export default function PricingSection() {
         return;
       }
 
+      const phoneFormatted = formatNanpPhoneForStorage(phone);
+      if (!phoneFormatted) {
+        setError(t("pricing.invalidPhone"));
+        setIsSubmitting(false);
+        return;
+      }
+
       if (!residencyConfirmed || !agreedTerms || !agreedPrivacy || !agreedRefundPolicy) {
         setError(t("pricing.mustAcceptLegal"));
         setIsSubmitting(false);
@@ -89,7 +97,7 @@ export default function PricingSection() {
         firstName,
         lastName,
         email,
-        phone,
+        phone: phoneFormatted,
         address: address || "",
         photoFile: postPhotoFile,
       });
@@ -439,10 +447,18 @@ export default function PricingSection() {
                     <input
                       id="inp-phone"
                       type="tel"
-                      placeholder="+1 (787) 000-0000"
+                      inputMode="tel"
+                      autoComplete="tel"
+                      placeholder="+1 787-555-0100"
                       className={inputClass}
                       style={inputStyle}
                     />
+                    <p
+                      className="text-xs mt-1"
+                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.phoneFormatHint")}
+                    </p>
                   </div>
                   <div>
                     <label style={labelStyle}>{t("pricing.email")} *</label>

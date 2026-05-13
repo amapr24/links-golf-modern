@@ -17,18 +17,19 @@ import {
   markWelcomeEmailSentAtMember,
   resolveMemberIdFromEmail,
 } from "./memberWelcomeFromDb";
-import { fetchMemberProfileForSession } from "./memberProfileFromDb";
-import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
+import { fetchMemberProfileForSession, activateSupabaseMemberAfterPaidCheckout } from "./memberProfileFromDb";
+import { createCheckoutSession } from "./stripe/checkout";
+import { requireStripeApi } from "./stripe/client";
 import {
   getRequestClientIp,
   recordSendOtpAttempt,
 } from "./sendOtpRateLimit";
+import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
 import {
   hasWelcomeEmailBeenSent,
   markWelcomeEmailSent,
 } from "./welcomeEmailOnce";
 import { COOKIE_NAME, MEMBER_SESSION_COOKIE } from "@shared/const";
-import { createCheckoutSession } from "./stripe/checkout";
 import {
   fetchMemberPaymentHistory,
   fetchMemberSubscriptionStatus,
@@ -287,28 +288,22 @@ export const appRouter = router({
       )
       .mutation(async ({ input, ctx }) => {
         try {
-          const memberId = input.memberId.toString();
+          const memberId = String(input.memberId);
           const emailNorm = input.email.toLowerCase();
 
-          console.log(`[createSessionAfterCheckout] Starting with memberId=${input.memberId}, email=${emailNorm}, sessionId=${input.checkoutSessionId}`);
+          console.log(
+            `[createSessionAfterCheckout] memberId=${memberId}, email=${emailNorm}, sessionId=${input.checkoutSessionId}`,
+          );
 
-          // Verify member exists
-          const member = await getMemberByUserId(input.memberId);
-          if (!member) {
-            console.error(`[createSessionAfterCheckout] Member not found: ${input.memberId}`);
+          let stripe;
+          try {
+            stripe = requireStripeApi();
+          } catch {
             return {
               success: false,
-              error: "Member not found.",
+              error: "Payment verification is unavailable.",
             };
           }
-
-          console.log(`[createSessionAfterCheckout] Member found: ${member.id}`);
-
-          // Verify Stripe checkout session was completed
-          const Stripe = (await import('stripe')).default;
-          const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
-          
-          console.log(`[createSessionAfterCheckout] Retrieving Stripe session: ${input.checkoutSessionId}`);
 
           let checkoutSession;
           try {
@@ -320,7 +315,7 @@ export const appRouter = router({
               error: "Failed to verify checkout session.",
             };
           }
-          
+
           if (!checkoutSession) {
             console.error(`[createSessionAfterCheckout] Session not found: ${input.checkoutSessionId}`);
             return {
@@ -329,39 +324,86 @@ export const appRouter = router({
             };
           }
 
-          console.log(`[createSessionAfterCheckout] Session found. Payment status: ${checkoutSession.payment_status}, client_reference_id: ${checkoutSession.client_reference_id}`);
+          console.log(
+            `[createSessionAfterCheckout] Session payment_status=${checkoutSession.payment_status}, client_reference_id=${checkoutSession.client_reference_id}`,
+          );
 
           if (checkoutSession.payment_status !== "paid") {
-            console.warn(`[createSessionAfterCheckout] Payment not completed. Status: ${checkoutSession.payment_status}`);
+            console.warn(
+              `[createSessionAfterCheckout] Payment not completed. Status: ${checkoutSession.payment_status}`,
+            );
             return {
               success: false,
               error: "Payment not completed. Please try again.",
             };
           }
 
-          // Verify the checkout session belongs to this member
-          if (checkoutSession.client_reference_id !== input.memberId.toString()) {
-            console.error(`[createSessionAfterCheckout] Session mismatch: ${checkoutSession.client_reference_id} !== ${input.memberId}`);
+          if (checkoutSession.client_reference_id !== memberId) {
+            console.error(
+              `[createSessionAfterCheckout] Session mismatch: ${checkoutSession.client_reference_id} !== ${memberId}`,
+            );
             return {
               success: false,
               error: "Session verification failed.",
             };
           }
 
-          // Create session token
+          const existingProfile = await fetchMemberProfileForSession(memberId, emailNorm);
+          if (!existingProfile) {
+            console.error(
+              `[createSessionAfterCheckout] Supabase member not found for id=${memberId} email=${emailNorm}`,
+            );
+            return {
+              success: false,
+              error: "Member not found.",
+            };
+          }
+
+          const activatedAt = new Date();
+          const expiresAt = new Date(activatedAt.getTime() + 365 * 24 * 60 * 60 * 1000);
+          const activatedOk = await activateSupabaseMemberAfterPaidCheckout({
+            memberId,
+            activatedAtIso: activatedAt.toISOString(),
+            expiresAtIso: expiresAt.toISOString(),
+          });
+          if (!activatedOk) {
+            console.error("[createSessionAfterCheckout] Failed to update activated_at / expires_at on Supabase");
+            return {
+              success: false,
+              error: "Could not activate membership. Please contact support.",
+            };
+          }
+
+          const welcome = await fetchMemberWelcomeFields(memberId, emailNorm);
+          if (welcome) {
+            const alreadyFromDb = Boolean(welcome.welcomeEmailSentAt);
+            const alreadyFromCache = alreadyFromDb
+              ? false
+              : await hasWelcomeEmailBeenSent(emailNorm);
+            if (!alreadyFromDb && !alreadyFromCache) {
+              const mailed = await sendWelcomeEmail(
+                emailNorm,
+                welcome.firstName,
+                welcome.memberNumber,
+              );
+              if (mailed) {
+                await markWelcomeEmailSentAtMember(memberId);
+                await markWelcomeEmailSent(emailNorm);
+              }
+            }
+          }
+
           const token = await signMemberSessionToken({
             sub: memberId,
             email: emailNorm,
           });
 
-          // Set session cookie
           const cookieOpts = getMemberSessionCookieOptions(ctx.req);
           ctx.res.cookie(MEMBER_SESSION_COOKIE, token, {
             ...cookieOpts,
             maxAge: MEMBER_SESSION_MAX_AGE_SEC * 1000,
           });
 
-          // Fetch and return member profile
           const profile = await fetchMemberProfileForSession(memberId, emailNorm);
 
           return {
