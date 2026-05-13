@@ -25,6 +25,8 @@ const getFeatures = (t: any) => [
   t("pricing.features.noBlackout"),
 ];
 
+type PhoneRegion = "PR" | "US" | "CA";
+
 type Step = 1 | 2;
 
 export default function PricingSection() {
@@ -45,8 +47,9 @@ export default function PricingSection() {
   const [signupFirstName, setSignupFirstName] = useState("");
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
-  /** US/PR: 10 national digits only; +1 applied on save. */
+  /** NANP national 10 digits; country/region selector is +1 only (US, PR, CA). */
   const [phoneLocal, setPhoneLocal] = useState("");
+  const [phoneRegion, setPhoneRegion] = useState<PhoneRegion>("PR");
   const postPhotoRef = useRef<HTMLInputElement>(null);
 
   const handleContinueToPayment = async () => {
@@ -445,26 +448,33 @@ export default function PricingSection() {
                   </div>
                   <div>
                     <label style={labelStyle}>{t("pricing.phone")} *</label>
-                    <input
-                      id="inp-phone"
-                      type="tel"
-                      inputMode="numeric"
-                      autoComplete="tel-national"
-                      maxLength={10}
-                      placeholder="7875550100"
-                      value={phoneLocal}
-                      onChange={(e) =>
-                        setPhoneLocal(normalizeUsLocalPhoneDigits(e.target.value))
-                      }
-                      className={inputClass}
-                      style={inputStyle}
-                    />
-                    <p
-                      className="text-xs mt-1"
-                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.phoneFormatHint")}
-                    </p>
+                    <div className="flex flex-col sm:flex-row gap-2 items-stretch">
+                      <select
+                        value={phoneRegion}
+                        onChange={(e) => setPhoneRegion(e.target.value as PhoneRegion)}
+                        className={`${inputClass} shrink-0 w-full sm:w-auto sm:min-w-[12.5rem]`}
+                        style={{ ...inputStyle, cursor: "pointer" }}
+                        aria-label={t("pricing.phoneCountryAria")}
+                      >
+                        <option value="PR">{t("pricing.phoneOptionPR")}</option>
+                        <option value="US">{t("pricing.phoneOptionUS")}</option>
+                        <option value="CA">{t("pricing.phoneOptionCA")}</option>
+                      </select>
+                      <input
+                        id="inp-phone"
+                        type="tel"
+                        inputMode="numeric"
+                        autoComplete="tel-national"
+                        maxLength={10}
+                        placeholder="7875550100"
+                        value={phoneLocal}
+                        onChange={(e) =>
+                          setPhoneLocal(normalizeUsLocalPhoneDigits(e.target.value))
+                        }
+                        className={`${inputClass} flex-1 min-w-0`}
+                        style={inputStyle}
+                      />
+                    </div>
                   </div>
                   <div>
                     <label style={labelStyle}>{t("pricing.email")} *</label>
@@ -493,29 +503,12 @@ export default function PricingSection() {
                       border: "1px solid oklch(0.42 0.14 145 / 0.2)",
                     }}
                   >
+                    <label style={labelStyle}>{t("pricing.verificationPhoto")} *</label>
                     <p
-                      className="text-xs font-semibold uppercase tracking-widest mb-1"
-                      style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.verificationPhoto")} *
-                    </p>
-                    <p
-                      className="text-sm mb-2 leading-snug"
+                      className="text-sm mt-1 mb-3 leading-snug"
                       style={{ color: "oklch(0.45 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      {t("pricing.postPhotoBody")}
-                    </p>
-                    <p
-                      className="text-xs mb-3"
-                      style={{ color: "oklch(0.5 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.postPhotoFooter")}
-                    </p>
-                    <p
-                      className="text-xs mb-3 leading-snug"
-                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.photoPickerHint")}
+                      {t("pricing.verificationPhotoHint")}
                     </p>
                     <div className="flex flex-wrap items-center gap-3">
                       <input

@@ -108,13 +108,16 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.firstName": "First Name",
     "pricing.lastName": "Last Name",
     "pricing.phone": "Phone",
-    "pricing.phoneFormatHint":
-      "Enter 10 digits only (US / Puerto Rico). Country code +1 is saved automatically and is not shown here.",
-    "pricing.invalidPhone": "Enter exactly 10 digits for your US or Puerto Rico phone number.",
+    "pricing.phoneCountryAria": "Country or region",
+    "pricing.phoneOptionPR": "Puerto Rico (+1)",
+    "pricing.phoneOptionUS": "United States (+1)",
+    "pricing.phoneOptionCA": "Canada (+1)",
+    "pricing.invalidPhone": "Enter a valid 10-digit phone number.",
     "pricing.email": "Email Address",
     "pricing.address": "Address",
-    "pricing.verificationPhoto": "Verification Photo",
-    "pricing.photoRequired": "Required: Front-facing. Used for Digital ID only.",
+    "pricing.verificationPhoto": "Verification photo",
+    "pricing.verificationPhotoHint":
+      "Front-facing, well-lit face—camera or library is fine.",
     "pricing.takeUploadPhoto": "Take or Upload Photo",
     "pricing.removePhoto": "Remove",
     "pricing.errorSignupGeneric":
@@ -146,12 +149,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.success": "You're in.",
     "pricing.successDesc":
       "Membership active. A confirmation has been sent to your email.",
-    "pricing.postPhotoHeading": "One last step — add your photo.",
-    "pricing.postPhotoBody":
-      "Your wallet pass is photo-bound, so we can't issue it without a verified photo. It only appears on your Digital ID and is never shared.",
-    "pricing.postPhotoFooter": "Required · Front-facing · Used for your Digital ID only.",
-    "pricing.photoPickerHint":
-      "When you tap the button below, your phone should offer the camera and your photo library—use whichever you prefer.",
     "pricing.savingPhoto": "Saving…",
     "pricing.walletDisabledHint":
       "Add your photo above to enable Apple Wallet and Google Wallet.",
@@ -444,13 +441,16 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.firstName": "Nombre",
     "pricing.lastName": "Apellido",
     "pricing.phone": "Teléfono",
-    "pricing.phoneFormatHint":
-      "Ingresa solo 10 dígitos (EE. UU. / Puerto Rico). El código +1 se guarda automáticamente y no se muestra aquí.",
-    "pricing.invalidPhone": "Ingresa exactamente 10 dígitos para tu número de EE. UU. o Puerto Rico.",
+    "pricing.phoneCountryAria": "País o región",
+    "pricing.phoneOptionPR": "Puerto Rico (+1)",
+    "pricing.phoneOptionUS": "Estados Unidos (+1)",
+    "pricing.phoneOptionCA": "Canadá (+1)",
+    "pricing.invalidPhone": "Ingresa un número válido de 10 dígitos.",
     "pricing.email": "Correo Electrónico",
     "pricing.address": "Dirección",
-    "pricing.verificationPhoto": "Foto de Verificación",
-    "pricing.photoRequired": "Requerido: De frente. Se usa solo para ID Digital.",
+    "pricing.verificationPhoto": "Foto de verificación",
+    "pricing.verificationPhotoHint":
+      "Rostro de frente y buena luz—cámara o galería.",
     "pricing.takeUploadPhoto": "Tomar o Cargar Foto",
     "pricing.removePhoto": "Quitar",
     "pricing.errorSignupGeneric":
@@ -482,12 +482,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.success": "Ya estás dentro.",
     "pricing.successDesc":
       "Membresía activa. Te enviamos un correo de confirmación.",
-    "pricing.postPhotoHeading": "Un último paso: agrega tu foto.",
-    "pricing.postPhotoBody":
-      "Tu pase de billetera va ligado a la foto; no podemos emitirlo sin una foto verificada. Solo aparece en tu ID digital y no se comparte.",
-    "pricing.postPhotoFooter": "Obligatoria · De frente · Solo para tu ID digital.",
-    "pricing.photoPickerHint":
-      "Al tocar el botón de abajo, tu teléfono debería ofrecer la cámara y la galería: usa la que prefieras.",
     "pricing.savingPhoto": "Guardando…",
     "pricing.walletDisabledHint":
       "Sube tu foto arriba para activar Apple Wallet y Google Wallet.",
