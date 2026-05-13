@@ -11,6 +11,7 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "screenshots": "playwright test e2e/screenshots",
+    "reflow-audit": "playwright test e2e/screenshots/reflow-audit.spec.ts",
     "playwright:install": "playwright install chromium",
     "db:push": "drizzle-kit generate && drizzle-kit migrate"
   },

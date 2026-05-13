@@ -12,7 +12,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 - [x] **Nav + shell @ `lg` (1024px):** `Navbar` desktop nav / CTAs use `lg:flex`; hamburger + overlay use `lg:hidden`. `StickyCTA` and hero vignette / scroll cue / content padding breakpoints aligned to `lg` so tablet matches “compact header” behavior (`Navbar.tsx`, `StickyCTA.tsx`, `HeroSection.tsx`).
 - [x] **Courses list = responsive grid:** `CoursesSection` list view is `grid-cols-1` / `md:grid-cols-2` / `lg:grid-cols-3`; horizontal scroll + `courses.scrollHint` removed (`LanguageContext` keys removed).
 
-**P0 checklist (responsive / layout):** nav breakpoint, course grid + hint, and Why Join stack-until-`lg` are done in code — **manual reflow pass** (1440 → 320) remains open until QA signs off.
+**P0 checklist (responsive / layout):** nav breakpoint, course grid + hint, and Why Join stack-until-`lg` are done in code. **Automated reflow audit** (`pnpm reflow-audit`): horizontal overflow probes at 1440 / 1024 / 768 / 414 / 375 / 320 on `/` (top, `#courses`, `#pricing`) and `/courses` — all green as of 2026-05-13; report in `e2e/screenshots/output/reflow-audit-report.md` and full-page PNGs `reflow-full-*.png`. A quick **human glance** at those screenshots (or in the browser) still closes the official “verify reflow” P0 row for typography and density.
 
 ---
 
