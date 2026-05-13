@@ -12,7 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { isSupabaseConfigured, saveMemberSignup, classifyMemberSignupError } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
-import { formatUsPhoneForStorage, normalizeUsLocalPhoneDigits } from "@shared/phoneNanp";
+import { formatUsPhoneForStorage, formatUsLocalDigitsForDisplay, normalizeUsLocalPhoneDigits } from "@shared/phoneNanp";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -24,8 +24,6 @@ const getFeatures = (t: any) => [
   t("pricing.features.reissue"),
   t("pricing.features.noBlackout"),
 ];
-
-type PhoneRegion = "PR" | "US" | "CA";
 
 type Step = 1 | 2;
 
@@ -47,9 +45,8 @@ export default function PricingSection() {
   const [signupFirstName, setSignupFirstName] = useState("");
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
-  /** NANP national 10 digits; country/region selector is +1 only (US, PR, CA). */
-  const [phoneLocal, setPhoneLocal] = useState("");
-  const [phoneRegion, setPhoneRegion] = useState<PhoneRegion>("PR");
+  /** NANP national digits only (max 10); shown in the field as XXX-XXX-XXXX. */
+  const [phoneDigits, setPhoneDigits] = useState("");
   const postPhotoRef = useRef<HTMLInputElement>(null);
 
   const handleContinueToPayment = async () => {
@@ -68,13 +65,13 @@ export default function PricingSection() {
       const email = (document.getElementById("inp-email") as HTMLInputElement)?.value;
       const address = (document.getElementById("inp-address") as HTMLInputElement)?.value;
 
-      if (!firstName || !lastName || !email || phoneLocal.length === 0) {
+      if (!firstName || !lastName || !email || phoneDigits.length === 0) {
         setError("Please fill in all required fields");
         setIsSubmitting(false);
         return;
       }
 
-      const phoneFormatted = formatUsPhoneForStorage(phoneLocal);
+      const phoneFormatted = formatUsPhoneForStorage(phoneDigits);
       if (!phoneFormatted) {
         setError(t("pricing.invalidPhone"));
         setIsSubmitting(false);
@@ -448,33 +445,20 @@ export default function PricingSection() {
                   </div>
                   <div>
                     <label style={labelStyle}>{t("pricing.phone")} *</label>
-                    <div className="flex flex-col sm:flex-row gap-2 items-stretch">
-                      <select
-                        value={phoneRegion}
-                        onChange={(e) => setPhoneRegion(e.target.value as PhoneRegion)}
-                        className={`${inputClass} shrink-0 w-full sm:w-auto sm:min-w-[12.5rem]`}
-                        style={{ ...inputStyle, cursor: "pointer" }}
-                        aria-label={t("pricing.phoneCountryAria")}
-                      >
-                        <option value="PR">{t("pricing.phoneOptionPR")}</option>
-                        <option value="US">{t("pricing.phoneOptionUS")}</option>
-                        <option value="CA">{t("pricing.phoneOptionCA")}</option>
-                      </select>
-                      <input
-                        id="inp-phone"
-                        type="tel"
-                        inputMode="numeric"
-                        autoComplete="tel-national"
-                        maxLength={10}
-                        placeholder="7875550100"
-                        value={phoneLocal}
-                        onChange={(e) =>
-                          setPhoneLocal(normalizeUsLocalPhoneDigits(e.target.value))
-                        }
-                        className={`${inputClass} flex-1 min-w-0`}
-                        style={inputStyle}
-                      />
-                    </div>
+                    <input
+                      id="inp-phone"
+                      type="tel"
+                      inputMode="numeric"
+                      autoComplete="tel-national"
+                      maxLength={12}
+                      placeholder="787-555-0100"
+                      value={formatUsLocalDigitsForDisplay(phoneDigits)}
+                      onChange={(e) =>
+                        setPhoneDigits(normalizeUsLocalPhoneDigits(e.target.value))
+                      }
+                      className={inputClass}
+                      style={inputStyle}
+                    />
                   </div>
                   <div>
                     <label style={labelStyle}>{t("pricing.email")} *</label>

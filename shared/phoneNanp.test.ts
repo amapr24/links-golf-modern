@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   formatUsPhoneForStorage,
+  formatUsLocalDigitsForDisplay,
   normalizeUsLocalPhoneDigits,
 } from "./phoneNanp";
 
@@ -19,6 +20,18 @@ describe("normalizeUsLocalPhoneDigits", () => {
 
   it("strips non-digits", () => {
     expect(normalizeUsLocalPhoneDigits("(787) 555-0100")).toBe("7875550100");
+  });
+});
+
+describe("formatUsLocalDigitsForDisplay", () => {
+  it("adds dashes progressively", () => {
+    expect(formatUsLocalDigitsForDisplay("787")).toBe("787");
+    expect(formatUsLocalDigitsForDisplay("787555")).toBe("787-555");
+    expect(formatUsLocalDigitsForDisplay("7875550100")).toBe("787-555-0100");
+  });
+
+  it("ignores extra length", () => {
+    expect(formatUsLocalDigitsForDisplay("787555010012")).toBe("787-555-0100");
   });
 });
 
