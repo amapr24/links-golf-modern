@@ -9,6 +9,9 @@ import Home from "./pages/Home";
 import Courses from "./pages/Courses";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
+import RefundPolicy from "./pages/RefundPolicy";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 function Router() {
   // make sure to consider if you need authentication for certain routes
@@ -17,6 +20,9 @@ function Router() {
       <Route path={"/"} component={Home} />
       <Route path={"/login"} component={Login} />
       <Route path={"/courses"} component={Courses} />
+      <Route path={"/refunds"} component={RefundPolicy} />
+      <Route path={"/terms"} component={TermsOfService} />
+      <Route path={"/privacy"} component={PrivacyPolicy} />
       <Route path={"/dashboard"} component={Dashboard} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}

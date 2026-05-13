@@ -3,25 +3,44 @@
  * Design: Cream background, accordion FAQ with smooth expand
  */
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Plus, Minus } from "lucide-react";
+import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
-const getFaqs = (t: any) => [
-  { q: t("faq.q1"), a: t("faq.a1") },
-  { q: t("faq.q2"), a: t("faq.a2") },
-  { q: t("faq.q3"), a: t("faq.a3") },
-  { q: t("faq.q4"), a: t("faq.a4") },
-  { q: t("faq.q5"), a: t("faq.a5") },
-  { q: t("faq.q6"), a: t("faq.a6") },
-  { q: t("faq.q7"), a: t("faq.a7") },
-];
+function buildFaqs(t: (key: string) => string): { q: string; a: ReactNode }[] {
+  return [
+    { q: t("faq.q1"), a: t("faq.a1") },
+    { q: t("faq.q2"), a: t("faq.a2") },
+    { q: t("faq.q3"), a: t("faq.a3") },
+    { q: t("faq.q4"), a: t("faq.a4") },
+    { q: t("faq.q5"), a: t("faq.a5") },
+    { q: t("faq.q6"), a: t("faq.a6") },
+    { q: t("faq.q7"), a: t("faq.a7") },
+    {
+      q: t("faq.q8"),
+      a: (
+        <>
+          <span>{t("faq.a8Lead")} </span>
+          <Link
+            href="/refunds"
+            className="underline font-semibold"
+            style={{ color: "oklch(0.42 0.14 145)" }}
+          >
+            {t("faq.refundsPageLink")}
+          </Link>
+          <span> {t("faq.a8Trail")}</span>
+        </>
+      ),
+    },
+  ];
+}
 
 export default function FaqSection() {
   const { t } = useLanguage();
-  const faqs = getFaqs(t);
+  const faqs = buildFaqs(t);
   const [open, setOpen] = useState<number | null>(0);
 
   const faqBackgroundStyle = {
@@ -103,12 +122,12 @@ export default function FaqSection() {
                 </button>
                 <div
                   style={{
-                    maxHeight: open === i ? "200px" : "0",
+                    maxHeight: open === i ? "min(70vh, 720px)" : "0",
                     overflow: "hidden",
                     transition: "max-height 350ms cubic-bezier(0.23, 1, 0.32, 1)",
                   }}
                 >
-                  <p
+                  <div
                     className="px-5 pb-5 text-sm leading-relaxed"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
@@ -117,7 +136,7 @@ export default function FaqSection() {
                     }}
                   >
                     {faq.a}
-                  </p>
+                  </div>
                 </div>
               </div>
             ))}
@@ -134,7 +153,7 @@ export default function FaqSection() {
                 className="text-sm font-semibold mb-2"
                 style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
               >
-                Still have questions?
+                {t("faq.stillHaveQuestions")}
               </p>
               <p
                 className="text-sm leading-relaxed"

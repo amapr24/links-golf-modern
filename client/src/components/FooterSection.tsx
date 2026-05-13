@@ -3,13 +3,20 @@
  * Design: Dark forest background, clean link columns
  */
 
+import { Link, useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 export default function FooterSection() {
   const { t } = useLanguage();
-  const scrollTo = (id: string) => {
-    scrollSelectorIntoViewMotionSafe(id);
+  const [pathname] = useLocation();
+
+  const scrollTo = (hash: string) => {
+    if (pathname === "/") {
+      scrollSelectorIntoViewMotionSafe(hash);
+      return;
+    }
+    window.location.href = `/${hash}`;
   };
 
   return (
@@ -126,10 +133,11 @@ export default function FooterSection() {
             </p>
             <div className="space-y-2.5">
               {[
-                { label: t("footer.terms"), href: "#" },
-                { label: t("footer.privacy"), href: "#" },
+                { label: t("footer.terms"), href: "/terms" },
+                { label: t("footer.privacy"), href: "/privacy" },
+                { label: t("footer.refunds"), href: "/refunds" },
               ].map(({ label, href }) => (
-                <a
+                <Link
                   key={label}
                   href={href}
                   className="block text-sm transition-colors duration-200"
@@ -138,7 +146,7 @@ export default function FooterSection() {
                   onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
                 >
                   {label}
-                </a>
+                </Link>
               ))}
             </div>
           </div>

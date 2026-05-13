@@ -31,7 +31,10 @@ function isPublicMarketingPath(pathname: string): boolean {
     pathname === "/" ||
     pathname === "/courses" ||
     pathname === "/login" ||
-    pathname === "/404"
+    pathname === "/404" ||
+    pathname === "/refunds" ||
+    pathname === "/terms" ||
+    pathname === "/privacy"
   );
 }
 

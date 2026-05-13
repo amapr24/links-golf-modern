@@ -6,6 +6,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Smartphone } from "lucide-react";
+import { Link } from "wouter";
 import {
   activateMembership,
   isSupabaseConfigured,
@@ -47,6 +48,10 @@ export default function PricingSection() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
   const [memberId, setMemberId] = useState<string | null>(null);
+  const [residencyConfirmed, setResidencyConfirmed] = useState(false);
+  const [agreedTerms, setAgreedTerms] = useState(false);
+  const [agreedPrivacy, setAgreedPrivacy] = useState(false);
+  const [agreedRefundPolicy, setAgreedRefundPolicy] = useState(false);
   const [signupFirstName, setSignupFirstName] = useState("");
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
@@ -138,6 +143,12 @@ export default function PricingSection() {
 
       if (!firstName || !lastName || !email || !phone) {
         setError("Please fill in all required fields");
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (!residencyConfirmed || !agreedTerms || !agreedPrivacy || !agreedRefundPolicy) {
+        setError(t("pricing.mustAcceptLegal"));
         setIsSubmitting(false);
         return;
       }
@@ -375,11 +386,41 @@ export default function PricingSection() {
               {step === 1 && (
                 <div className="space-y-4">
                   <h3
-                    className="font-semibold text-lg mb-4"
+                    className="font-semibold text-lg mb-1"
                     style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
                   >
                     {t("pricing.playerDetails")}
                   </h3>
+                  <div
+                    className="rounded-sm p-4 mb-2"
+                    style={{
+                      background: "oklch(0.42 0.14 145 / 0.08)",
+                      border: "1px solid oklch(0.42 0.14 145 / 0.25)",
+                    }}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-widest mb-3"
+                      style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.residencyGateTitle")}
+                    </p>
+                    <label className="flex gap-3 items-start cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={residencyConfirmed}
+                        onChange={(e) => setResidencyConfirmed(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border"
+                        style={{ accentColor: "oklch(0.42 0.14 145)" }}
+                      />
+                      <span
+                        className="text-sm leading-snug"
+                        style={{ color: "oklch(0.2 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 500 }}
+                      >
+                        {t("pricing.residencyCheckbox")}
+                      </span>
+                    </label>
+                  </div>
+
                   <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label style={labelStyle}>{t("pricing.firstName")} *</label>
@@ -432,6 +473,56 @@ export default function PricingSection() {
                       style={inputStyle}
                     />
                   </div>
+                  <div className="space-y-3 pt-1">
+                    <label className="flex gap-3 items-start cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={agreedTerms}
+                        onChange={(e) => setAgreedTerms(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border"
+                        style={{ accentColor: "oklch(0.42 0.14 145)" }}
+                      />
+                      <span className="text-xs leading-relaxed" style={{ color: "oklch(0.4 0.05 145)", fontFamily: "'Outfit', sans-serif" }}>
+                        {t("pricing.agreeTermsLead")}{" "}
+                        <Link href="/terms" className="underline font-semibold" style={{ color: "oklch(0.42 0.14 145)" }}>
+                          {t("pricing.terms")}
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                    <label className="flex gap-3 items-start cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={agreedPrivacy}
+                        onChange={(e) => setAgreedPrivacy(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border"
+                        style={{ accentColor: "oklch(0.42 0.14 145)" }}
+                      />
+                      <span className="text-xs leading-relaxed" style={{ color: "oklch(0.4 0.05 145)", fontFamily: "'Outfit', sans-serif" }}>
+                        {t("pricing.agreePrivacyLead")}{" "}
+                        <Link href="/privacy" className="underline font-semibold" style={{ color: "oklch(0.42 0.14 145)" }}>
+                          {t("pricing.privacy")}
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                    <label className="flex gap-3 items-start cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={agreedRefundPolicy}
+                        onChange={(e) => setAgreedRefundPolicy(e.target.checked)}
+                        className="mt-0.5 h-4 w-4 shrink-0 rounded border"
+                        style={{ accentColor: "oklch(0.42 0.14 145)" }}
+                      />
+                      <span className="text-xs leading-relaxed" style={{ color: "oklch(0.4 0.05 145)", fontFamily: "'Outfit', sans-serif" }}>
+                        {t("pricing.agreeRefundLead")}{" "}
+                        <Link href="/refunds" className="underline font-semibold" style={{ color: "oklch(0.42 0.14 145)" }}>
+                          {t("footer.refunds")}
+                        </Link>
+                        .
+                      </span>
+                    </label>
+                  </div>
                   {error && (
                     <div
                       className="p-3 rounded-sm text-sm text-center"
@@ -453,15 +544,7 @@ export default function PricingSection() {
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    By continuing, you confirm you are a Puerto Rico resident and agree to our{" "}
-                    <a href="#" className="underline" style={{ color: "oklch(0.42 0.14 145)" }}>
-                      Terms of Service
-                    </a>
-                    {" "}and{" "}
-                    <a href="#" className="underline" style={{ color: "oklch(0.42 0.14 145)" }}>
-                      Privacy Policy
-                    </a>
-                    .
+                    {t("pricing.checkoutHelp")}
                   </p>
                 </div>
               )}
@@ -548,6 +631,16 @@ export default function PricingSection() {
                     <span>{t("pricing.payNow")}</span>
                     <ArrowRight size={14} className="shrink-0" aria-hidden />
                   </button>
+                  <p
+                    className="text-xs text-center leading-relaxed"
+                    style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                  >
+                    {t("pricing.paymentRefundReminder")}{" "}
+                    <Link href="/refunds" className="underline font-semibold" style={{ color: "oklch(0.42 0.14 145)" }}>
+                      {t("footer.refunds")}
+                    </Link>
+                    .
+                  </p>
                   <p
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
