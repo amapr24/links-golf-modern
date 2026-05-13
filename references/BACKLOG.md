@@ -11,14 +11,15 @@ Tracked follow-ups that are not yet implemented in code.
 - **OTP storage** — [`server/otpStore.ts`](../server/otpStore.ts): uses **`REDIS_URL`** with `SETEX` when set; otherwise a **process-wide in-memory `Map`** with 10-minute TTL (fixes the old per-request `Map` bug). Vitest forces in-memory store (`VITEST` / `NODE_ENV=test`).
 - **Server-side verify** — [`server/routers.ts`](../server/routers.ts) `member.verifyOtp` calls `verifyAndConsumeOtp` (one-time use).
 - **Login flow** — [`client/src/pages/Login.tsx`](../client/src/pages/Login.tsx) calls `trpc.member.verifyOtp` with email + OTP; no `login_otp` in localStorage.
-- **Welcome email** — After successful verify, optional `firstName` + `memberNumber` trigger `sendWelcomeEmail()` (fire-and-forget; login passes derived `LGM-…` from Supabase member `id`).
+- **Welcome email (once per address)** — [`server/welcomeEmailOnce.ts`](../server/welcomeEmailOnce.ts): after successful `verifyOtp`, `sendWelcomeEmail` runs only if we have not already recorded a send for that email (Redis key `links:welcome:sent:{email}` or in-memory `Set`). Marked only after Resend returns success.
 
 ### Still operational / follow-up
 
 1. **`RESEND_API_KEY`** — Must be set in each deployed environment or emails return `false` / skip.
-2. **`REDIS_URL`** — Set in **production** when running **more than one Node instance** or horizontal scale; otherwise in-memory fallback is single-process only.
+2. **`REDIS_URL`** — Set in **production** when running **more than one Node instance** or horizontal scale; otherwise in-memory fallback is single-process only. **Welcome-once** also benefits from Redis in multi-instance setups (otherwise each process has its own `Set`).
 3. **JWT / server session** — Client still builds `member_session` with `btoa`; replace with signed token or httpOnly cookie when ready.
 4. **E2E** — Manual or automated flow: real Resend inbox, Redis in staging, multi-replica check.
+5. **Renewal / lifecycle emails (later)** — e.g. “Renews in X days” — not implemented; will need renewal dates in data + scheduler or Resend batch when product is ready.
 
 ---
 

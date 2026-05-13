@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { appRouter } from "./routers";
 import { peekOtpForTests, resetOtpStoreForTests } from "./otpStore";
+import { resetWelcomeEmailSentForTests } from "./welcomeEmailOnce";
 
 // Mock the email service
 vi.mock("./email", () => ({
@@ -16,6 +17,7 @@ describe("member.sendOtp", () => {
 
   beforeEach(() => {
     resetOtpStoreForTests();
+    resetWelcomeEmailSentForTests();
     // Create a caller with minimal context (no user required for public procedure)
     caller = appRouter.createCaller({
       req: {

@@ -1,30 +1,10 @@
-import Redis from "ioredis";
+import { getRedis } from "./redis";
 
 const TTL_SECONDS = 10 * 60;
 const KEY_PREFIX = "links:otp:";
 
 /** In-process fallback when `REDIS_URL` is unset (single Node instance only). */
 const memory = new Map<string, { otp: string; expiresAt: number }>();
-
-let redisClient: Redis | null = null;
-let redisInitAttempted = false;
-
-function getRedis(): Redis | null {
-  // Vitest always uses in-memory store so tests do not require Redis.
-  if (process.env.VITEST === "true" || process.env.NODE_ENV === "test") {
-    return null;
-  }
-  const url = process.env.REDIS_URL?.trim();
-  if (!url) return null;
-  if (!redisInitAttempted) {
-    redisInitAttempted = true;
-    redisClient = new Redis(url, {
-      maxRetriesPerRequest: 2,
-      enableReadyCheck: true,
-    });
-  }
-  return redisClient;
-}
 
 function normalizeEmail(email: string): string {
   return email.trim().toLowerCase();

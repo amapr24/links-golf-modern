@@ -5,6 +5,10 @@ import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { sendOtpEmail, sendWelcomeEmail } from "./email";
 import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
+import {
+  hasWelcomeEmailBeenSent,
+  markWelcomeEmailSent,
+} from "./welcomeEmailOnce";
 import { COOKIE_NAME } from "@shared/const";
 
 export const appRouter = router({
@@ -85,9 +89,17 @@ export const appRouter = router({
           }
 
           if (input.firstName && input.memberNumber) {
-            void sendWelcomeEmail(input.email, input.firstName, input.memberNumber).catch(
-              (err) => console.error("[verifyOtp] Welcome email failed:", err)
-            );
+            const alreadyWelcomed = await hasWelcomeEmailBeenSent(input.email);
+            if (!alreadyWelcomed) {
+              const mailed = await sendWelcomeEmail(
+                input.email,
+                input.firstName,
+                input.memberNumber
+              );
+              if (mailed) {
+                await markWelcomeEmailSent(input.email);
+              }
+            }
           }
 
           return {

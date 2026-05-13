@@ -1,17 +1,22 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { appRouter } from "./routers";
 import { peekOtpForTests, resetOtpStoreForTests } from "./otpStore";
+import { resetWelcomeEmailSentForTests } from "./welcomeEmailOnce";
 
-vi.mock("./email", () => ({
-  sendOtpEmail: vi.fn(async () => true),
+const emailMocks = vi.hoisted(() => ({
+  sendOtpEmail: vi.fn(async (_email: string, _otp: string) => true),
   sendWelcomeEmail: vi.fn(async () => true),
 }));
+
+vi.mock("./email", () => emailMocks);
 
 describe("member.verifyOtp", () => {
   let caller: ReturnType<typeof appRouter.createCaller>;
 
   beforeEach(() => {
     resetOtpStoreForTests();
+    resetWelcomeEmailSentForTests();
+    emailMocks.sendWelcomeEmail.mockClear();
     caller = appRouter.createCaller({
       req: {
         headers: {},
@@ -85,5 +90,27 @@ describe("member.verifyOtp", () => {
         otp: "12345",
       })
     ).rejects.toBeDefined();
+  });
+
+  it("sends welcome email at most once per email address", async () => {
+    await caller.member.sendOtp({ email: "once@example.com" });
+    const otp1 = peekOtpForTests("once@example.com")!;
+    await caller.member.verifyOtp({
+      email: "once@example.com",
+      otp: otp1,
+      firstName: "Pat",
+      memberNumber: "LGM-001",
+    });
+    expect(emailMocks.sendWelcomeEmail).toHaveBeenCalledTimes(1);
+
+    await caller.member.sendOtp({ email: "once@example.com" });
+    const otp2 = peekOtpForTests("once@example.com")!;
+    await caller.member.verifyOtp({
+      email: "once@example.com",
+      otp: otp2,
+      firstName: "Pat",
+      memberNumber: "LGM-001",
+    });
+    expect(emailMocks.sendWelcomeEmail).toHaveBeenCalledTimes(1);
   });
 });
