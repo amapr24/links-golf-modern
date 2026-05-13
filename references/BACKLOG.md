@@ -2,6 +2,8 @@
 
 Tracked follow-ups that are not yet implemented in code.
 
+**Roadmap grouping (batches A–D, what’s done vs open):** see [`BATCHES.md`](BATCHES.md).
+
 ---
 
 ## Resend / member OTP (updated)
