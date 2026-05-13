@@ -10,7 +10,7 @@ import { CoursesMap } from "./CoursesMap";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
-const DIRECTORY_TYPES = ["all", "Resort", "Semi-Private", "Public", "Country Club"] as const;
+const DIRECTORY_TYPES = ["all", "Resort", "Semi-Private", "Public"] as const;
 
 type DirectoryFilter = (typeof DIRECTORY_TYPES)[number];
 
@@ -19,7 +19,6 @@ const tabIds: Record<DirectoryFilter, string> = {
   Resort: "courses-tab-resort",
   "Semi-Private": "courses-tab-semi-private",
   Public: "courses-tab-public",
-  "Country Club": "courses-tab-country-club",
 };
 
 function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => string): string {
@@ -32,8 +31,6 @@ function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => strin
       return t("courses.homeFilter.semiPrivate");
     case "Public":
       return t("courses.homeFilter.public");
-    case "Country Club":
-      return t("courses.homeFilter.countryClub");
   }
 }
 

@@ -1,7 +1,7 @@
 /**
  * CoursesMap — Interactive Google Map showing partner golf courses in Puerto Rico
  * Displays course pins with filtering by directory course type.
- * Pin hover: immediate custom label (no slow native `title` tooltip).
+ * Pin hover: immediate custom label showing only course name.
  * Course pills always visible — no popup detail card.
  */
 
@@ -55,20 +55,6 @@ function golfPinIcon(fill: string, selected: boolean): google.maps.Icon {
     scaledSize: new google.maps.Size(w, h),
     anchor: new google.maps.Point(w / 2, h - 2),
   };
-}
-
-/** Course type label for desktop pill */
-function courseTypeLabel(type: PartnerCourseType, t: (key: string) => string): string {
-  switch (type) {
-    case "Resort":
-      return t("courses.homeFilter.resort");
-    case "Semi-Private":
-      return t("courses.homeFilter.semiPrivate");
-    case "Public":
-      return t("courses.homeFilter.public");
-    case "Country Club":
-      return t("courses.homeFilter.countryClub");
-  }
 }
 
 export function CoursesMap({ filter }: CoursesMapProps) {
@@ -270,10 +256,11 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     : "";
 
   return (
-    <div className="w-full min-w-0 max-w-full">
+    /* Mobile: add horizontal padding so section doesn't span full width */
+    <div className="w-full min-w-0 max-w-full px-4 min-[900px]:px-0">
       {/* Grid: wider rectangular map + course list side panel */}
       <div
-        className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 min-[900px]:grid-cols-[minmax(0,5fr)_minmax(0,2fr)] min-[900px]:grid-rows-[minmax(0,380px)] min-[900px]:gap-6 min-[900px]:items-stretch min-[900px]:h-[380px] min-[900px]:max-h-[380px] min-[900px]:min-h-0 min-[900px]:overflow-hidden"
+        className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 min-[900px]:grid-cols-[minmax(0,5fr)_minmax(240px,2fr)] min-[900px]:grid-rows-[minmax(0,380px)] min-[900px]:gap-6 min-[900px]:items-stretch min-[900px]:h-[380px] min-[900px]:max-h-[380px] min-[900px]:min-h-0 min-[900px]:overflow-hidden"
         role="presentation"
       >
         {/* Map — wider, shorter rectangle to echo Puerto Rico's shape */}
@@ -284,21 +271,22 @@ export function CoursesMap({ filter }: CoursesMapProps) {
             onMapReady={handleMapReady}
             className="w-full h-full"
           />
+          {/* Hover tooltip — name only for minimal pin coverage */}
           {hoverTip && (
             <div
-              className="pointer-events-none absolute z-[1000] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-black/10 bg-white px-3.5 py-2.5 shadow-lg"
+              className="pointer-events-none absolute z-[1000] rounded-md border border-black/10 bg-white px-3 py-1.5 shadow-lg"
               style={{
                 left: hoverTip.x,
                 top: hoverTip.y,
                 transform: "translate(-50%, calc(-100% - 14px))",
-                boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
+                boxShadow: "0 6px 24px rgba(0,0,0,0.14)",
               }}
               role="status"
               aria-live="polite"
               aria-label={hoverTitle}
             >
               <div
-                className="text-base font-semibold leading-snug text-balance"
+                className="text-sm font-semibold leading-snug whitespace-nowrap"
                 style={{
                   fontFamily: "'Outfit', sans-serif",
                   color: "oklch(0.16 0.04 145)",
@@ -306,28 +294,15 @@ export function CoursesMap({ filter }: CoursesMapProps) {
               >
                 {hoverTitle}
               </div>
-              <div
-                className="mt-1 text-sm font-medium leading-snug"
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  color: "oklch(0.32 0.06 145)",
-                }}
-              >
-                {hoverTip.course.location}
-                <span style={{ color: "oklch(0.45 0.05 145)" }}>
-                  {" "}
-                  · {hoverTip.course.discount}% {t("courses.discount")}
-                </span>
-              </div>
             </div>
           )}
         </div>
 
-        {/* Course list panel */}
+        {/* Course list panel — narrower pills */}
         <div className="relative flex min-h-0 min-w-0 flex-col mt-1 min-[900px]:mt-0 min-[900px]:h-full min-[900px]:min-h-0 min-[900px]:overflow-hidden">
           <ul
             ref={listUlRef}
-            className="m-0 flex min-h-0 list-none flex-col gap-2.5 overflow-y-auto overscroll-contain p-0 pb-6 pr-1 max-h-[360px] max-[899px]:shrink-0 min-[900px]:max-h-full min-[900px]:min-h-0 min-[900px]:flex-1 min-[900px]:pr-1 [scrollbar-width:thin] [scrollbar-color:oklch(0.55_0.06_145/0.35)_oklch(0.92_0.02_85/0.5)] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/25 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-black/[0.06]"
+            className="m-0 flex min-h-0 list-none flex-col gap-2 overflow-y-auto overscroll-contain p-0 pb-8 pr-1 max-h-[360px] max-[899px]:shrink-0 min-[900px]:max-h-full min-[900px]:min-h-0 min-[900px]:flex-1 min-[900px]:pr-1 [scrollbar-width:thin] [scrollbar-color:oklch(0.55_0.06_145/0.35)_oklch(0.92_0.02_85/0.5)] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/25 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-black/[0.06]"
             style={{ WebkitOverflowScrolling: "touch" }}
             aria-label={t("courses.mapListRegion")}
           >
@@ -346,7 +321,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                       else delete pillRefs.current[course.slug];
                     }}
                     onClick={() => onCoursePillClick(course)}
-                    className="course-map-pill flex w-full items-center justify-between gap-3 rounded-lg border px-3.5 py-3 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
+                    className="course-map-pill flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
                       background: selected ? "oklch(0.97 0.03 145)" : "white",
@@ -367,11 +342,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                           <MapPin size={10} aria-hidden />
                           {course.location}
                         </span>
-                        {/* Desktop: show extra info */}
-                        <span className="hidden min-[900px]:inline">·</span>
-                        <span className="hidden min-[900px]:inline">
-                          {courseTypeLabel(course.courseType, t)}
-                        </span>
+                        {/* Desktop: show holes count (type removed — filters handle that) */}
                         {holes && (
                           <>
                             <span className="hidden min-[900px]:inline">·</span>
@@ -382,21 +353,16 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                         )}
                       </div>
                     </div>
+                    {/* Discount badge — smaller and less prominent */}
                     <div
-                      className="flex h-11 w-14 shrink-0 flex-col items-center justify-center rounded-sm"
-                      style={{ background: colors.bg }}
+                      className="flex h-7 shrink-0 items-center justify-center rounded-full px-2.5"
+                      style={{ background: colors.bg, opacity: 0.85 }}
                     >
                       <span
-                        className="font-bold leading-none"
-                        style={{ color: colors.text, fontSize: "1rem" }}
+                        className="font-semibold leading-none"
+                        style={{ color: colors.text, fontSize: "0.75rem" }}
                       >
-                        {course.discount}%
-                      </span>
-                      <span
-                        className="mt-0.5 text-[8px] font-medium uppercase tracking-wider"
-                        style={{ color: colors.text, opacity: 0.75 }}
-                      >
-                        {t("courses.discountOff")}
+                        {course.discount}% {t("courses.discountOff")}
                       </span>
                     </div>
                   </button>
@@ -405,22 +371,18 @@ export function CoursesMap({ filter }: CoursesMapProps) {
             })}
           </ul>
 
-          {/* Scroll indicator — positioned at the bottom edge of the pill list */}
+          {/* Scroll indicator — carats just above bottom edge of pill list, no faded bar */}
           {listScrollable && (
             <div
-              className="pointer-events-none absolute bottom-0 left-0 right-1 z-10 flex flex-col items-center"
+              className="pointer-events-none absolute bottom-0 left-0 right-1 z-10 flex justify-center pb-1"
               aria-hidden
             >
-              {/* Fade gradient so pills don't hard-cut */}
               <div
-                className="w-full h-10"
-                style={{
-                  background: "linear-gradient(to bottom, transparent, #F7F3EC)",
-                }}
-              />
-              <div className="flex items-center gap-1.5 pb-1 -mt-1" style={{ background: "#F7F3EC" }}>
+                className="flex items-center gap-1.5 rounded-full px-3 py-0.5"
+                style={{ background: "oklch(0.97 0.02 85 / 0.9)" }}
+              >
                 <ChevronsDown
-                  size={16}
+                  size={14}
                   strokeWidth={2.5}
                   style={{ color: "oklch(0.42 0.14 145)" }}
                   aria-hidden

@@ -96,7 +96,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.8167,
     tier: "resort",
     discount: 20,
-    courseType: "Country Club",
+    courseType: "Semi-Private",
   },
   {
     slug: "caguas_real",

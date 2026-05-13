@@ -103,3 +103,12 @@
 - [x] Reposition scroll indicator carats to bottom edge of course pills
 - [x] Remove popup/modal on map marker click (cards always visible)
 - [x] Expand desktop pills to show full directory info (holes, discount %, location)
+
+## Courses Section Refinements (Round 2)
+- [x] Reclassify Palmas Del Mar as Semi-Private (remove Country Club from filters)
+- [x] Remove faded bar above scroll indicator at bottom of course list
+- [x] Remove course type from pills (filters handle that)
+- [x] Reduce discount badge prominence on pills
+- [x] Make pills narrower
+- [x] Simplify map hover tooltip to show only course name
+- [x] Add mobile padding so section doesn't span full screen width
