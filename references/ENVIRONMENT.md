@@ -17,6 +17,8 @@ Operational reference for **Links Golf** server and client. Values are never com
 | `SEND_OTP_RATE_WINDOW_MS` | No | Override default OTP send rate-limit window. |
 | `SEND_OTP_MAX_PER_EMAIL_PER_WINDOW` | No | Max OTP emails per address per window. |
 | `SEND_OTP_MAX_PER_IP_PER_WINDOW` | No | Max OTP emails per client IP per window. |
+| `BUILT_IN_FORGE_API_URL` | For server-side Maps proxy helpers | Same host as Forge maps proxy (see `server/_core/map.ts`). |
+| `BUILT_IN_FORGE_API_KEY` | For server-side Maps proxy helpers | Forge API key for server `makeRequest` to Google via proxy. |
 
 ## Client (Vite)
 
@@ -24,6 +26,9 @@ Operational reference for **Links Golf** server and client. Values are never com
 |----------|---------|
 | `VITE_SUPABASE_URL` | Public Supabase URL (anon client). |
 | `VITE_SUPABASE_ANON_KEY` | Public anon key for browser Supabase client. |
+| `VITE_GOOGLE_MAPS_API_KEY` | **Maps (browser):** loads the [Maps JavaScript API](https://developers.google.com/maps/documentation/javascript) from Google for the home course map. Enable **Maps JavaScript API** + billing in Google Cloud; restrict the key to your dev/prod HTTP referrers (e.g. `http://localhost:5173/*`). If set, this takes priority over Forge. |
+| `VITE_FRONTEND_FORGE_API_KEY` | **Maps (proxy):** Manus/Forge-style key; script loads from `VITE_FRONTEND_FORGE_API_URL` + `/v1/maps/proxy/...`. Use when you do not use `VITE_GOOGLE_MAPS_API_KEY`. |
+| `VITE_FRONTEND_FORGE_API_URL` | Optional. Defaults to `https://forge.butterfly-effect.dev` when unset. |
 
 Other `VITE_*` keys follow your app’s `import.meta.env` usage.
 

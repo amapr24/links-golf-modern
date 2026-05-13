@@ -1,24 +1,14 @@
 /*
  * CoursesSection — Links Golf Membership
- * Design: Cream background, responsive course discount grid (1 / 2 / 3 columns)
- * 15 partner courses with location and discount percentage
+ * Design: Cream background; map + scrollable course list (directory type filters)
  */
 
-import { useLayoutEffect, useState } from "react";
-import { MapPin, Map as MapIcon, List } from "lucide-react";
+import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { partnerCourses } from "@/data/partnerCourses";
-import { partnerCourseName } from "@/lib/partnerCourseName";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
-
-const discountColor = (d: number) => {
-  if (d >= 25) return { bg: "oklch(0.42 0.14 145)", text: "white" };
-  if (d >= 20) return { bg: "oklch(0.35 0.12 145)", text: "white" };
-  return { bg: "oklch(0.92 0.04 145)", text: "oklch(0.28 0.12 145)" };
-};
 
 const DIRECTORY_TYPES = ["all", "Resort", "Semi-Private", "Public", "Country Club"] as const;
 
@@ -48,28 +38,13 @@ function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => strin
 }
 
 export default function CoursesSection() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const [typeFilter, setTypeFilter] = useState<DirectoryFilter>("all");
-  const [viewMode, setViewMode] = useState<"list" | "map">("list");
-
-  const filtered = partnerCourses.filter(
-    (c) => typeFilter === "all" || c.courseType === typeFilter,
-  );
-
-  // Course cards remount when `typeFilter` or `viewMode` changes; Home's IO only runs on
-  // mount/language, so new nodes never get `.visible` and stay opacity-0 without this.
-  useLayoutEffect(() => {
-    const root = document.getElementById("courses");
-    if (!root) return;
-    root.querySelectorAll(".course-card.fade-up").forEach((el) => {
-      el.classList.add("visible");
-    });
-  }, [typeFilter, viewMode]);
 
   const activeTabId = tabIds[typeFilter];
 
   return (
-    <section id="courses" className="relative bg-[#F7F3EC]">
+    <section id="courses" className="relative overflow-x-hidden bg-[#F7F3EC]">
       <div
         className="w-full h-56 md:h-72 bg-cover bg-center relative overflow-hidden"
         style={{ backgroundImage: `url(${AERIAL_IMAGE})` }}
@@ -115,43 +90,6 @@ export default function CoursesSection() {
               {t("courses.filterLabel")}
             </p>
             <div className="flex flex-col gap-3 w-full md:items-end">
-              {/* View mode: compact two-button control */}
-              <div
-                className="inline-flex gap-1 self-end rounded-md p-1 touch-manipulation"
-                style={{ background: "rgba(0,0,0,0.06)" }}
-                role="group"
-                aria-label={t("courses.viewModeGroup")}
-              >
-                <button
-                  type="button"
-                  onClick={() => setViewMode("list")}
-                  className="min-h-[44px] min-w-[44px] px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200 inline-flex items-center justify-center gap-1.5 rounded-sm"
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    background: viewMode === "list" ? "oklch(0.42 0.14 145)" : "transparent",
-                    color: viewMode === "list" ? "white" : "oklch(0.45 0.06 145)",
-                  }}
-                  title={t("courses.viewList")}
-                >
-                  <List size={16} aria-hidden />
-                  <span className="sr-only sm:not-sr-only sm:inline">{t("courses.viewList")}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setViewMode("map")}
-                  className="min-h-[44px] min-w-[44px] px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-all duration-200 inline-flex items-center justify-center gap-1.5 rounded-sm"
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    background: viewMode === "map" ? "oklch(0.42 0.14 145)" : "transparent",
-                    color: viewMode === "map" ? "white" : "oklch(0.45 0.06 145)",
-                  }}
-                  title={t("courses.viewMap")}
-                >
-                  <MapIcon size={16} aria-hidden />
-                  <span className="sr-only sm:not-sr-only sm:inline">{t("courses.viewMap")}</span>
-                </button>
-              </div>
-              {/* Course type filters — same set as full directory, natural width + wrap */}
               <div
                 role="tablist"
                 aria-labelledby="courses-filter-label"
@@ -183,67 +121,10 @@ export default function CoursesSection() {
           </div>
         </div>
 
-        <div
-          id="courses-network-panel"
-          role="tabpanel"
-          aria-labelledby={activeTabId}
-        >
-        {/* Map View */}
-        {viewMode === "map" && (
+        <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
           <div className="courses-map-mount">
             <CoursesMap filter={typeFilter} />
           </div>
-        )}
-
-        {/* List View */}
-        {viewMode === "list" && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {filtered.map((course, i) => {
-              const colors = discountColor(course.discount);
-              const displayName = partnerCourseName(course.slug, course.name, language, t);
-              return (
-                <div
-                  key={course.slug}
-                  className="course-card fade-up flex min-h-[5.25rem] items-center justify-between gap-4"
-                  style={{ transitionDelay: `${i * 40}ms` }}
-                >
-                  <div className="flex-1 min-w-0">
-                    <div
-                      className="font-semibold text-sm mb-0.5 truncate"
-                      style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {displayName}
-                    </div>
-                    <div
-                      className="flex items-center gap-1 text-xs"
-                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      <MapPin size={10} />
-                      {course.location}
-                    </div>
-                  </div>
-                  <div
-                    className="flex-shrink-0 w-16 h-12 rounded-sm flex flex-col items-center justify-center"
-                    style={{ background: colors.bg }}
-                  >
-                    <span
-                      className="font-bold leading-none"
-                      style={{ color: colors.text, fontFamily: "'Outfit', sans-serif", fontSize: "1.1rem" }}
-                    >
-                      {course.discount}%
-                    </span>
-                    <span
-                      className="text-[9px] uppercase tracking-wider mt-0.5"
-                      style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("courses.discountOff")}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
         </div>
 
         {/* Bottom CTA — primary membership vs secondary directory link */}

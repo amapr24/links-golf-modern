@@ -86,11 +86,17 @@ declare global {
   }
 }
 
-const API_KEY = import.meta.env.VITE_FRONTEND_FORGE_API_KEY;
-const FORGE_BASE_URL =
-  import.meta.env.VITE_FRONTEND_FORGE_API_URL ||
-  "https://forge.butterfly-effect.dev";
+/** Google Cloud browser key — loads Maps directly (best for local dev). */
+const GOOGLE_MAPS_KEY = (import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined)?.trim();
+/** Forge proxy key — used when no direct Google key (e.g. hosted / template setups). */
+const FORGE_KEY = (import.meta.env.VITE_FRONTEND_FORGE_API_KEY as string | undefined)?.trim();
+const FORGE_BASE_URL = (
+  import.meta.env.VITE_FRONTEND_FORGE_API_URL || "https://forge.butterfly-effect.dev"
+).replace(/\/+$/, "");
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
+
+const MAPS_LIBRARIES_GOOGLE = "places,geometry";
+const MAPS_LIBRARIES_FORGE = "places,geocoding,geometry";
 
 /** Single bootstrap; failed loads clear so a remount can retry. */
 let mapsBootstrapPromise: Promise<void> | null = null;
@@ -102,15 +108,26 @@ function loadMapScript(): Promise<void> {
   if (mapsBootstrapPromise) return mapsBootstrapPromise;
 
   mapsBootstrapPromise = new Promise((resolve, reject) => {
-    if (!API_KEY) {
-      console.error("VITE_FRONTEND_FORGE_API_KEY is not set; map cannot load");
+    let scriptSrc: string;
+    if (GOOGLE_MAPS_KEY) {
+      scriptSrc = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(GOOGLE_MAPS_KEY)}&v=weekly&libraries=${MAPS_LIBRARIES_GOOGLE}`;
+    } else if (FORGE_KEY) {
+      scriptSrc = `${MAPS_PROXY_URL}/maps/api/js?key=${encodeURIComponent(FORGE_KEY)}&v=weekly&libraries=${MAPS_LIBRARIES_FORGE}`;
+    } else {
+      console.error(
+        "Maps: set VITE_GOOGLE_MAPS_API_KEY (Google Cloud Maps JavaScript API, browser key) or VITE_FRONTEND_FORGE_API_KEY (Forge proxy). See .env.example.",
+      );
       mapsBootstrapPromise = null;
-      reject(new Error("Missing VITE_FRONTEND_FORGE_API_KEY"));
+      reject(
+        new Error(
+          "Missing VITE_GOOGLE_MAPS_API_KEY or VITE_FRONTEND_FORGE_API_KEY — map cannot load",
+        ),
+      );
       return;
     }
 
     const script = document.createElement("script");
-    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${encodeURIComponent(API_KEY)}&v=weekly&libraries=places,geocoding,geometry`;
+    script.src = scriptSrc;
     script.async = true;
     script.crossOrigin = "anonymous";
     script.onload = () => {

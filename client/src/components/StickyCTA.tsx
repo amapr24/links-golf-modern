@@ -1,7 +1,7 @@
 /*
  * StickyCTA — Links Golf Membership
- * Design: Slides up from bottom on mobile after hero exits viewport
- * Shows price and CTA button
+ * Design: Slides up from bottom on smaller viewports after hero exits viewport.
+ * Hidden from 900px up so it never overlaps the home map + course list (same breakpoint as CoursesMap).
  */
 
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
@@ -20,7 +20,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
 
   return (
     <div
-      className="lg:hidden sticky-cta"
+      className="min-[900px]:hidden sticky-cta"
       style={{
         transform: visible ? "translateY(0)" : "translateY(100%)",
         transition: "transform 350ms cubic-bezier(0.23, 1, 0.32, 1)",

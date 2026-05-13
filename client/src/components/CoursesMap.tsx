@@ -4,8 +4,8 @@
  * Pin hover: immediate custom label (no slow native `title` tooltip). Click opens detail card below.
  */
 
-import { useRef, useEffect, useState, useMemo } from "react";
-import { X } from "lucide-react";
+import { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import { ChevronsDown, MapPin, X } from "lucide-react";
 import { MapView } from "./Map";
 import { courseCoordinates, type CourseCoordinate } from "@/data/courseCoordinates";
 import type { PartnerCourseType } from "@/data/partnerCourses";
@@ -18,6 +18,12 @@ type CoursesMapFilter = "all" | PartnerCourseType;
 interface CoursesMapProps {
   filter: CoursesMapFilter;
 }
+
+const discountColor = (d: number) => {
+  if (d >= 25) return { bg: "oklch(0.42 0.14 145)", text: "white" };
+  if (d >= 20) return { bg: "oklch(0.35 0.12 145)", text: "white" };
+  return { bg: "oklch(0.92 0.04 145)", text: "oklch(0.28 0.12 145)" };
+};
 
 /** Teardrop pin (SVG) — reads as “map pin” / fairway marker vs plain circle */
 function golfPinIcon(fill: string, selected: boolean): google.maps.Icon {
@@ -38,6 +44,9 @@ export function CoursesMap({ filter }: CoursesMapProps) {
   const overlayRef = useRef<google.maps.OverlayView | null>(null);
   const hoverLatLngRef = useRef<google.maps.LatLng | null>(null);
   const mapListenersRef = useRef<google.maps.MapsEventListener[]>([]);
+  const pillRefs = useRef<Partial<Record<string, HTMLButtonElement>>>({});
+  const listUlRef = useRef<HTMLUListElement>(null);
+  const [listScrollable, setListScrollable] = useState(false);
   const [selectedCourse, setSelectedCourse] = useState<CourseCoordinate | null>(null);
   const [hoverTip, setHoverTip] = useState<{
     course: CourseCoordinate;
@@ -49,6 +58,37 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     () => courseCoordinates.filter((c) => filter === "all" || c.courseType === filter),
     [filter],
   );
+
+  useEffect(() => {
+    setSelectedCourse((prev) =>
+      prev && filteredCourses.some((c) => c.slug === prev.slug) ? prev : null,
+    );
+  }, [filter, filteredCourses]);
+
+  useEffect(() => {
+    if (!selectedCourse) return;
+    const el = pillRefs.current[selectedCourse.slug];
+    el?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [selectedCourse?.slug]);
+
+  const updateListScrollable = useCallback(() => {
+    const el = listUlRef.current;
+    if (!el) return;
+    setListScrollable(el.scrollHeight > el.clientHeight + 2);
+  }, []);
+
+  useEffect(() => {
+    const el = listUlRef.current;
+    if (!el) return;
+    updateListScrollable();
+    const ro = new ResizeObserver(() => updateListScrollable());
+    ro.observe(el);
+    el.addEventListener("scroll", updateListScrollable, { passive: true });
+    return () => {
+      ro.disconnect();
+      el.removeEventListener("scroll", updateListScrollable);
+    };
+  }, [filteredCourses, updateListScrollable]);
 
   const calculateBounds = (courses: CourseCoordinate[]) => {
     if (courses.length === 0) return null;
@@ -186,61 +226,156 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     };
   }, []);
 
+  const onCoursePillClick = usePersistFn((course: CourseCoordinate) => {
+    setSelectedCourse(course);
+    mapRef.current?.panTo({ lat: course.lat, lng: course.lng });
+  });
+
   const hoverTitle = hoverTip
     ? partnerCourseName(hoverTip.course.slug, hoverTip.course.name, language, t)
     : "";
 
   return (
-    <div className="w-full">
-      <div className="relative w-full h-[min(68vh,26rem)] sm:h-[500px] md:h-[600px] rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
-        <MapView
-          initialCenter={{ lat: 18.2208, lng: -66.5901 }}
-          initialZoom={9}
-          onMapReady={handleMapReady}
-          className="w-full h-full"
-        />
-        {hoverTip && (
-          <div
-            className="pointer-events-none absolute z-[1000] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-black/10 bg-white px-3.5 py-2.5 shadow-lg"
-            style={{
-              left: hoverTip.x,
-              top: hoverTip.y,
-              transform: "translate(-50%, calc(-100% - 14px))",
-              boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
-            }}
-            role="status"
-            aria-live="polite"
-            aria-label={hoverTitle}
+    <div className="w-full min-w-0 max-w-full">
+      <div
+        className="grid w-full min-w-0 max-w-full grid-cols-1 gap-4 min-[900px]:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] min-[900px]:grid-rows-[minmax(0,480px)] min-[900px]:gap-8 min-[900px]:items-stretch min-[900px]:h-[480px] min-[900px]:max-h-[480px] min-[900px]:min-h-0 min-[900px]:overflow-hidden"
+        role="presentation"
+      >
+        <div className="relative min-h-0 min-w-0 h-[min(68vh,26rem)] min-[640px]:max-[899px]:h-[440px] min-[900px]:h-[480px] min-[900px]:min-h-0 rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
+          <MapView
+            initialCenter={{ lat: 18.2208, lng: -66.5901 }}
+            initialZoom={9}
+            onMapReady={handleMapReady}
+            className="w-full h-full"
+          />
+          {hoverTip && (
+            <div
+              className="pointer-events-none absolute z-[1000] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-black/10 bg-white px-3.5 py-2.5 shadow-lg"
+              style={{
+                left: hoverTip.x,
+                top: hoverTip.y,
+                transform: "translate(-50%, calc(-100% - 14px))",
+                boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
+              }}
+              role="status"
+              aria-live="polite"
+              aria-label={hoverTitle}
+            >
+              <div
+                className="text-base font-semibold leading-snug text-balance"
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  color: "oklch(0.16 0.04 145)",
+                }}
+              >
+                {hoverTitle}
+              </div>
+              <div
+                className="mt-1 text-sm font-medium leading-snug"
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  color: "oklch(0.32 0.06 145)",
+                }}
+              >
+                {hoverTip.course.location}
+                <span style={{ color: "oklch(0.45 0.05 145)" }}>
+                  {" "}
+                  · {hoverTip.course.discount}% {t("courses.discount")}
+                </span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="relative flex min-h-0 min-w-0 flex-col mt-1 min-[900px]:mt-0 min-[900px]:h-full min-[900px]:min-h-0 min-[900px]:overflow-hidden min-[900px]:rounded-lg min-[900px]:ring-1 min-[900px]:ring-black/[0.06]">
+          <ul
+            ref={listUlRef}
+            className="m-0 flex min-h-0 list-none flex-col gap-2.5 overflow-y-auto overscroll-contain p-0 pb-6 pr-1 max-h-[360px] max-[899px]:shrink-0 min-[900px]:max-h-full min-[900px]:min-h-0 min-[900px]:flex-1 min-[900px]:pr-1 [scrollbar-width:thin] [scrollbar-color:oklch(0.55_0.06_145/0.35)_oklch(0.92_0.02_85/0.5)] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-black/25 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-black/[0.06]"
+            style={{ WebkitOverflowScrolling: "touch" }}
+            aria-label={t("courses.mapListRegion")}
           >
+            {filteredCourses.map((course) => {
+              const colors = discountColor(course.discount);
+              const displayName = partnerCourseName(course.slug, course.name, language, t);
+              const selected = course === selectedCourse;
+              return (
+                <li key={course.slug} className="shrink-0">
+                  <button
+                    type="button"
+                    aria-pressed={selected}
+                    ref={(el) => {
+                      if (el) pillRefs.current[course.slug] = el;
+                      else delete pillRefs.current[course.slug];
+                    }}
+                    onClick={() => onCoursePillClick(course)}
+                    className="course-map-pill flex min-h-[5.25rem] w-full items-center justify-between gap-4 rounded-lg border px-3.5 py-2.5 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
+                    style={{
+                      fontFamily: "'Outfit', sans-serif",
+                      background: selected ? "oklch(0.97 0.03 145)" : "white",
+                      borderColor: selected ? "oklch(0.42 0.14 145)" : "oklch(0.88 0.02 85)",
+                      boxShadow: selected
+                        ? "0 0 0 1px oklch(0.42 0.14 145)"
+                        : "0 1px 0 rgba(0,0,0,0.04)",
+                      color: "oklch(0.13 0.05 145)",
+                    }}
+                  >
+                    <div className="min-w-0 flex-1">
+                      <div className="truncate text-sm font-semibold">{displayName}</div>
+                      <div
+                        className="mt-0.5 flex items-center gap-1 text-xs"
+                        style={{ color: "oklch(0.55 0.06 145)" }}
+                      >
+                        <MapPin size={10} aria-hidden />
+                        {course.location}
+                      </div>
+                    </div>
+                    <div
+                      className="flex h-12 w-16 shrink-0 flex-col items-center justify-center rounded-sm"
+                      style={{ background: colors.bg }}
+                    >
+                      <span
+                        className="font-bold leading-none"
+                        style={{ color: colors.text, fontSize: "1.1rem" }}
+                      >
+                        {course.discount}%
+                      </span>
+                      <span
+                        className="mt-0.5 text-[9px] font-medium uppercase tracking-wider"
+                        style={{ color: colors.text, opacity: 0.75 }}
+                      >
+                        {t("courses.discountOff")}
+                      </span>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+          {listScrollable ? (
             <div
-              className="text-base font-semibold leading-snug text-balance"
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                color: "oklch(0.16 0.04 145)",
-              }}
+              className="flex shrink-0 flex-col items-center gap-0.5 px-1 pt-2.5 pb-1 min-[900px]:rounded-b-lg"
+              aria-hidden
             >
-              {hoverTitle}
+              <ChevronsDown
+                size={20}
+                strokeWidth={2}
+                style={{ color: "oklch(0.42 0.14 145)" }}
+                aria-hidden
+              />
+              <p
+                className="m-0 text-center text-[11px] font-medium leading-snug px-1"
+                style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+              >
+                {t("courses.mapListScrollHint")}
+              </p>
             </div>
-            <div
-              className="mt-1 text-sm font-medium leading-snug"
-              style={{
-                fontFamily: "'Outfit', sans-serif",
-                color: "oklch(0.32 0.06 145)",
-              }}
-            >
-              {hoverTip.course.location}
-              <span style={{ color: "oklch(0.45 0.05 145)" }}>
-                {" "}
-                · {hoverTip.course.discount}% {t("courses.discount")}
-              </span>
-            </div>
-          </div>
-        )}
+          ) : null}
+        </div>
       </div>
 
       {selectedCourse && (
         <div
-          className="mt-4 max-w-lg mx-auto md:mx-0 p-5 md:p-6 bg-white rounded-lg border shadow-sm"
+          className="mt-4 max-w-lg mx-auto min-[900px]:mx-0 min-[900px]:max-w-none p-5 md:p-6 bg-white rounded-lg border shadow-sm"
           style={{ borderColor: "oklch(0.88 0.02 85)" }}
         >
           <div className="flex items-start justify-between gap-3">
@@ -306,7 +441,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
       )}
 
       <p
-        className="mt-4 text-sm md:text-base text-center leading-relaxed"
+        className="mt-4 text-sm md:text-base text-center min-[900px]:text-left leading-relaxed"
         style={{
           fontFamily: "'Outfit', sans-serif",
           color: "oklch(0.45 0.06 145)",
