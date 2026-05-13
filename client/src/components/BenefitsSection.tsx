@@ -67,7 +67,7 @@ export default function BenefitsSection() {
       />
 
       <div className="container relative z-10 py-20 md:py-28">
-        <div className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left: Text panel */}
           <div>
             <p className="section-label mb-4 text-white/50">01 · {t("benefits.label")}</p>

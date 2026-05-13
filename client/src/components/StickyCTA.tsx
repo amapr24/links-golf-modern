@@ -20,7 +20,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
 
   return (
     <div
-      className="md:hidden sticky-cta"
+      className="lg:hidden sticky-cta"
       style={{
         transform: visible ? "translateY(0)" : "translateY(100%)",
         transition: "transform 350ms cubic-bezier(0.23, 1, 0.32, 1)",

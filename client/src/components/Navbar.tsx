@@ -1,7 +1,7 @@
 /*
  * Navbar — Links Golf Membership
  * Design: Transparent on hero, dark solid on scroll
- * Mobile: Hamburger menu with full-screen overlay
+ * Tablet and below (< lg): Hamburger menu with full-screen overlay
  */
 
 import { useEffect, useState } from "react";
@@ -50,7 +50,7 @@ export default function Navbar() {
           borderBottom: scrolled ? "1px solid rgba(255,255,255,0.07)" : "none",
         }}
       >
-        <div className="container flex items-center justify-between h-16 md:h-18">
+        <div className="container flex items-center justify-between h-16 lg:h-18">
           {/* Logo */}
           <a
             href="#"
@@ -69,8 +69,8 @@ export default function Navbar() {
             </span>
           </a>
 
-          {/* Desktop nav */}
-          <div className="hidden md:flex items-center gap-8">
+          {/* Desktop nav (lg+ — tablet uses hamburger to avoid cramped wrap) */}
+          <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <button
                 key={link.href}
@@ -84,7 +84,7 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA — login before language so hierarchy reads: auth → utility → primary */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             {hasMemberSession ? (
               <>
                 <button
@@ -118,9 +118,9 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile hamburger */}
+          {/* Mobile / tablet hamburger */}
           <button
-            className="md:hidden text-white p-1"
+            className="lg:hidden text-white p-1"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Toggle menu"
           >
@@ -129,9 +129,9 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {/* Mobile menu overlay */}
+      {/* Mobile / tablet menu overlay */}
       <div
-        className="fixed inset-0 z-50 md:hidden transition-all duration-300"
+        className="fixed inset-0 z-50 lg:hidden transition-all duration-300"
         style={{
           background: "rgba(15, 26, 18, 0.98)",
           opacity: menuOpen ? 1 : 0,

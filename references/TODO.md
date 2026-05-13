@@ -5,6 +5,17 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 ---
 
+## Status: Sprint A — responsive shell (2026-05-13)
+
+**Shipped in repo:**
+
+- [x] **Nav + shell @ `lg` (1024px):** `Navbar` desktop nav / CTAs use `lg:flex`; hamburger + overlay use `lg:hidden`. `StickyCTA` and hero vignette / scroll cue / content padding breakpoints aligned to `lg` so tablet matches “compact header” behavior (`Navbar.tsx`, `StickyCTA.tsx`, `HeroSection.tsx`).
+- [x] **Courses list = responsive grid:** `CoursesSection` list view is `grid-cols-1` / `md:grid-cols-2` / `lg:grid-cols-3`; horizontal scroll + `courses.scrollHint` removed (`LanguageContext` keys removed).
+
+**P0 checklist (responsive / layout):** nav breakpoint, course grid + hint, and Why Join stack-until-`lg` are done in code — **manual reflow pass** (1440 → 320) remains open until QA signs off.
+
+---
+
 ## Status: next main commit (2026-05-13, Prototype #1)
 
 **Shipped (ready to commit / push):**
@@ -25,10 +36,10 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 ## P0 — Launch Blockers
 
 ### Responsive / layout
-- [ ] Raise the mobile-nav breakpoint so the hamburger appears no later than ~1024px. Currently the desktop nav remains visible at 768–1024px and "Links Golf" / "How It Works" wrap onto two and three lines, breaking the header bar.
+- [x] Raise the mobile-nav breakpoint so the hamburger appears no later than ~1024px (`Navbar`: desktop nav and CTAs at `lg:flex`, hamburger and overlay at `lg:hidden`).
 - [ ] Verify nav, hero, feature grid, course grid, and form all reflow cleanly at 1440 / 1024 / 768 / 414 / 375 / 320 widths.
-- [ ] Replace the horizontal-scroll course "carousel" used below desktop widths with a vertical 2-column (tablet) or 1-column (mobile) grid. Remove the "Scroll sideways to see every course." instruction.
-- [ ] Fix "Why Join" section so the left-column copy and the right-column feature cards reflow together (single column under ~900px), instead of the cards growing absurdly tall next to a fixed-width left column.
+- [x] Replace the horizontal-scroll course "carousel" used below desktop widths with a vertical 2-column (tablet) or 1-column (mobile) grid. Remove the "Scroll sideways to see every course." instruction.
+- [x] Fix "Why Join" section so the left-column copy and the right-column feature cards reflow together (single column under ~900px), instead of the cards growing absurdly tall next to a fixed-width left column.
 
 ### Trust / credibility
 
@@ -181,7 +192,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 ### P1 — Hero, nav, courses, form, FAQ
 
 - **Concurrence:** Hero scrim + WCAG check, stat-strip deduplication, nav grouping, filter `aria-pressed`, stepper, address split, explicit ToS/Privacy checkboxes, and FAQ layout/sticky issues are all sound UX engineering.
-- **Finding:** The **“Scroll sideways…”** string is present in-repo as `courses.scrollHint` in `LanguageContext.tsx`—removing it tracks directly with the carousel → grid change.
+- **Finding:** The horizontal course strip and `courses.scrollHint` were removed in **Sprint A**; home list view is now a responsive grid (`CoursesSection.tsx`).
 - **Proposal:** **Map toggle:** confirm whether `Map.tsx` / Forge integration is wired on the marketing **Courses** section; “remove toggle” is often faster than half-built map for launch. **Per-course detail pages** are a larger slice—consider tagging as **P1.5** or first ship as **modal/drawer** from the same card to reduce routing + SEO scope.
 - **Proposal:** **ATH Móvil:** depends on payment processor support (Stripe vs. local rails); add a spike task to pick provider + UX before promising on the primary CTA.
 

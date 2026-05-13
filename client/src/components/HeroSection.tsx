@@ -53,7 +53,7 @@ export default function HeroSection() {
       />
       {/* Left-side vignette for text legibility */}
       <div
-        className="absolute inset-0 hidden md:block pointer-events-none"
+        className="absolute inset-0 hidden lg:block pointer-events-none"
         style={{
           background:
             "linear-gradient(to right, rgba(10,18,12,0.45) 0%, transparent 58%)",
@@ -61,7 +61,7 @@ export default function HeroSection() {
       />
 
       {/* Content */}
-      <div className="relative z-10 container pb-16 pt-28 md:pb-20 md:pt-32">
+      <div className="relative z-10 container pb-16 pt-28 lg:pb-20 lg:pt-32">
         <div className="max-w-2xl">
           {/* Location badge */}
           <div
@@ -170,7 +170,7 @@ export default function HeroSection() {
 
       {/* Scroll indicator */}
       <div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hidden md:flex"
+        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 hidden lg:flex"
         style={{
           opacity: loaded ? 0.5 : 0,
           transition: "opacity 1s ease",

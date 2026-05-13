@@ -1,6 +1,6 @@
 /*
  * CoursesSection — Links Golf Membership
- * Design: Cream background, course discount card grid (desktop) / horizontal scroll (mobile)
+ * Design: Cream background, responsive course discount grid (1 / 2 / 3 columns)
  * 15 partner courses with location and discount percentage
  */
 
@@ -197,113 +197,52 @@ export default function CoursesSection() {
 
         {/* List View */}
         {viewMode === "list" && (
-          <>
-        {/* Desktop: Grid layout */}
-        <div className="hidden lg:grid grid-cols-3 gap-3">
-          {filtered.map((course, i) => {
-            const colors = discountColor(course.discount);
-            const displayName = partnerCourseName(course.slug, course.name, language, t);
-            return (
-              <div
-                key={course.slug}
-                className="course-card fade-up flex items-center justify-between gap-4"
-                style={{ transitionDelay: `${i * 40}ms` }}
-              >
-                <div className="flex-1 min-w-0">
-                  <div
-                    className="font-semibold text-sm mb-0.5 truncate"
-                    style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {displayName}
-                  </div>
-                  <div
-                    className="flex items-center gap-1 text-xs"
-                    style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    <MapPin size={10} />
-                    {course.location}
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+            {filtered.map((course, i) => {
+              const colors = discountColor(course.discount);
+              const displayName = partnerCourseName(course.slug, course.name, language, t);
+              return (
                 <div
-                  className="flex-shrink-0 w-16 h-12 rounded-sm flex flex-col items-center justify-center"
-                  style={{ background: colors.bg }}
+                  key={course.slug}
+                  className="course-card fade-up flex min-h-[5.25rem] items-center justify-between gap-4"
+                  style={{ transitionDelay: `${i * 40}ms` }}
                 >
-                  <span
-                    className="font-bold leading-none"
-                    style={{ color: colors.text, fontFamily: "'Outfit', sans-serif", fontSize: "1.1rem" }}
-                  >
-                    {course.discount}%
-                  </span>
-                  <span
-                    className="text-[9px] uppercase tracking-wider mt-0.5"
-                    style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {t("courses.discountOff")}
-                  </span>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Mobile & Tablet: Horizontal scrollable list */}
-        <div className="lg:hidden">
-          <div className="overflow-x-auto pb-4 -mx-4 px-4 snap-x snap-mandatory touch-pan-x overscroll-x-contain [scrollbar-width:thin]">
-            <div className="flex gap-3 min-w-min">
-              {filtered.map((course, i) => {
-                const colors = discountColor(course.discount);
-                const displayName = partnerCourseName(course.slug, course.name, language, t);
-                return (
-                  <div
-                    key={course.slug}
-                    className="flex-shrink-0 w-[min(17.5rem,calc(100vw-2.5rem))] min-h-[5.25rem] course-card fade-up flex items-center justify-between gap-4 snap-start"
-                    style={{ transitionDelay: `${i * 40}ms` }}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <div
-                        className="font-semibold text-sm mb-0.5 truncate"
-                        style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
-                      >
-                        {displayName}
-                      </div>
-                      <div
-                        className="flex items-center gap-1 text-xs"
-                        style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-                      >
-                        <MapPin size={10} />
-                        {course.location}
-                      </div>
+                  <div className="flex-1 min-w-0">
+                    <div
+                      className="font-semibold text-sm mb-0.5 truncate"
+                      style={{ color: "oklch(0.13 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {displayName}
                     </div>
                     <div
-                      className="flex-shrink-0 w-16 h-12 rounded-sm flex flex-col items-center justify-center"
-                      style={{ background: colors.bg }}
+                      className="flex items-center gap-1 text-xs"
+                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      <span
-                        className="font-bold leading-none"
-                        style={{ color: colors.text, fontFamily: "'Outfit', sans-serif", fontSize: "1.1rem" }}
-                      >
-                        {course.discount}%
-                      </span>
-                      <span
-                        className="text-[9px] uppercase tracking-wider mt-0.5"
-                        style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
-                      >
-                        {t("courses.discountOff")}
-                      </span>
+                      <MapPin size={10} />
+                      {course.location}
                     </div>
                   </div>
-                );
-              })}
-            </div>
+                  <div
+                    className="flex-shrink-0 w-16 h-12 rounded-sm flex flex-col items-center justify-center"
+                    style={{ background: colors.bg }}
+                  >
+                    <span
+                      className="font-bold leading-none"
+                      style={{ color: colors.text, fontFamily: "'Outfit', sans-serif", fontSize: "1.1rem" }}
+                    >
+                      {course.discount}%
+                    </span>
+                    <span
+                      className="text-[9px] uppercase tracking-wider mt-0.5"
+                      style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("courses.discountOff")}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-          <div
-            className="text-center text-xs mt-3"
-            style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.55 0.06 145)" }}
-          >
-            {t("courses.scrollHint")}
-          </div>
-        </div>
-          </>
         )}
         </div>
 
