@@ -70,6 +70,8 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filterLabel": "Filter by tier",
     "courses.discountOff": "OFF",
     "courses.scrollHint": "← Scroll to see all →",
+    "courses.discount": "discount",
+    "courses.mapInfo": "{{count}} courses in this tier",
 
     // How It Works
     "howItWorks.title": "From sign-up to first tee in minutes.",
@@ -251,6 +253,8 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filterLabel": "Filtrar por categoría",
     "courses.discountOff": "DTO",
     "courses.scrollHint": "← Desliza para ver todos →",
+    "courses.discount": "descuento",
+    "courses.mapInfo": "{{count}} campos en esta categoría",
 
     // How It Works
     "howItWorks.title": "Del registro al primer golpe en minutos.",

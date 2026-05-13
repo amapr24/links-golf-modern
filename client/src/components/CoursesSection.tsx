@@ -5,10 +5,11 @@
  */
 
 import { useLayoutEffect, useState } from "react";
-import { MapPin, ArrowRight } from "lucide-react";
+import { MapPin, ArrowRight, Map as MapIcon, List } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { partnerCourses } from "@/data/partnerCourses";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
+import { CoursesMap } from "./CoursesMap";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
@@ -21,6 +22,7 @@ const discountColor = (d: number) => {
 export default function CoursesSection() {
   const { t } = useLanguage();
   const [filter, setFilter] = useState<"all" | "resort" | "club">("all");
+  const [viewMode, setViewMode] = useState<"list" | "map">("list");
 
   const filtered = partnerCourses.filter((c) => filter === "all" || c.tier === filter);
 
@@ -83,32 +85,66 @@ export default function CoursesSection() {
             >
               {t("courses.filterLabel")}
             </p>
-            <div
-              role="tablist"
-              aria-labelledby="courses-filter-label"
-              className="flex gap-1 fade-up self-stretch md:self-end"
-              style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}
-            >
-              {(["all", "resort", "club"] as const).map((f) => (
+            <div className="flex flex-col gap-2 w-full md:w-auto md:items-end">
+              {/* View Mode Toggle */}
+              <div className="flex gap-1 fade-up self-stretch md:self-end" style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}>
                 <button
-                  key={f}
                   type="button"
-                  role="tab"
-                  id={tabIds[f]}
-                  aria-selected={filter === f}
-                  aria-controls="courses-network-panel"
-                  onClick={() => setFilter(f)}
-                  className="filter-pill px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                  onClick={() => setViewMode("list")}
+                  className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 flex items-center gap-1"
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     borderRadius: "2px",
-                    background: filter === f ? "oklch(0.42 0.14 145)" : "transparent",
-                    color: filter === f ? "white" : "oklch(0.45 0.06 145)",
+                    background: viewMode === "list" ? "oklch(0.42 0.14 145)" : "transparent",
+                    color: viewMode === "list" ? "white" : "oklch(0.45 0.06 145)",
                   }}
+                  title="List view"
                 >
-                  {f === "all" ? t("courses.filter.all") : f === "resort" ? t("courses.filter.resort") : t("courses.filter.club")}
+                  <List size={14} />
                 </button>
-              ))}
+                <button
+                  type="button"
+                  onClick={() => setViewMode("map")}
+                  className="px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200 flex items-center gap-1"
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    borderRadius: "2px",
+                    background: viewMode === "map" ? "oklch(0.42 0.14 145)" : "transparent",
+                    color: viewMode === "map" ? "white" : "oklch(0.45 0.06 145)",
+                  }}
+                  title="Map view"
+                >
+                  <MapIcon size={14} />
+                </button>
+              </div>
+              {/* Filter Tabs */}
+              <div
+                role="tablist"
+                aria-labelledby="courses-filter-label"
+                className="flex gap-1 fade-up self-stretch md:self-end"
+                style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}
+              >
+                {(["all", "resort", "club"] as const).map((f) => (
+                  <button
+                    key={f}
+                    type="button"
+                    role="tab"
+                    id={tabIds[f]}
+                    aria-selected={filter === f}
+                    aria-controls="courses-network-panel"
+                    onClick={() => setFilter(f)}
+                    className="filter-pill px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                    style={{
+                      fontFamily: "'Outfit', sans-serif",
+                      borderRadius: "2px",
+                      background: filter === f ? "oklch(0.42 0.14 145)" : "transparent",
+                      color: filter === f ? "white" : "oklch(0.45 0.06 145)",
+                    }}
+                  >
+                    {f === "all" ? t("courses.filter.all") : f === "resort" ? t("courses.filter.resort") : t("courses.filter.club")}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -118,6 +154,16 @@ export default function CoursesSection() {
           role="tabpanel"
           aria-labelledby={activeTabId}
         >
+        {/* Map View */}
+        {viewMode === "map" && (
+          <div className="fade-up">
+            <CoursesMap filter={filter} />
+          </div>
+        )}
+
+        {/* List View */}
+        {viewMode === "list" && (
+          <>
         {/* Desktop: Grid layout */}
         <div className="hidden lg:grid grid-cols-3 gap-3">
           {filtered.map((course, i) => {
@@ -221,6 +267,8 @@ export default function CoursesSection() {
             {t("courses.scrollHint")}
           </div>
         </div>
+          </>
+        )}
         </div>
 
         {/* Bottom CTA — primary membership vs secondary directory link */}
