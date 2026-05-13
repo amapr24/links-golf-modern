@@ -33,9 +33,9 @@ export interface MemberSignupData {
 }
 
 export interface MemberActivationData {
-  memberId: number;
+  memberId: string;
   activatedAt: string; // ISO timestamp
-  expiresAt: string;   // ISO timestamp (activated_at + 1 year)
+  expiresAt: string; // ISO timestamp (activated_at + 1 year)
 }
 
 /**
@@ -105,6 +105,22 @@ export async function saveMemberSignup(data: MemberSignupData) {
     return result?.[0];
   } catch (error) {
     console.error("Failed to save member signup:", error);
+    throw error;
+  }
+}
+
+/**
+ * Update member profile photo URL after post-payment upload.
+ */
+export async function updateMemberPhotoUrl(memberId: string, photoUrl: string) {
+  const sb = requireSupabase();
+  const { error } = await sb
+    .from("members")
+    .update({ photo_url: photoUrl })
+    .eq("id", memberId);
+
+  if (error) {
+    console.error("Error updating member photo:", error);
     throw error;
   }
 }

@@ -9,6 +9,11 @@ import { useLocation } from "wouter";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { PARTNER_COURSE_COUNT } from "@/data/partnerCourses";
+import { DigitalMemberCard } from "@/components/DigitalMemberCard";
+import {
+  formatCardExpiryMonthYear,
+  formatCardSeasonLabel,
+} from "@/lib/memberCardDisplay";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
 function formatLongDate(iso: string, language: Language): string {
@@ -22,17 +27,6 @@ function formatLongDate(iso: string, language: Language): string {
   });
 }
 
-function formatShortDate(iso: string, language: Language): string {
-  const locale = language === "es" ? "es-PR" : "en-US";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "—";
-  return d.toLocaleDateString(locale, {
-    month: "2-digit",
-    day: "2-digit",
-    year: "2-digit",
-  });
-}
-
 type MemberDisplay = {
   firstName: string;
   lastName: string;
@@ -40,6 +34,7 @@ type MemberDisplay = {
   email: string;
   phone: string;
   joinDateLabel: string;
+  joinDateIso: string;
   renewalDateIso: string;
   photoUrl: string | null;
 };
@@ -69,6 +64,7 @@ export default function Dashboard() {
       email: profile.email,
       phone: profile.phone,
       joinDateLabel: formatLongDate(profile.joinDateIso, language),
+      joinDateIso: profile.joinDateIso,
       renewalDateIso: profile.renewalDateIso,
       photoUrl: profile.photoUrl,
     };
@@ -219,111 +215,43 @@ export default function Dashboard() {
           <div className="md:col-span-2">
             <div
               className="rounded-lg overflow-hidden shadow-lg"
-              style={{
-                background: "linear-gradient(135deg, oklch(0.28 0.12 145) 0%, oklch(0.18 0.08 145) 100%)",
-                border: "1px solid oklch(0.42 0.14 145 / 0.3)",
-              }}
+              style={{ border: "1px solid oklch(0.88 0.02 85)" }}
             >
-              <div className="p-8">
-                {/* Card header */}
-                <div className="flex items-start justify-between mb-8">
-                  <div>
-                    <div
-                      className="text-white/40 text-xs uppercase tracking-widest mb-1"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Links Golf
-                    </div>
-                    <div
-                      className="text-white font-semibold text-xl"
-                      style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                    >
-                      Golf Membership
-                    </div>
-                  </div>
-                  <div
-                    className="w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0"
-                    style={{ background: "oklch(0.42 0.14 145 / 0.3)" }}
-                  >
-                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center overflow-hidden">
-                      {member.photoUrl?.startsWith("http") ? (
-                        <img
-                          src={member.photoUrl}
-                          alt=""
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white/60 text-4xl">
-                          {member.photoUrl || "👤"}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Member info */}
-                <div className="mb-6 pb-6" style={{ borderBottom: "1px solid oklch(0.42 0.14 145 / 0.2)" }}>
-                  <div className="mb-4">
-                    <div
-                      className="text-white/40 text-xs uppercase tracking-widest mb-1"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Member Name
-                    </div>
-                    <div
-                      className="text-white font-semibold text-lg"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {member.firstName} {member.lastName}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Member number and validity */}
-                <div className="flex items-center justify-between mb-6">
-                  <div>
-                    <div
-                      className="text-white/40 text-xs uppercase tracking-widest mb-1"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("dashboard.pass.memberNo")}
-                    </div>
-                    <div className="text-white/80 text-sm font-mono">{member.memberNumber}</div>
-                  </div>
-                  <div className="text-right">
-                    <div
-                      className="text-white/40 text-xs uppercase tracking-widest mb-1"
-                      style={{ fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("dashboard.pass.validUntil")}
-                    </div>
-                    <div className="text-white/80 text-sm font-mono">
-                      {formatShortDate(member.renewalDateIso, language)}
-                    </div>
-                  </div>
-                </div>
-
-                {/* QR Code placeholder */}
-                <div className="flex items-center justify-center py-6 mb-6" style={{ background: "rgba(255,255,255,0.05)", borderRadius: "8px" }}>
+              <DigitalMemberCard
+                displayName={`${member.firstName} ${member.lastName}`}
+                memberNumber={member.memberNumber}
+                validUntil={formatCardExpiryMonthYear(member.renewalDateIso)}
+                season={formatCardSeasonLabel(member.joinDateIso)}
+                photoUrl={member.photoUrl}
+              />
+              <div
+                className="px-6 py-5 space-y-4"
+                style={{
+                  background: "oklch(0.16 0.06 145)",
+                  borderTop: "1px solid rgba(255,255,255,0.1)",
+                }}
+              >
+                <div
+                  className="flex items-center justify-center py-6 rounded-sm"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                >
                   <div className="flex flex-col items-center gap-2">
                     <QrCode size={48} style={{ color: "oklch(0.65 0.14 145)" }} />
                     <div
-                      className="text-xs text-white/40"
+                      className="text-xs text-white/50"
                       style={{ fontFamily: "'Outfit', sans-serif" }}
                     >
                       {t("dashboard.pass.showAtProShop")}
                     </div>
                   </div>
                 </div>
-
-                {/* Founding member badge */}
                 <div
                   className="px-4 py-2 text-center text-xs uppercase tracking-widest rounded-sm"
                   style={{
-                    background: "oklch(0.42 0.14 145 / 0.3)",
+                    background: "oklch(0.42 0.14 145 / 0.25)",
                     color: "oklch(0.65 0.14 145)",
                     fontFamily: "'Outfit', sans-serif",
-                    border: "1px solid oklch(0.42 0.14 145 / 0.2)",
+                    border: "1px solid oklch(0.42 0.14 145 / 0.25)",
                   }}
                 >
                   {t("dashboard.pass.badge")}

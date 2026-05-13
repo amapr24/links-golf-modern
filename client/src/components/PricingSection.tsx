@@ -10,10 +10,19 @@ import {
   activateMembership,
   isSupabaseConfigured,
   saveMemberSignup,
+  uploadMemberPhoto,
+  updateMemberPhotoUrl,
 } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { DigitalMemberCard } from "@/components/DigitalMemberCard";
+import {
+  MEMBER_CARD_AERIAL_IMAGE,
+  formatMemberNumberFromId,
+  formatCardExpiryMonthYear,
+  formatCardSeasonLabel,
+} from "@/lib/memberCardDisplay";
 
-const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
+const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 const getFeatures = (t: any) => [
   t("pricing.features.courses"),
@@ -30,17 +39,38 @@ export default function PricingSection() {
   const { t } = useLanguage();
   const features = getFeatures(t);
   const [step, setStep] = useState<Step>(1);
-  const [photoName, setPhotoName] = useState<string>("");
-  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [postPhotoName, setPostPhotoName] = useState("");
+  const [postPhotoFile, setPostPhotoFile] = useState<File | null>(null);
+  const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
+  const [photoSaved, setPhotoSaved] = useState(false);
+  const [isSavingPhoto, setIsSavingPhoto] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
-  const [memberId, setMemberId] = useState<number | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [memberId, setMemberId] = useState<string | null>(null);
+  const [signupFirstName, setSignupFirstName] = useState("");
+  const [signupLastName, setSignupLastName] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [activationInfo, setActivationInfo] = useState<{
+    activatedAt: string;
+    expiresAt: string;
+  } | null>(null);
+  const postPhotoRef = useRef<HTMLInputElement>(null);
 
-  // Activate membership when payment succeeds (step 3)
+  useEffect(() => {
+    setActivationInfo(null);
+  }, [memberId]);
+
+  useEffect(() => {
+    if (step !== 3) return;
+    setPostPhotoName("");
+    setPostPhotoFile(null);
+    setPhotoPreviewUrl(null);
+    setPhotoSaved(false);
+    setError("");
+  }, [step]);
+
   useEffect(() => {
     if (step !== 3 || !memberId || !isSupabaseConfigured) return;
-
     const now = new Date();
     const expiresDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
 
@@ -48,8 +78,46 @@ export default function PricingSection() {
       memberId,
       activatedAt: now.toISOString(),
       expiresAt: expiresDate.toISOString(),
-    }).catch((err) => console.error("Failed to activate membership:", err));
+    })
+      .then((row: { activated_at?: string; expires_at?: string } | undefined) => {
+        setActivationInfo({
+          activatedAt: row?.activated_at ?? now.toISOString(),
+          expiresAt: row?.expires_at ?? expiresDate.toISOString(),
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to activate membership:", err);
+      });
   }, [step, memberId]);
+
+  const handleSavePhoto = async () => {
+    setError("");
+    const prevPreview = photoPreviewUrl;
+    if (!postPhotoFile || !memberId || !signupEmail) {
+      setError(t("pricing.choosePhoto"));
+      return;
+    }
+    if (!isSupabaseConfigured) {
+      setError(
+        "Photo upload is unavailable in this environment (Supabase env vars are not set).",
+      );
+      return;
+    }
+    setIsSavingPhoto(true);
+    try {
+      const url = await uploadMemberPhoto(postPhotoFile, signupEmail);
+      if (!url) throw new Error("No photo URL returned");
+      await updateMemberPhotoUrl(memberId, url);
+      if (prevPreview?.startsWith("blob:")) URL.revokeObjectURL(prevPreview);
+      setPhotoPreviewUrl(url);
+      setPhotoSaved(true);
+    } catch (err) {
+      console.error("Error saving photo:", err);
+      setError(t("pricing.savePhotoError"));
+    } finally {
+      setIsSavingPhoto(false);
+    }
+  };
 
   const handleContinueToPayment = async () => {
     setError("");
@@ -74,18 +142,20 @@ export default function PricingSection() {
         return;
       }
 
-      // Save to Supabase with photo file and address
+      setSignupFirstName(firstName);
+      setSignupLastName(lastName);
+      setSignupEmail(email);
+
       const member = await saveMemberSignup({
         firstName,
         lastName,
         email,
         phone,
         address: address || "",
-        photoFile: photoFile || undefined,
       });
 
       if (member?.id) {
-        setMemberId(member.id);
+        setMemberId(String(member.id));
       }
 
       setStep(2);
@@ -122,6 +192,13 @@ export default function PricingSection() {
     backgroundPosition: "center",
     backgroundAttachment: "fixed",
   };
+
+  const memberCardName = `${signupFirstName} ${signupLastName}`.trim() || "—";
+  const memberNoDisplay = memberId ? formatMemberNumberFromId(memberId) : "—";
+  const validUntilDisplay =
+    activationInfo ? formatCardExpiryMonthYear(activationInfo.expiresAt) : "—";
+  const seasonDisplay =
+    activationInfo ? formatCardSeasonLabel(activationInfo.activatedAt) : "—";
 
   return (
     <section
@@ -289,7 +366,7 @@ export default function PricingSection() {
                     borderBottom: step > s ? "2px solid oklch(0.42 0.14 145)" : "none",
                   }}
                 >
-                  {s === 1 ? "Details" : s === 2 ? "Payment" : "Digital ID"}
+                  {s === 1 ? t("pricing.details") : s === 2 ? t("pricing.payment") : t("pricing.digitalId")}
                 </div>
               ))}
             </div>
@@ -301,11 +378,11 @@ export default function PricingSection() {
                     className="font-semibold text-lg mb-4"
                     style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
                   >
-                    Player Details
+                    {t("pricing.playerDetails")}
                   </h3>
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label style={labelStyle}>First Name *</label>
+                      <label style={labelStyle}>{t("pricing.firstName")} *</label>
                       <input
                         id="inp-firstname"
                         type="text"
@@ -315,7 +392,7 @@ export default function PricingSection() {
                       />
                     </div>
                     <div>
-                      <label style={labelStyle}>Last Name *</label>
+                      <label style={labelStyle}>{t("pricing.lastName")} *</label>
                       <input
                         id="inp-lastname"
                         type="text"
@@ -326,7 +403,7 @@ export default function PricingSection() {
                     </div>
                   </div>
                   <div>
-                    <label style={labelStyle}>Mobile *</label>
+                    <label style={labelStyle}>{t("pricing.phone")} *</label>
                     <input
                       id="inp-phone"
                       type="tel"
@@ -336,7 +413,7 @@ export default function PricingSection() {
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Email Address *</label>
+                    <label style={labelStyle}>{t("pricing.email")} *</label>
                     <input
                       id="inp-email"
                       type="email"
@@ -346,7 +423,7 @@ export default function PricingSection() {
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Address</label>
+                    <label style={labelStyle}>{t("pricing.address")}</label>
                     <input
                       id="inp-address"
                       type="text"
@@ -354,41 +431,6 @@ export default function PricingSection() {
                       className={inputClass}
                       style={inputStyle}
                     />
-                  </div>
-                  {/* Photo upload */}
-                  <div>
-                    <label style={labelStyle}>Verification Photo *</label>
-                    <input
-                      ref={fileRef}
-                      type="file"
-                      accept="image/*"
-                      capture="user"
-                      className="hidden"
-                      onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        setPhotoName(file?.name || "");
-                        setPhotoFile(file || null);
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileRef.current?.click()}
-                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-sm border-2 border-dashed text-sm font-medium transition-all duration-200 hover:border-[oklch(0.42_0.14_145)] hover:bg-[oklch(0.42_0.14_145_/_0.04)]"
-                      style={{
-                        borderColor: photoName ? "oklch(0.42 0.14 145)" : "oklch(0.85 0.03 145)",
-                        color: photoName ? "oklch(0.42 0.14 145)" : "oklch(0.55 0.06 145)",
-                        fontFamily: "'Outfit', sans-serif",
-                      }}
-                    >
-                      <Camera size={16} />
-                      {photoName || "Take or Upload Photo"}
-                    </button>
-                    <p
-                      className="text-xs mt-1.5"
-                      style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      Required · Front-facing · Used for your Digital ID only.
-                    </p>
                   </div>
                   {error && (
                     <div
@@ -404,7 +446,8 @@ export default function PricingSection() {
                     disabled={isSubmitting}
                     className="btn-fairway w-full text-sm py-3.5 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {isSubmitting ? "Saving..." : "Continue to Payment"} <ArrowRight size={14} />
+                    {isSubmitting ? t("pricing.savingForm") : t("pricing.continuePayment")}{" "}
+                    <ArrowRight size={14} />
                   </button>
                   <p
                     className="text-xs text-center"
@@ -513,9 +556,8 @@ export default function PricingSection() {
               )}
 
               {step === 3 && (
-                <div className="space-y-4">
-                  {/* Success message */}
-                  <div className="text-center mb-6">
+                <div className="space-y-5">
+                  <div className="text-center">
                     <div
                       className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
                       style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
@@ -523,56 +565,149 @@ export default function PricingSection() {
                       <Check size={24} style={{ color: "oklch(0.42 0.14 145)" }} />
                     </div>
                     <h3
-                      className="font-semibold text-lg"
+                      className="font-semibold text-xl"
                       style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
                     >
-                      Welcome to Links Golf!
+                      {t("pricing.success")}
                     </h3>
                     <p
-                      className="text-sm mt-1"
+                      className="text-sm mt-1 max-w-sm mx-auto"
                       style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
-                      Your membership is active. Add your pass to your wallet.
+                      {t("pricing.successDesc")}
                     </p>
                   </div>
 
-                  {/* Wallet buttons */}
+                  <DigitalMemberCard
+                    displayName={memberCardName}
+                    memberNumber={memberNoDisplay}
+                    validUntil={validUntilDisplay}
+                    season={seasonDisplay}
+                    photoUrl={photoPreviewUrl}
+                  />
+
+                  <div>
+                    <h4
+                      className="font-semibold text-base mb-1"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
+                    >
+                      {t("pricing.postPhotoHeading")}
+                    </h4>
+                    <p
+                      className="text-sm mb-3"
+                      style={{ color: "oklch(0.5 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.postPhotoBody")}
+                    </p>
+                    <input
+                      ref={postPhotoRef}
+                      type="file"
+                      accept="image/*"
+                      capture="user"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        setPostPhotoName(file?.name ?? "");
+                        setPostPhotoFile(file ?? null);
+                        setPhotoSaved(false);
+                        setPhotoPreviewUrl((prev) => {
+                          if (prev?.startsWith("blob:")) URL.revokeObjectURL(prev);
+                          return file ? URL.createObjectURL(file) : null;
+                        });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => postPhotoRef.current?.click()}
+                      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-sm border-2 border-dashed text-sm font-medium transition-all duration-200 hover:border-[oklch(0.42_0.14_145)] hover:bg-[oklch(0.42_0.14_145_/_0.04)]"
+                      style={{
+                        borderColor: postPhotoName ? "oklch(0.42 0.14 145)" : "oklch(0.85 0.03 145)",
+                        color: postPhotoName ? "oklch(0.42 0.14 145)" : "oklch(0.55 0.06 145)",
+                        fontFamily: "'Outfit', sans-serif",
+                      }}
+                    >
+                      <Camera size={16} aria-hidden />
+                      {postPhotoName || t("pricing.takeUploadPhoto")}
+                    </button>
+                    <p
+                      className="text-xs mt-1.5 mb-3"
+                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.postPhotoFooter")}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={handleSavePhoto}
+                      disabled={isSavingPhoto || !postPhotoFile}
+                      className="btn-fairway w-full text-sm py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      {isSavingPhoto ? t("pricing.savingPhoto") : t("pricing.savePhoto")}
+                    </button>
+                  </div>
+
+                  {error && (
+                    <div
+                      className="p-3 rounded-sm text-sm text-center"
+                      style={{
+                        background: "rgba(220, 38, 38, 0.1)",
+                        color: "rgb(220, 38, 38)",
+                        fontFamily: "'Outfit', sans-serif",
+                      }}
+                    >
+                      {error}
+                    </div>
+                  )}
+
                   <div className="space-y-2">
                     <button
-                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all"
+                      type="button"
+                      disabled={!photoSaved}
+                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed"
                       style={{
                         background: "black",
                         color: "white",
                         fontFamily: "'Outfit', sans-serif",
                       }}
                     >
-                      🍎 Add to Apple Wallet
+                      {t("pricing.addAppleWallet")}
                     </button>
                     <button
-                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all"
+                      type="button"
+                      disabled={!photoSaved}
+                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed"
                       style={{
                         background: "oklch(0.42 0.14 145)",
                         color: "white",
                         fontFamily: "'Outfit', sans-serif",
                       }}
                     >
-                      🤖 Add to Google Wallet
+                      {t("pricing.addGoogleWallet")}
                     </button>
+                    {!photoSaved && (
+                      <p
+                        className="text-xs text-center"
+                        style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                      >
+                        {t("pricing.walletDisabledHint")}
+                      </p>
+                    )}
                   </div>
 
-                  {/* Dashboard button */}
                   <button
-                    onClick={() => window.location.href = "/dashboard"}
+                    type="button"
+                    onClick={() => {
+                      window.location.href = "/dashboard";
+                    }}
                     className="btn-fairway w-full text-sm py-3.5"
                   >
-                    Go to My Dashboard
+                    {t("pricing.goToDashboard")}
                   </button>
 
                   <p
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    Check your email for membership details and course information.
+                    {t("pricing.checkEmail")}
                   </p>
                 </div>
               )}

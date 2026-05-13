@@ -5,31 +5,44 @@
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
+import { useLanguage, type Language } from "@/contexts/LanguageContext";
+import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 
 const HOW_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/how-it-works-bg-WVAFVj6UWeQHDsK6Y9SiNP.webp";
 
-const steps = [
-  {
-    number: "01",
-    icon: CreditCard,
-    title: "Join Online",
-    body: "Fill out the short membership form, upload your photo, and complete the $199 annual payment — all in under 5 minutes.",
-  },
-  {
-    number: "02",
-    icon: UserCheck,
-    title: "Get Your Digital Pass",
-    body: "Your photo-verified digital ID is issued instantly to Apple Wallet or Google Wallet. No app, no physical card.",
-  },
-  {
-    number: "03",
-    icon: Flag,
-    title: "Play & Save",
-    body: "Show your pass at any partner course pro shop. Your member rate is applied immediately — every round, all year.",
-  },
-];
+function getSteps(language: Language) {
+  const L = language === "es";
+  return [
+    {
+      number: "01",
+      icon: CreditCard,
+      title: L ? "Únete en línea" : "Join Online",
+      body: L
+        ? "Completa el formulario de membresía, paga los $199 al año y, después del pago, sube tu foto para emitir tu pase de billetera. Todo en menos de 5 minutos."
+        : "Fill out the short membership form, complete the $199 annual payment, then add your photo after checkout so we can issue your wallet pass — all in under 5 minutes.",
+    },
+    {
+      number: "02",
+      icon: UserCheck,
+      title: L ? "Obtén tu pase digital" : "Get Your Digital Pass",
+      body: L
+        ? "Tu ID digital con foto se emite al instante para Apple Wallet o Google Wallet. Sin app, sin tarjeta física."
+        : "Your photo-verified digital ID is issued instantly to Apple Wallet or Google Wallet. No app, no physical card.",
+    },
+    {
+      number: "03",
+      icon: Flag,
+      title: L ? "Juega y ahorra" : "Play & Save",
+      body: L
+        ? "Muestra tu pase en la tienda del campo asociado. Tu tarifa de miembro se aplica al instante — cada ronda, todo el año."
+        : "Show your pass at any partner course pro shop. Your member rate is applied immediately — every round, all year.",
+    },
+  ];
+}
 
 export default function HowItWorksSection() {
+  const { language, t } = useLanguage();
+  const steps = getSteps(language);
   return (
     <section
       id="how-it-works"
@@ -115,73 +128,21 @@ export default function HowItWorksSection() {
           })}
         </div>
 
-        {/* Wallet pass visual */}
+        {/* Wallet pass visual — same digital card as signup + dashboard */}
         <div className="mt-16 flex justify-center fade-up">
           <div
-            className="relative rounded-xl overflow-hidden shadow-2xl"
-            style={{
-              width: "min(320px, 90vw)",
-              background: "linear-gradient(135deg, oklch(0.28 0.12 145) 0%, oklch(0.18 0.08 145) 100%)",
-              border: "1px solid oklch(0.42 0.14 145 / 0.3)",
-            }}
+            className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
+            style={{ width: "min(320px, 90vw)" }}
           >
-            <div className="p-6">
-              {/* Card header */}
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <div className="text-white/40 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    Links Golf
-                  </div>
-                  <div className="text-white font-semibold text-lg" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-                    Golf Membership
-                  </div>
-                </div>
-                <div
-                  className="w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
-                  style={{ background: "oklch(0.42 0.14 145 / 0.3)" }}
-                >
-                  <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
-                    <span className="text-white/60 text-2xl">👤</span>
-                  </div>
-                </div>
-              </div>
-              {/* Member name */}
-              <div className="mb-4">
-                <div className="text-white/40 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                  Member Name
-                </div>
-                <div className="text-white font-medium" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                  YOUR NAME HERE
-                </div>
-              </div>
-              {/* Details row */}
-              <div className="flex items-center justify-between gap-4">
-                <div>
-                  <div className="text-white/40 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    Member No.
-                  </div>
-                  <div className="text-white/80 text-sm font-mono">LGM-#####</div>
-                </div>
-                <div className="text-right">
-                  <div className="text-white/40 text-xs uppercase tracking-widest mb-1" style={{ fontFamily: "'Outfit', sans-serif" }}>
-                    Valid Until
-                  </div>
-                  <div className="text-white/80 text-sm font-mono">##/##</div>
-                </div>
-              </div>
-            </div>
-            {/* Founding member badge */}
-            <div
-              className="px-6 py-2 text-center text-xs uppercase tracking-widest"
-              style={{
-                background: "oklch(0.42 0.14 145 / 0.3)",
-                color: "oklch(0.65 0.14 145)",
-                fontFamily: "'Outfit', sans-serif",
-                borderTop: "1px solid oklch(0.42 0.14 145 / 0.2)",
-              }}
-            >
-              Founding Member · 2026–27
-            </div>
+            <DigitalMemberCard
+              compact
+              displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
+              memberNumber="LGM-000000"
+              validUntil="05/27"
+              season="2026/2027"
+              photoUrl={null}
+              footer={t("dashboard.pass.badge")}
+            />
           </div>
         </div>
 
