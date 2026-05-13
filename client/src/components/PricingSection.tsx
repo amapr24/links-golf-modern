@@ -195,18 +195,14 @@ export default function PricingSection() {
       const origin = window.location.origin;
       const cancelUrl = `${origin}/pricing`;
       const memberIdNum = parseInt(memberId, 10);
+      // Stripe substitutes {CHECKOUT_SESSION_ID} on redirect. Without it, /success cannot
+      // verify payment or call createSessionAfterCheckout. sessionStorage is not visible
+      // in a separate checkout tab opened via window.open.
+      const successUrlForStripe = `${origin}/success?sessionId={CHECKOUT_SESSION_ID}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
 
-      // Build the success URL with the session ID and member info as query parameters
-      // We'll pass this to Stripe so it redirects with the data we need
-      // Note: We use a placeholder for sessionId since we don't have it yet,
-      // but we'll use Stripe's {CHECKOUT_SESSION_ID} placeholder if available,
-      // or we can fetch it server-side and rebuild the URL
-      const successUrlWithParams = `${origin}/success?memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
-
-      // Call createCheckout with the full success URL that includes member data
       const result = await createCheckoutMutation.mutateAsync({
         paymentType,
-        successUrl: successUrlWithParams, // Pass the full URL with member data
+        successUrl: successUrlForStripe,
         cancelUrl,
         memberId: memberIdNum,
         memberEmail: signupEmail,

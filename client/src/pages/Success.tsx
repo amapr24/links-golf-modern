@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 
 export default function Success() {
-  const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [isCreatingSession, setIsCreatingSession] = useState(true);
   const [error, setError] = useState<string | null>(null);

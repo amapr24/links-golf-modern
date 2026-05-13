@@ -3,9 +3,7 @@
  * Fetches payment history and subscription status from Stripe
  */
 
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
+import { isStripeApiConfigured, stripe } from "./stripe/client";
 
 export interface PaymentHistory {
   id: string;
@@ -32,6 +30,9 @@ export interface SubscriptionStatus {
 export async function fetchMemberPaymentHistory(
   stripeCustomerId: string
 ): Promise<PaymentHistory[]> {
+  if (!isStripeApiConfigured()) {
+    return [];
+  }
   try {
     const invoices = await stripe.invoices.list({
       customer: stripeCustomerId,
@@ -74,6 +75,15 @@ export async function fetchMemberSubscriptionStatus(
     };
   }
 
+  if (!isStripeApiConfigured()) {
+    return {
+      isActive: false,
+      cancelAtPeriodEnd: false,
+      status: "unconfigured",
+      paymentType: "subscription",
+    };
+  }
+
   try {
     const subscription = await stripe.subscriptions.retrieve(
       stripeSubscriptionId
@@ -107,6 +117,9 @@ export async function fetchMemberSubscriptionStatus(
 export async function cancelMemberSubscription(
   stripeSubscriptionId: string
 ): Promise<boolean> {
+  if (!isStripeApiConfigured()) {
+    return false;
+  }
   try {
     await stripe.subscriptions.update(stripeSubscriptionId, {
       cancel_at_period_end: true,

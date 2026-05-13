@@ -1,8 +1,6 @@
 import Stripe from "stripe";
 import { getMemberByStripeCustomerId, getMemberByUserId, upsertMember } from "../db";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
-
 /**
  * Process Stripe webhook events
  * Handles checkout.session.completed, customer.subscription.updated, etc.

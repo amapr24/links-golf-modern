@@ -1,7 +1,5 @@
-import Stripe from "stripe";
+import { requireStripeApi } from "./client";
 import { STRIPE_PRODUCTS } from "./products";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
 
 /**
  * Create a Stripe Checkout Session for membership purchase
@@ -15,6 +13,7 @@ export async function createCheckoutSession(options: {
   successUrl: string;
   cancelUrl: string;
 }) {
+  const stripe = requireStripeApi();
   const { userId, userEmail, userName, paymentType, successUrl, cancelUrl } = options;
 
   const product = paymentType === "subscription" 
@@ -68,5 +67,6 @@ export async function createCheckoutSession(options: {
  * Retrieve checkout session details
  */
 export async function getCheckoutSession(sessionId: string) {
+  const stripe = requireStripeApi();
   return stripe.checkout.sessions.retrieve(sessionId);
 }
