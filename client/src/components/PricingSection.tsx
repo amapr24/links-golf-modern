@@ -193,7 +193,7 @@ export default function PricingSection() {
       }
 
       const origin = window.location.origin;
-      const successUrl = `${origin}/pricing?success=true`;
+      const successUrl = `${origin}/success`;
       const cancelUrl = `${origin}/pricing`;
 
       const result = await createCheckoutMutation.mutateAsync({

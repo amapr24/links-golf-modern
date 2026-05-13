@@ -91,3 +91,4 @@
 
 ## Bug Fixes (Current Sprint)
 - [x] Add missing translation keys: pricing.annualMembership, pricing.paymentMethodDesc, pricing.subscribeNow, pricing.buyOnceNow, pricing.securedByStripe
+- [x] Fix: Create success page or handle Stripe redirect properly (404 after checkout success)
