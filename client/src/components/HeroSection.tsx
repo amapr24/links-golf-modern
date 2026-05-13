@@ -48,7 +48,7 @@ export default function HeroSection() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "linear-gradient(to top, rgba(10,18,12,0.94) 0%, rgba(10,18,12,0.72) 28%, rgba(10,18,12,0.38) 52%, rgba(10,18,12,0.12) 72%, rgba(10,18,12,0) 100%)",
+            "linear-gradient(to top, rgba(10,18,12,0.88) 0%, rgba(10,18,12,0.62) 28%, rgba(10,18,12,0.28) 52%, rgba(10,18,12,0.08) 72%, rgba(10,18,12,0) 100%)",
         }}
       />
       {/* Left-side vignette for text legibility */}
@@ -56,7 +56,15 @@ export default function HeroSection() {
         className="absolute inset-0 hidden lg:block pointer-events-none"
         style={{
           background:
-            "linear-gradient(to right, rgba(10,18,12,0.45) 0%, transparent 58%)",
+            "linear-gradient(to right, rgba(10,18,12,0.32) 0%, transparent 58%)",
+        }}
+      />
+      {/* Top-left: soften mirrored sun hot spot */}
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 95% 70% at 10% 6%, rgba(10,18,12,0.22) 0%, rgba(10,18,12,0.06) 45%, transparent 72%)",
         }}
       />
 
