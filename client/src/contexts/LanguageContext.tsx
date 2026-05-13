@@ -151,7 +151,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.agreePrivacyLead": "I have read and agree to the",
     "pricing.agreeRefundLead": "I have read the",
     "pricing.mustAcceptLegal": "Please confirm eligibility and accept all policies above to continue.",
-    "pricing.checkoutHelp": "Questions before checkout? Email info@linksgolfpr.com.",
+    "pricing.checkoutHelpLead": "Questions before checkout? Email ",
     "pricing.paymentRefundReminder": "You are about to pay the annual fee. Review",
 
     "memberCard.wordmark": "Links Golf Membership",
@@ -453,7 +453,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.agreePrivacyLead": "He leído y acepto la",
     "pricing.agreeRefundLead": "He leído",
     "pricing.mustAcceptLegal": "Confirma la elegibilidad y acepta todas las políticas arriba para continuar.",
-    "pricing.checkoutHelp": "¿Dudas antes de pagar? Escríbenos a info@linksgolfpr.com.",
+    "pricing.checkoutHelpLead": "¿Dudas antes de pagar? Escríbenos a ",
     "pricing.paymentRefundReminder": "Estás a punto de pagar la cuota anual. Revisa",
 
     "memberCard.wordmark": "Membresía Links Golf",

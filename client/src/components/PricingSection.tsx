@@ -544,7 +544,15 @@ export default function PricingSection() {
                     className="text-xs text-center"
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
-                    {t("pricing.checkoutHelp")}
+                    {t("pricing.checkoutHelpLead")}
+                    <a
+                      href={`mailto:${t("footer.email")}`}
+                      className="underline font-medium"
+                      style={{ color: "oklch(0.42 0.14 145)" }}
+                    >
+                      {t("footer.email")}
+                    </a>
+                    .
                   </p>
                 </div>
               )}
