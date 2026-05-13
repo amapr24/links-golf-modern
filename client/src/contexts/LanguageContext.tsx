@@ -133,7 +133,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.savePhotoError": "Failed to save your photo. Please try again.",
     "pricing.memberNoLabel": "Member No.",
     "pricing.validUntilLabel": "Valid until",
-    "pricing.seasonLabel": "Season",
     "pricing.payNow": "PAY $199 & GET YOUR MEMBERSHIP",
     "pricing.cardNumber": "Card Number",
     "pricing.expiry": "EXPIRY",
@@ -167,8 +166,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.mustAcceptLegal": "Please confirm eligibility and accept all policies above to continue.",
     "pricing.checkoutHelpLead": "Questions before checkout? Email ",
     "pricing.paymentRefundReminder": "You are about to pay the annual fee. Review",
-
-    "memberCard.wordmark": "Links Golf Membership",
 
     "trustStrip.headline": "Built for year-round play in Puerto Rico",
     "trustStrip.col1Value": "{{count}}",
@@ -285,7 +282,6 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.pass.memberNo": "Member No.",
     "dashboard.pass.validUntil": "Valid Until",
     "dashboard.pass.showAtProShop": "Show this at pro shop",
-    "dashboard.pass.badge": "Founding Member · 2026–27",
     "dashboard.renewalReminder": "You'll receive a renewal reminder 30 days before expiration.",
     "dashboard.coursesCount": "{{count}} courses",
     "dashboard.viewAllCourses": "View all courses",
@@ -462,7 +458,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.savePhotoError": "No se pudo guardar la foto. Inténtalo de nuevo.",
     "pricing.memberNoLabel": "N.º de miembro",
     "pricing.validUntilLabel": "Válido hasta",
-    "pricing.seasonLabel": "Temporada",
     "pricing.payNow": "PAGAR $199 Y OBTENER TU MEMBRESÍA",
     "pricing.cardNumber": "Número de Tarjeta",
     "pricing.expiry": "VENCIMIENTO",
@@ -496,8 +491,6 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.mustAcceptLegal": "Confirma la elegibilidad y acepta todas las políticas arriba para continuar.",
     "pricing.checkoutHelpLead": "¿Dudas antes de pagar? Escríbenos a ",
     "pricing.paymentRefundReminder": "Estás a punto de pagar la cuota anual. Revisa",
-
-    "memberCard.wordmark": "Membresía Links Golf",
 
     "trustStrip.headline": "Pensado para jugar todo el año en Puerto Rico",
     "trustStrip.col1Value": "{{count}}",
@@ -614,7 +607,6 @@ const translations: Record<Language, Record<string, string>> = {
     "dashboard.pass.memberNo": "N.º de miembro",
     "dashboard.pass.validUntil": "Válido hasta",
     "dashboard.pass.showAtProShop": "Muéstralo en la pro shop",
-    "dashboard.pass.badge": "Miembro fundador · 2026–27",
     "dashboard.renewalReminder": "Recibirás un recordatorio de renovación 30 días antes del vencimiento.",
     "dashboard.coursesCount": "{{count}} campos",
     "dashboard.viewAllCourses": "Ver todos los campos",

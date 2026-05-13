@@ -10,6 +10,27 @@ import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 
 const HOW_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/how-it-works-bg-WVAFVj6UWeQHDsK6Y9SiNP.webp";
 
+function AppleWalletGlyph({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+      <path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09z" />
+    </svg>
+  );
+}
+
+function GoogleWalletGlyph({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <path
+        d="M3 7a2 2 0 012-2h14a2 2 0 012 2v10a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"
+        stroke="#4285F4"
+        strokeWidth="2"
+      />
+      <circle cx="17" cy="12" r="1.5" fill="#EA4335" />
+    </svg>
+  );
+}
+
 function getSteps(language: Language) {
   const L = language === "es";
   return [
@@ -41,7 +62,7 @@ function getSteps(language: Language) {
 }
 
 export default function HowItWorksSection() {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
   const steps = getSteps(language);
   return (
     <section
@@ -139,9 +160,7 @@ export default function HowItWorksSection() {
               displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
               memberNumber="LGM-000000"
               validUntil="05/27"
-              season="2026/2027"
               photoUrl={null}
-              footer={t("dashboard.pass.badge")}
             />
           </div>
         </div>
@@ -149,16 +168,18 @@ export default function HowItWorksSection() {
         {/* Wallet badges */}
         <div className="flex justify-center gap-4 mt-6 fade-up">
           <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium"
-            style={{ background: "rgba(255,255,255,0.08)", color: "white/70", fontFamily: "'Outfit', sans-serif" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+            style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
           >
-            <span>🍎</span> Apple Wallet
+            <AppleWalletGlyph className="h-4 w-4 shrink-0 text-white/85" />
+            Apple Wallet
           </div>
           <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium"
-            style={{ background: "rgba(255,255,255,0.08)", color: "white/70", fontFamily: "'Outfit', sans-serif" }}
+            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+            style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
           >
-            <span>🤖</span> Google Wallet
+            <GoogleWalletGlyph className="h-4 w-4 shrink-0" />
+            Google Wallet
           </div>
         </div>
       </div>

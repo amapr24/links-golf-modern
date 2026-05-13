@@ -11,10 +11,7 @@ import { trpc } from "@/lib/trpc";
 import { PARTNER_COURSE_COUNT } from "@/data/partnerCourses";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 import { PaymentHistory } from "@/components/PaymentHistory";
-import {
-  formatCardExpiryMonthYear,
-  formatCardSeasonLabel,
-} from "@/lib/memberCardDisplay";
+import { formatCardExpiryMonthYear } from "@/lib/memberCardDisplay";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
 function formatLongDate(iso: string, language: Language): string {
@@ -222,7 +219,6 @@ export default function Dashboard() {
                 displayName={`${member.firstName} ${member.lastName}`}
                 memberNumber={member.memberNumber}
                 validUntil={formatCardExpiryMonthYear(member.renewalDateIso)}
-                season={formatCardSeasonLabel(member.joinDateIso)}
                 photoUrl={member.photoUrl}
               />
               <div
@@ -245,17 +241,6 @@ export default function Dashboard() {
                       {t("dashboard.pass.showAtProShop")}
                     </div>
                   </div>
-                </div>
-                <div
-                  className="px-4 py-2 text-center text-xs uppercase tracking-widest rounded-sm"
-                  style={{
-                    background: "oklch(0.42 0.14 145 / 0.25)",
-                    color: "oklch(0.65 0.14 145)",
-                    fontFamily: "'Outfit', sans-serif",
-                    border: "1px solid oklch(0.42 0.14 145 / 0.25)",
-                  }}
-                >
-                  {t("dashboard.pass.badge")}
                 </div>
               </div>
             </div>

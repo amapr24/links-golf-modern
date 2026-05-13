@@ -13,11 +13,3 @@ export function formatCardExpiryMonthYear(iso: string): string {
   if (Number.isNaN(d.getTime())) return "—";
   return `${String(d.getMonth() + 1).padStart(2, "0")}/${String(d.getFullYear()).slice(-2)}`;
 }
-
-/** Season label e.g. 2026/2027 from activation (or join) instant. */
-export function formatCardSeasonLabel(joinOrActivateIso: string): string {
-  const d = new Date(joinOrActivateIso);
-  if (Number.isNaN(d.getTime())) return "—";
-  const y = d.getFullYear();
-  return `${y}/${y + 1}`;
-}
