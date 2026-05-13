@@ -10,6 +10,7 @@ import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { trpc } from "@/lib/trpc";
 import { PARTNER_COURSE_COUNT } from "@/data/partnerCourses";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
+import { PaymentHistory } from "@/components/PaymentHistory";
 import {
   formatCardExpiryMonthYear,
   formatCardSeasonLabel,
@@ -509,6 +510,17 @@ export default function Dashboard() {
           >
             {t("dashboard.editDetails")}
           </button>
+        </div>
+
+        {/* Payment History Section */}
+        <div
+          className="rounded-lg p-8 mt-12"
+          style={{
+            background: "white",
+            border: "1px solid oklch(0.88 0.02 85)",
+          }}
+        >
+          <PaymentHistory />
         </div>
       </main>
     </div>

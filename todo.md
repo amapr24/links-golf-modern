@@ -16,7 +16,9 @@
 - [x] Pricing section: add "Subscribe Now" / "Buy Once" buttons that trigger checkout
 - [x] Checkout modal or redirect: call `trpc.member.createCheckout` and open Stripe session URL
 - [x] Success page: display membership confirmation and digital member card
-- [ ] Member dashboard: show subscription status, renewal date, payment history
+- [x] Member dashboard: show subscription status, renewal date, payment history
+- [x] tRPC procedures: `paymentHistory`, `subscriptionStatus`, `cancelSubscription`
+- [x] PaymentHistory component: display invoices and subscription status
 
 ### Payment Testing & Validation
 - [ ] Test card: 4242 4242 4242 4242 (Stripe test mode)

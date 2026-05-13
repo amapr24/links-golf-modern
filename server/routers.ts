@@ -29,6 +29,12 @@ import {
 } from "./welcomeEmailOnce";
 import { COOKIE_NAME, MEMBER_SESSION_COOKIE } from "@shared/const";
 import { createCheckoutSession } from "./stripe/checkout";
+import {
+  fetchMemberPaymentHistory,
+  fetchMemberSubscriptionStatus,
+  cancelMemberSubscription,
+} from "./member.payments";
+import { getMemberByUserId } from "./db";
 
 export const appRouter = router({
   system: systemRouter,
@@ -228,9 +234,9 @@ export const appRouter = router({
                 error: "Member profile not found.",
               };
             }
-            userId = session.memberId;
+            userId = parseInt(session.memberId, 10);
             userEmail = session.email;
-            userName = profile.displayName || "Member";
+            userName = `${profile.firstName} ${profile.lastName}`.trim() || "Member";
           } else if (input.memberId && input.memberEmail) {
             // Fall back to provided member info (from pricing signup)
             userId = input.memberId;
@@ -265,6 +271,140 @@ export const appRouter = router({
           };
         }
       }),
+
+    /**
+     * Get payment history for the current member
+     * Requires member session (logged in)
+     */
+    paymentHistory: publicProcedure.query(async ({ ctx }) => {
+      try {
+        const session = await readMemberSessionFromRequest(ctx.req);
+        if (!session) {
+          return {
+            success: false,
+            error: "Not authenticated",
+            payments: [],
+          };
+        }
+
+        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        if (!member || !member.stripeCustomerId) {
+          return {
+            success: true,
+            error: null,
+            payments: [],
+          };
+        }
+
+        const payments = await fetchMemberPaymentHistory(
+          member.stripeCustomerId
+        );
+
+        return {
+          success: true,
+          error: null,
+          payments,
+        };
+      } catch (error) {
+        console.error("[paymentHistory] Error:", error);
+        return {
+          success: false,
+          error: "Failed to fetch payment history",
+          payments: [],
+        };
+      }
+    }),
+
+    /**
+     * Get subscription status for the current member
+     * Requires member session (logged in)
+     */
+    subscriptionStatus: publicProcedure.query(async ({ ctx }) => {
+      try {
+        const session = await readMemberSessionFromRequest(ctx.req);
+        if (!session) {
+          return {
+            success: false,
+            error: "Not authenticated",
+            subscription: null,
+          };
+        }
+
+        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        if (!member) {
+          return {
+            success: false,
+            error: "Member not found",
+            subscription: null,
+          };
+        }
+
+        const subscription = await fetchMemberSubscriptionStatus(
+          member.stripeSubscriptionId,
+          member.paymentType
+        );
+
+        return {
+          success: true,
+          error: null,
+          subscription,
+        };
+      } catch (error) {
+        console.error("[subscriptionStatus] Error:", error);
+        return {
+          success: false,
+          error: "Failed to fetch subscription status",
+          subscription: null,
+        };
+      }
+    }),
+
+    /**
+     * Cancel subscription for the current member
+     * Sets cancel_at_period_end so membership remains active until renewal
+     * Requires member session (logged in)
+     */
+    cancelSubscription: publicProcedure.mutation(async ({ ctx }) => {
+      try {
+        const session = await readMemberSessionFromRequest(ctx.req);
+        if (!session) {
+          return {
+            success: false,
+            error: "Not authenticated",
+          };
+        }
+
+        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        if (!member || !member.stripeSubscriptionId) {
+          return {
+            success: false,
+            error: "No active subscription found",
+          };
+        }
+
+        const cancelled = await cancelMemberSubscription(
+          member.stripeSubscriptionId
+        );
+
+        if (!cancelled) {
+          return {
+            success: false,
+            error: "Failed to cancel subscription",
+          };
+        }
+
+        return {
+          success: true,
+          error: null,
+        };
+      } catch (error) {
+        console.error("[cancelSubscription] Error:", error);
+        return {
+          success: false,
+          error: "Failed to cancel subscription",
+        };
+      }
+    }),
   }),
 });
 

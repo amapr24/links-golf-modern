@@ -41,6 +41,7 @@ type Step = 1 | 2 | 3;
 export default function PricingSection() {
   const { t } = useLanguage();
   const features = getFeatures(t);
+  const createCheckoutMutation = trpc.member.createCheckout.useMutation();
   const [step, setStep] = useState<Step>(1);
   const [postPhotoName, setPostPhotoName] = useState("");
   const [postPhotoFile, setPostPhotoFile] = useState<File | null>(null);
@@ -195,7 +196,7 @@ export default function PricingSection() {
       const successUrl = `${origin}/pricing?success=true`;
       const cancelUrl = `${origin}/pricing`;
 
-      const result = await trpc.member.createCheckout.mutate({
+      const result = await createCheckoutMutation.mutateAsync({
         paymentType,
         successUrl,
         cancelUrl,
