@@ -15,7 +15,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 **Follow-up (not closed by this commit — do not check off P0 bullets below until these are done):**
 
-- [x] **Branded `og-share.png`:** **1200×630** PNG in `client/public/`, center-cropped from `references/brand/lgm-logos/PNG Files/LINKS-GOLF-MEMBERSHIP-9.png` (regeneration steps in `references/brand/lgm-logos/README.txt`). Optional later: add tagline/URL in a dedicated export from the `.ai` sources.
+- [x] **Branded `og-share.png`:** **1200×630** PNG in `client/public/` (center-cropped from Drive master `PNG Files/LINKS-GOLF-MEMBERSHIP-9.png`; regen steps in `references/brand/lgm-logos/README.txt`). Optional later: add tagline/URL in a dedicated export from the `.ai` sources on Drive.
 - [ ] **Bilingual social copy:** Static HTML meta is **EN-first**; add Spanish (and parity) for `og:description` / `twitter:description` when you pick an approach (separate routes, build-time env, or SSR).
 - [ ] **`og:url` + canonical:** Deliberately omitted until a single canonical origin is guaranteed (avoid wrong-domain canonical on Manus previews). Wire `VITE_PUBLIC_SITE_ORIGIN` (or similar) at build time when `linksgolfpr.com` is live.
 - [ ] **Deploy smoke test:** Confirm the hosted Manus/preview URL does not apply any *other* forced login before first paint; this repo’s home page already uses public `member.session` only.
@@ -37,7 +37,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 - [ ] Move the site to the production domain `linksgolfpr.com` (currently lives at `linksgolfpr.manus.space`, mismatching the `info@linksgolfpr.com` contact email). Provision SSL on the production domain.
 - [ ] Remove the initial OAuth redirect to `manus.im` for anonymous visitors. The marketing site must be publicly viewable without any login. *(Repo: guarded on public paths; still verify full “no surprise login” behavior on the deployed preview/host.)*
 - [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES. *(Repo: real EN copy in `index.html` + `meta name="description"`; ES-specific OG/Twitter strings not yet in static head.)*
-- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: **1200×630** `/og-share.png` from brand kit `LINKS-GOLF-MEMBERSHIP-9.png`; source tree under `references/brand/lgm-logos/`. Mark this P0 row done once production deploy is verified in Facebook/X debuggers.)*
+- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: **1200×630** `/og-share.png`; masters on [Google Drive](https://drive.google.com/drive/folders/180FaEc3UYn0_3-oaQat2B1Vd_01hPiNH?usp=share_link). Mark this P0 row done once production deploy is verified in Facebook/X debuggers.)*
 
 ### Residency verification
 - [ ] Surface the Puerto Rico residency requirement *before* the form, not in fine print at the bottom. Add a prominent residency confirmation gate (radio or checkbox) at the top of the signup flow.
@@ -165,7 +165,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 - **Concurrence:** Domain + SSL + email alignment is non-negotiable for trust; OAuth wall on a marketing site is a launch blocker if still true on production.
 - **Finding:** This app’s **`/` route is not wrapped in auth** (`App.tsx` renders `Home` publicly). Unauthorized **tRPC** responses trigger `window.location.href = getLoginUrl()` in `main.tsx`—so anonymous users only get sent to OAuth if something fires an authed query and gets 401. Worth verifying **Home** and marketing routes never prefetch member-only procedures for guests.
-- **Finding:** **`client/index.html`** has no `og:title`, `og:description`, `og:image`, or Twitter card tags—social previews may be worse than “placeholder copy”: platforms may **infer** previews. Filling P0 meta bullets here is still correct; the exact “placeholder” string may be Manus-only.
+- **Finding:** **`client/index.html`** now includes `og:*` and `twitter:*` tags plus `/og-share.png`; bilingual meta and canonical `og:url` are still follow-ups (see **Status** at top of this file).
 - **Proposal:** Add OG/Twitter tags **and** per-locale variants if ES is a first-class URL or `?lang=` strategy; document the chosen pattern (static HTML vs. SSR later).
 
 ### P0 — Residency verification
