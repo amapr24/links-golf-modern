@@ -67,6 +67,9 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 ### Refund / cancellation policy
 - [ ] Publish a refund and cancellation policy and link it from the form, footer, and FAQ. An annual prepaid product without visible refund terms is a regulatory and trust risk.
 
+### Backend — Supabase vs Stripe-related data
+- [ ] Decide where Stripe-linked state lives and how it relates to Supabase: single source of truth for `members` / customer ids, webhook idempotency tables, reconciliation jobs, and Drizzle vs Supabase migrations so production does not drift across two databases.
+
 ---
 
 ## P1 — Major UX Issues
