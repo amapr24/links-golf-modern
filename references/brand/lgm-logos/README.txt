@@ -1,6 +1,13 @@
 Links Golf Membership — brand kit (LGM Logos)
 ============================================
 
+Canonical copy (Google Drive — same kit as in this repo):
+https://drive.google.com/drive/folders/1Bgsj2s0aoC3TsnbKgPD_VBkaY_b_I7Kq?usp=share_link
+
+Use Drive when you want the latest exports without cloning; use this folder when
+you need assets in CI or pinned to a git revision. Keep both in sync when the
+brand pack changes.
+
 Copied into the repo for design/dev reference. Original folder: "LGM Logos" (Documents).
 
 Open Graph / social preview (client/public/og-share.png)
