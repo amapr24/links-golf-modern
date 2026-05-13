@@ -1,16 +1,17 @@
 /**
  * CoursesMap — Interactive Google Map showing partner golf courses in Puerto Rico
  * Displays course pins with filtering by directory course type.
- * Pin hover: native title (no InfoWindow chrome). Click opens detail card below.
+ * Pin hover: immediate custom label (no slow native `title` tooltip). Click opens detail card below.
  */
 
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, useMemo } from "react";
 import { X } from "lucide-react";
 import { MapView } from "./Map";
 import { courseCoordinates, type CourseCoordinate } from "@/data/courseCoordinates";
 import type { PartnerCourseType } from "@/data/partnerCourses";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { partnerCourseName } from "@/lib/partnerCourseName";
+import { usePersistFn } from "@/hooks/usePersistFn";
 
 type CoursesMapFilter = "all" | PartnerCourseType;
 
@@ -34,10 +35,19 @@ export function CoursesMap({ filter }: CoursesMapProps) {
   const { t, language } = useLanguage();
   const mapRef = useRef<google.maps.Map | null>(null);
   const markersRef = useRef<google.maps.Marker[]>([]);
+  const overlayRef = useRef<google.maps.OverlayView | null>(null);
+  const hoverLatLngRef = useRef<google.maps.LatLng | null>(null);
+  const mapListenersRef = useRef<google.maps.MapsEventListener[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<CourseCoordinate | null>(null);
+  const [hoverTip, setHoverTip] = useState<{
+    course: CourseCoordinate;
+    x: number;
+    y: number;
+  } | null>(null);
 
-  const filteredCourses = courseCoordinates.filter(
-    (c) => filter === "all" || c.courseType === filter,
+  const filteredCourses = useMemo(
+    () => courseCoordinates.filter((c) => filter === "all" || c.courseType === filter),
+    [filter],
   );
 
   const calculateBounds = (courses: CourseCoordinate[]) => {
@@ -49,32 +59,91 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     return bounds;
   };
 
-  const createMarker = (
-    map: google.maps.Map,
-    course: CourseCoordinate,
-    isSelected: boolean,
-  ) => {
-    const markerColor = course.tier === "resort" ? "#2d7a4a" : "#4a9d6f";
-    const selectedColor = "#1a4d2e";
-    const color = isSelected ? selectedColor : markerColor;
+  const repositionHoverTip = usePersistFn(() => {
+    const ll = hoverLatLngRef.current;
+    const ov = overlayRef.current;
+    if (!ll || !ov) return;
+    const proj = ov.getProjection();
+    if (!proj) return;
+    const pt = proj.fromLatLngToContainerPixel(ll);
+    if (!pt) return;
+    setHoverTip((h) => (h ? { ...h, x: pt.x, y: pt.y } : null));
+  });
 
-    const label = partnerCourseName(course.slug, course.name, language, t);
-    const marker = new google.maps.Marker({
-      map,
-      position: { lat: course.lat, lng: course.lng },
-      title: `${label} — ${course.location} · ${course.discount}% ${t("courses.discount")}`,
-      icon: golfPinIcon(color, isSelected),
-    });
+  const attachMapListeners = usePersistFn((map: google.maps.Map) => {
+    mapListenersRef.current.forEach((l) => l.remove());
+    mapListenersRef.current = [];
+    mapListenersRef.current.push(
+      map.addListener("idle", repositionHoverTip),
+      map.addListener("zoom_changed", repositionHoverTip),
+      map.addListener("dragend", repositionHoverTip),
+    );
+  });
 
-    marker.addListener("click", () => {
-      setSelectedCourse(course);
-    });
+  const ensureProjectionOverlay = usePersistFn((map: google.maps.Map) => {
+    if (overlayRef.current) {
+      overlayRef.current.setMap(null);
+    }
+    const overlay = new google.maps.OverlayView();
+    overlay.onAdd = () => {};
+    overlay.draw = () => {};
+    overlay.onRemove = () => {};
+    overlay.setMap(map);
+    overlayRef.current = overlay;
+  });
 
-    return marker;
-  };
+  const createMarker = usePersistFn(
+    (map: google.maps.Map, course: CourseCoordinate, isSelected: boolean) => {
+      const markerColor = course.tier === "resort" ? "#2d7a4a" : "#4a9d6f";
+      const selectedColor = "#1a4d2e";
+      const color = isSelected ? selectedColor : markerColor;
+
+      const marker = new google.maps.Marker({
+        map,
+        position: { lat: course.lat, lng: course.lng },
+        icon: golfPinIcon(color, isSelected),
+        optimized: true,
+      });
+
+      marker.addListener("click", () => {
+        setSelectedCourse(course);
+      });
+
+      marker.addListener("mouseover", () => {
+        const pos = marker.getPosition();
+        hoverLatLngRef.current = pos ?? null;
+        if (!pos) return;
+
+        const proj = overlayRef.current?.getProjection();
+        let x = 0;
+        let y = 0;
+        if (proj) {
+          const pt = proj.fromLatLngToContainerPixel(pos);
+          if (pt) {
+            x = pt.x;
+            y = pt.y;
+          }
+        }
+        setHoverTip({ course, x, y });
+        requestAnimationFrame(() => repositionHoverTip());
+      });
+
+      marker.addListener("mouseout", () => {
+        const pos = marker.getPosition();
+        if (pos && hoverLatLngRef.current?.equals(pos)) {
+          hoverLatLngRef.current = null;
+          setHoverTip(null);
+        }
+      });
+
+      return marker;
+    },
+  );
 
   const handleMapReady = (map: google.maps.Map) => {
     mapRef.current = map;
+    ensureProjectionOverlay(map);
+    attachMapListeners(map);
 
     markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
@@ -105,7 +174,21 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     if (bounds) {
       mapRef.current.fitBounds(bounds, { top: 100, right: 100, bottom: 100, left: 100 });
     }
-  }, [filter, selectedCourse, t, language]);
+  }, [filter, selectedCourse, language, t, createMarker, filteredCourses]);
+
+  useEffect(() => {
+    return () => {
+      mapListenersRef.current.forEach((l) => l.remove());
+      mapListenersRef.current = [];
+      overlayRef.current?.setMap(null);
+      overlayRef.current = null;
+      hoverLatLngRef.current = null;
+    };
+  }, []);
+
+  const hoverTitle = hoverTip
+    ? partnerCourseName(hoverTip.course.slug, hoverTip.course.name, language, t)
+    : "";
 
   return (
     <div className="w-full">
@@ -116,6 +199,43 @@ export function CoursesMap({ filter }: CoursesMapProps) {
           onMapReady={handleMapReady}
           className="w-full h-full"
         />
+        {hoverTip && (
+          <div
+            className="pointer-events-none absolute z-[1000] max-w-[min(20rem,calc(100vw-2rem))] rounded-lg border border-black/10 bg-white px-3.5 py-2.5 shadow-lg"
+            style={{
+              left: hoverTip.x,
+              top: hoverTip.y,
+              transform: "translate(-50%, calc(-100% - 14px))",
+              boxShadow: "0 10px 40px rgba(0,0,0,0.18)",
+            }}
+            role="status"
+            aria-live="polite"
+            aria-label={hoverTitle}
+          >
+            <div
+              className="text-base font-semibold leading-snug text-balance"
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                color: "oklch(0.16 0.04 145)",
+              }}
+            >
+              {hoverTitle}
+            </div>
+            <div
+              className="mt-1 text-sm font-medium leading-snug"
+              style={{
+                fontFamily: "'Outfit', sans-serif",
+                color: "oklch(0.32 0.06 145)",
+              }}
+            >
+              {hoverTip.course.location}
+              <span style={{ color: "oklch(0.45 0.05 145)" }}>
+                {" "}
+                · {hoverTip.course.discount}% {t("courses.discount")}
+              </span>
+            </div>
+          </div>
+        )}
       </div>
 
       {selectedCourse && (
