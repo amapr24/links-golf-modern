@@ -1,19 +1,14 @@
 /*
- * BenefitsSection — Links Golf Membership
- * Design: Golf course background with dark overlay, continues hero experience
+ * BenefitsSection — prototype: compact “Why join” strip
+ * Tight vertical rhythm: quick scan, then on to courses / pricing.
  */
 
-import { DollarSign, Smartphone, ShieldCheck, CalendarDays } from "lucide-react";
+import { DollarSign, Smartphone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { PARTNER_COURSE_COUNT, MAX_PARTNER_DISCOUNT } from "@/data/partnerCourses";
-import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
-
-const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
-  const coarsePointer = useCoarsePointer();
 
   const benefits = [
     {
@@ -21,163 +16,97 @@ export default function BenefitsSection() {
       icon: DollarSign,
       title: t("benefits.savings.title"),
       highlight: t("benefits.savings.highlight"),
-      body: t("benefits.savings.body"),
     },
     {
       id: "card",
       icon: Smartphone,
       title: t("benefits.card.title"),
       highlight: t("benefits.card.highlight"),
-      body: t("benefits.card.body"),
     },
     {
-      id: "identity",
-      icon: ShieldCheck,
-      title: t("benefits.identity.title"),
-      highlight: t("benefits.identity.highlight"),
-      body: t("benefits.identity.body"),
-    },
-    {
-      id: "price",
-      icon: CalendarDays,
-      title: t("benefits.price.title"),
-      highlight: t("benefits.price.highlight"),
-      body: t("benefits.price.body"),
+      id: "network",
+      icon: MapPin,
+      title: t("benefits.network.title"),
+      highlight: t("benefits.network.highlight"),
     },
   ];
 
   return (
     <section
       id="benefits"
-      className="relative overflow-hidden"
-      style={{
-        backgroundImage: `url(${AERIAL_IMAGE})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundAttachment: coarsePointer ? "scroll" : "fixed",
-      }}
+      className="relative overflow-hidden border-t border-[oklch(0.42_0.1_145/0.45)] bg-[oklch(0.12_0.038_145)]"
     >
-      {/* Dark overlay - continues hero fade */}
       <div
+        className="pointer-events-none absolute inset-0 opacity-[0.07]"
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(180deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.55) 100%)",
+          backgroundImage:
+            "radial-gradient(ellipse 120% 80% at 20% 0%, oklch(0.55 0.12 145), transparent 55%), radial-gradient(ellipse 90% 60% at 100% 100%, oklch(0.35 0.08 145), transparent 50%)",
         }}
       />
 
-      <div className="container relative z-10 py-20 md:py-28">
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-          {/* Left: Text panel */}
-          <div>
-            <p className="section-label mb-4 text-white/50">01 · {t("benefits.label")}</p>
-            <h2
-              className="text-white leading-tight mb-6 fade-up"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                fontWeight: 400,
-              }}
-            >
-              {t("benefits.heading")}
-            </h2>
-            <p
-              className="text-white/70 leading-relaxed mb-8 fade-up"
-              style={{ fontFamily: "'Outfit', sans-serif", fontSize: "1rem", fontWeight: 300 }}
-            >
-              {t("benefits.description")}
-            </p>
-            <div className="fade-up">
-              <button
-                type="button"
-                onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-                className="btn-fairway text-xs py-3 px-6"
+      <div className="container relative z-10 py-6 md:py-7 lg:py-8">
+        <div className="fade-up flex max-w-2xl flex-col gap-0.5 sm:flex-row sm:flex-wrap sm:items-baseline sm:gap-x-2.5">
+          <p className="section-label text-[oklch(0.72_0.06_145)]">01 · {t("benefits.label")}</p>
+          <span className="hidden text-white/30 sm:inline" aria-hidden>
+            ·
+          </span>
+          <p
+            className="text-xs leading-snug text-white/55 sm:font-light"
+            style={{ fontFamily: "'Outfit', sans-serif" }}
+          >
+            {t("benefits.stripTagline")}
+          </p>
+        </div>
+
+        <div
+          className="mt-4 flex flex-col divide-y divide-white/10 border-y border-white/10 md:mt-5 md:flex-row md:divide-x md:divide-y-0"
+          role="list"
+        >
+          {benefits.map((b, i) => {
+            const Icon = b.icon;
+            return (
+              <div
+                key={b.id}
+                role="listitem"
+                className="fade-up min-w-0 flex-1 py-3 md:px-4 md:py-2 md:first:pl-0 md:last:pr-0 lg:px-5"
+                style={{ transitionDelay: `${i * 45}ms` }}
               >
-                {t("benefits.cta")}
-              </button>
-            </div>
-
-            {/* Stat row */}
-            <div className="flex gap-8 mt-10 pt-10 border-t fade-up" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-              {(
-                [
-                  {
-                    id: "courses",
-                    num: String(PARTNER_COURSE_COUNT),
-                    labelKey: "benefits.stats.partnerCoursesLabel" as const,
-                  },
-                  {
-                    id: "discount",
-                    num: `${MAX_PARTNER_DISCOUNT}%`,
-                    labelKey: "benefits.stats.maxDiscountLabel" as const,
-                  },
-                  {
-                    id: "breakeven",
-                    num: t("benefits.stats.breakEvenRange"),
-                    labelKey: "benefits.stats.breakEvenLabel" as const,
-                  },
-                ] as const
-              ).map((s) => (
-                <div key={s.id}>
+                <div className="flex items-start gap-2.5">
                   <div
-                    className="text-white font-bold text-2xl"
-                    style={{ fontFamily: "'Outfit', sans-serif" }}
+                    className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-sm"
+                    style={{ background: "oklch(0.42 0.14 145 / 0.22)" }}
+                    aria-hidden
                   >
-                    {s.num}
+                    <Icon size={15} style={{ color: "oklch(0.72 0.12 145)" }} />
                   </div>
-                  <div
-                    className="text-white/50 text-xs uppercase tracking-wider mt-0.5"
-                    style={{ fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {t(s.labelKey)}
+                  <div className="min-w-0">
+                    <div
+                      className="text-[9px] font-semibold uppercase tracking-[0.14em] text-[oklch(0.7_0.1_145)]"
+                      style={{ fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {b.highlight}
+                    </div>
+                    <h3
+                      className="text-white text-sm font-semibold leading-snug md:text-[0.9375rem] md:leading-snug"
+                      style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
+                    >
+                      {b.title}
+                    </h3>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
+              </div>
+            );
+          })}
+        </div>
 
-          {/* Right: 2x2 benefit cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {benefits.map((b, i) => {
-              const Icon = b.icon;
-              return (
-                <div
-                  key={b.id}
-                  className="fade-up rounded-sm p-6"
-                  style={{
-                    background: "rgba(255,255,255,0.06)",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    transitionDelay: `${i * 80}ms`,
-                  }}
-                >
-                  <div
-                    className="w-10 h-10 rounded-sm flex items-center justify-center mb-4"
-                    style={{ background: "oklch(0.42 0.14 145 / 0.2)" }}
-                  >
-                    <Icon size={18} style={{ color: "oklch(0.65 0.14 145)" }} />
-                  </div>
-                  <div
-                    className="text-xs font-semibold uppercase tracking-widest mb-1"
-                    style={{ color: "oklch(0.65 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {b.highlight}
-                  </div>
-                  <h3
-                    className="text-white font-semibold text-lg mb-2"
-                    style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
-                  >
-                    {b.title}
-                  </h3>
-                  <p
-                    className="text-white/60 text-sm leading-relaxed"
-                    style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
-                  >
-                    {b.body}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+        <div className="mt-6 flex justify-center md:mt-7 fade-up">
+          <button
+            type="button"
+            onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
+            className="btn-fairway text-[11px] py-2.5 px-5 tracking-[0.14em]"
+          >
+            {t("benefits.cta")}
+          </button>
         </div>
       </div>
     </section>
