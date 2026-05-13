@@ -84,7 +84,7 @@ const translations: Record<Language, Record<string, string>> = {
     // How It Works
     "howItWorks.title": "From sign-up to first tee in minutes.",
     "howItWorks.step1": "Sign Up",
-    "howItWorks.step1Desc": "Provide your details and upload a selfie.",
+    "howItWorks.step1Desc": "Provide your details and a front-facing verification selfie before you pay.",
     "howItWorks.step2": "Get Your Card",
     "howItWorks.step2Desc": "Digital pass appears instantly in your wallet.",
     "howItWorks.step3": "Play",
@@ -113,6 +113,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.verificationPhoto": "Verification Photo",
     "pricing.photoRequired": "Required: Front-facing. Used for Digital ID only.",
     "pricing.takeUploadPhoto": "Take or Upload Photo",
+    "pricing.removePhoto": "Remove",
     "pricing.continuePayment": "CONTINUE TO PAYMENT",
     "pricing.savingForm": "Saving…",
     "pricing.savePhoto": "Save photo",
@@ -404,7 +405,7 @@ const translations: Record<Language, Record<string, string>> = {
     // How It Works
     "howItWorks.title": "Del registro al primer golpe en minutos.",
     "howItWorks.step1": "Regístrate",
-    "howItWorks.step1Desc": "Proporciona tus datos y carga una selfie.",
+    "howItWorks.step1Desc": "Proporciona tus datos y una selfie de verificación de frente antes de pagar.",
     "howItWorks.step2": "Obtén Tu Membresía",
     "howItWorks.step2Desc": "El pase digital aparece instantáneamente en tu billetera.",
     "howItWorks.step3": "Juega",
@@ -433,6 +434,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.verificationPhoto": "Foto de Verificación",
     "pricing.photoRequired": "Requerido: De frente. Se usa solo para ID Digital.",
     "pricing.takeUploadPhoto": "Tomar o Cargar Foto",
+    "pricing.removePhoto": "Quitar",
     "pricing.continuePayment": "CONTINUAR AL PAGO",
     "pricing.savingForm": "Guardando…",
     "pricing.savePhoto": "Guardar foto",

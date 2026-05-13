@@ -1,29 +1,17 @@
 /*
  * PricingSection — Links Golf Membership
  * Design: Dark full-width panel, centered conversion card
- * Multi-step form: Player Details → Stripe Checkout → Digital ID
+ * Multi-step form: Player details + verification photo → Stripe checkout
  */
 
-import { useState, useRef, useEffect } from "react";
-import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Smartphone, Loader2 } from "lucide-react";
+import { useState, useRef } from "react";
+import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import {
-  activateMembership,
-  isSupabaseConfigured,
-  saveMemberSignup,
-  uploadMemberPhoto,
-  updateMemberPhotoUrl,
-} from "@/lib/supabase";
+import { isSupabaseConfigured, saveMemberSignup } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { DigitalMemberCard } from "@/components/DigitalMemberCard";
-import {
-  MEMBER_CARD_AERIAL_IMAGE,
-  formatMemberNumberFromId,
-  formatCardExpiryMonthYear,
-  formatCardSeasonLabel,
-} from "@/lib/memberCardDisplay";
+import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -36,7 +24,7 @@ const getFeatures = (t: any) => [
   t("pricing.features.noBlackout"),
 ];
 
-type Step = 1 | 2 | 3;
+type Step = 1 | 2;
 
 export default function PricingSection() {
   const { t } = useLanguage();
@@ -46,8 +34,6 @@ export default function PricingSection() {
   const [postPhotoName, setPostPhotoName] = useState("");
   const [postPhotoFile, setPostPhotoFile] = useState<File | null>(null);
   const [photoPreviewUrl, setPhotoPreviewUrl] = useState<string | null>(null);
-  const [photoSaved, setPhotoSaved] = useState(false);
-  const [isSavingPhoto, setIsSavingPhoto] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string>("");
   const [memberId, setMemberId] = useState<string | null>(null);
@@ -58,74 +44,7 @@ export default function PricingSection() {
   const [signupFirstName, setSignupFirstName] = useState("");
   const [signupLastName, setSignupLastName] = useState("");
   const [signupEmail, setSignupEmail] = useState("");
-  const [activationInfo, setActivationInfo] = useState<{
-    activatedAt: string;
-    expiresAt: string;
-  } | null>(null);
   const postPhotoRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    setActivationInfo(null);
-  }, [memberId]);
-
-  useEffect(() => {
-    if (step !== 3) return;
-    setPostPhotoName("");
-    setPostPhotoFile(null);
-    setPhotoPreviewUrl(null);
-    setPhotoSaved(false);
-    setError("");
-  }, [step]);
-
-  useEffect(() => {
-    if (step !== 3 || !memberId || !isSupabaseConfigured) return;
-    const now = new Date();
-    const expiresDate = new Date(now.getTime() + 365 * 24 * 60 * 60 * 1000);
-
-    activateMembership({
-      memberId,
-      activatedAt: now.toISOString(),
-      expiresAt: expiresDate.toISOString(),
-    })
-      .then((row: { activated_at?: string; expires_at?: string } | undefined) => {
-        setActivationInfo({
-          activatedAt: row?.activated_at ?? now.toISOString(),
-          expiresAt: row?.expires_at ?? expiresDate.toISOString(),
-        });
-      })
-      .catch((err) => {
-        console.error("Failed to activate membership:", err);
-      });
-  }, [step, memberId]);
-
-  const handleSavePhoto = async () => {
-    setError("");
-    const prevPreview = photoPreviewUrl;
-    if (!postPhotoFile || !memberId || !signupEmail) {
-      setError(t("pricing.choosePhoto"));
-      return;
-    }
-    if (!isSupabaseConfigured) {
-      setError(
-        "Photo upload is unavailable in this environment (Supabase env vars are not set).",
-      );
-      return;
-    }
-    setIsSavingPhoto(true);
-    try {
-      const url = await uploadMemberPhoto(postPhotoFile, signupEmail);
-      if (!url) throw new Error("No photo URL returned");
-      await updateMemberPhotoUrl(memberId, url);
-      if (prevPreview?.startsWith("blob:")) URL.revokeObjectURL(prevPreview);
-      setPhotoPreviewUrl(url);
-      setPhotoSaved(true);
-    } catch (err) {
-      console.error("Error saving photo:", err);
-      setError(t("pricing.savePhotoError"));
-    } finally {
-      setIsSavingPhoto(false);
-    }
-  };
 
   const handleContinueToPayment = async () => {
     setError("");
@@ -156,6 +75,12 @@ export default function PricingSection() {
         return;
       }
 
+      if (!postPhotoFile) {
+        setError(t("pricing.choosePhoto"));
+        setIsSubmitting(false);
+        return;
+      }
+
       setSignupFirstName(firstName);
       setSignupLastName(lastName);
       setSignupEmail(email);
@@ -166,10 +91,17 @@ export default function PricingSection() {
         email,
         phone,
         address: address || "",
+        photoFile: postPhotoFile,
       });
 
       if (member?.id) {
         setMemberId(String(member.id));
+      }
+
+      const row = member as { photo_url?: string | null } | undefined;
+      if (row?.photo_url) {
+        if (photoPreviewUrl?.startsWith("blob:")) URL.revokeObjectURL(photoPreviewUrl);
+        setPhotoPreviewUrl(row.photo_url);
       }
 
       setStep(2);
@@ -258,13 +190,6 @@ export default function PricingSection() {
     backgroundPosition: "center",
     backgroundAttachment: "fixed",
   };
-
-  const memberCardName = `${signupFirstName} ${signupLastName}`.trim() || "—";
-  const memberNoDisplay = memberId ? formatMemberNumberFromId(memberId) : "—";
-  const validUntilDisplay =
-    activationInfo ? formatCardExpiryMonthYear(activationInfo.expiresAt) : "—";
-  const seasonDisplay =
-    activationInfo ? formatCardSeasonLabel(activationInfo.activatedAt) : "—";
 
   return (
     <section
@@ -421,7 +346,7 @@ export default function PricingSection() {
               className="flex border-b"
               style={{ borderColor: "oklch(0.88 0.02 85)" }}
             >
-              {([1, 2, 3] as Step[]).map((s) => (
+              {([1, 2] as Step[]).map((s) => (
                 <div
                   key={s}
                   className="flex-1 py-3 text-center text-xs font-semibold uppercase tracking-widest transition-all"
@@ -432,7 +357,7 @@ export default function PricingSection() {
                     borderBottom: step > s ? "2px solid oklch(0.42 0.14 145)" : "none",
                   }}
                 >
-                  {s === 1 ? t("pricing.details") : s === 2 ? t("pricing.payment") : t("pricing.digitalId")}
+                  {s === 1 ? t("pricing.details") : t("pricing.payment")}
                 </div>
               ))}
             </div>
@@ -527,6 +452,90 @@ export default function PricingSection() {
                       className={inputClass}
                       style={inputStyle}
                     />
+                  </div>
+                  <div
+                    className="rounded-sm p-4 mb-2"
+                    style={{
+                      background: "oklch(0.42 0.14 145 / 0.06)",
+                      border: "1px solid oklch(0.42 0.14 145 / 0.2)",
+                    }}
+                  >
+                    <p
+                      className="text-xs font-semibold uppercase tracking-widest mb-1"
+                      style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.verificationPhoto")} *
+                    </p>
+                    <p
+                      className="text-sm mb-2 leading-snug"
+                      style={{ color: "oklch(0.45 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.postPhotoBody")}
+                    </p>
+                    <p
+                      className="text-xs mb-3"
+                      style={{ color: "oklch(0.5 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.postPhotoFooter")}
+                    </p>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <input
+                        ref={postPhotoRef}
+                        type="file"
+                        accept="image/*"
+                        capture="user"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.currentTarget.files?.[0];
+                          if (file) {
+                            setPostPhotoFile(file);
+                            setPostPhotoName(file.name);
+                            const reader = new FileReader();
+                            reader.onload = (event) => {
+                              setPhotoPreviewUrl(event.target?.result as string);
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => postPhotoRef.current?.click()}
+                        className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-sm border min-w-[10rem]"
+                        style={{
+                          borderColor: "oklch(0.88 0.02 85)",
+                          color: "oklch(0.42 0.14 145)",
+                          fontFamily: "'Outfit', sans-serif",
+                          fontWeight: 500,
+                        }}
+                      >
+                        <Camera size={16} />
+                        {postPhotoName || t("pricing.takeUploadPhoto")}
+                      </button>
+                      {photoPreviewUrl && (
+                        <div className="flex items-center gap-2">
+                          <img
+                            src={photoPreviewUrl}
+                            alt=""
+                            className="h-16 w-16 rounded-full object-cover border shrink-0"
+                            style={{ borderColor: "oklch(0.88 0.02 85)" }}
+                          />
+                          <button
+                            type="button"
+                            className="text-xs underline"
+                            style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                            onClick={() => {
+                              setPhotoPreviewUrl(null);
+                              setPostPhotoFile(null);
+                              setPostPhotoName("");
+                              if (postPhotoRef.current) postPhotoRef.current.value = "";
+                            }}
+                          >
+                            {t("pricing.removePhoto")}
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                   <div className="space-y-3 pt-1">
                     <label className="flex gap-3 items-start cursor-pointer">
@@ -698,113 +707,6 @@ export default function PricingSection() {
                     style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
                   >
                     🔒 {t("pricing.securedByStripe")}
-                  </p>
-                </div>
-              )}
-
-              {step === 3 && (
-                <div className="space-y-5">
-                  <div className="text-center">
-                    <div
-                      className="w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3"
-                      style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
-                    >
-                      <Check size={24} style={{ color: "oklch(0.42 0.14 145)" }} />
-                    </div>
-                    <h3
-                      className="font-semibold text-xl"
-                      style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
-                    >
-                      {t("pricing.success")}
-                    </h3>
-                    <p
-                      className="text-sm mt-1 max-w-sm mx-auto"
-                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.successDesc")}
-                    </p>
-                  </div>
-
-                  <DigitalMemberCard
-                    displayName={memberCardName}
-                    memberNumber={memberNoDisplay}
-                    validUntil={validUntilDisplay}
-                    season={seasonDisplay}
-                    photoUrl={photoPreviewUrl}
-                  />
-
-                  <div>
-                    <h4
-                      className="font-semibold text-base mb-1"
-                      style={{ fontFamily: "'Cormorant Garamond', serif", color: "oklch(0.13 0.05 145)" }}
-                    >
-                      {t("pricing.postPhotoHeading")}
-                    </h4>
-                    <p
-                      className="text-sm mb-3"
-                      style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {t("pricing.postPhotoDesc")}
-                    </p>
-                    <div className="flex gap-3">
-                      <input
-                        ref={postPhotoRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={(e) => {
-                          const file = e.currentTarget.files?.[0];
-                          if (file) {
-                            setPostPhotoFile(file);
-                            setPostPhotoName(file.name);
-                            const reader = new FileReader();
-                            reader.onload = (event) => {
-                              setPhotoPreviewUrl(event.target?.result as string);
-                            };
-                            reader.readAsDataURL(file);
-                          }
-                        }}
-                      />
-                      <button
-                        type="button"
-                        onClick={() => postPhotoRef.current?.click()}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-sm border"
-                        style={{
-                          borderColor: "oklch(0.88 0.02 85)",
-                          color: "oklch(0.42 0.14 145)",
-                          fontFamily: "'Outfit', sans-serif",
-                          fontWeight: 500,
-                        }}
-                      >
-                        <Camera size={14} />
-                        {postPhotoName || t("pricing.choosePhoto")}
-                      </button>
-                      {postPhotoFile && !photoSaved && (
-                        <button
-                          type="button"
-                          onClick={handleSavePhoto}
-                          disabled={isSavingPhoto}
-                          className="flex-1 btn-fairway text-sm py-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {isSavingPhoto ? t("pricing.saving") : t("pricing.save")}
-                        </button>
-                      )}
-                      {photoSaved && (
-                        <div
-                          className="flex-1 flex items-center justify-center rounded-sm"
-                          style={{ background: "oklch(0.42 0.14 145 / 0.1)" }}
-                        >
-                          <Check size={16} style={{ color: "oklch(0.42 0.14 145)" }} />
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <p
-                    className="text-xs text-center"
-                    style={{ color: "oklch(0.65 0.04 145)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    {t("pricing.nextSteps")}
                   </p>
                 </div>
               )}

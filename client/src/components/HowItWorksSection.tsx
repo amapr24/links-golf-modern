@@ -18,8 +18,8 @@ function getSteps(language: Language) {
       icon: CreditCard,
       title: L ? "Únete en línea" : "Join Online",
       body: L
-        ? "Completa el formulario de membresía, paga los $199 al año y, después del pago, sube tu foto para emitir tu pase de billetera. Todo en menos de 5 minutos."
-        : "Fill out the short membership form, complete the $199 annual payment, then add your photo after checkout so we can issue your wallet pass — all in under 5 minutes.",
+        ? "Completa el formulario de membresía, sube una selfie de verificación de frente y luego paga los $199 al año. Emitimos tu pase de billetera con esa foto. Todo en menos de 5 minutos."
+        : "Fill out the membership form, add a front-facing verification selfie, then complete your $199 annual payment. We use that photo for your wallet pass — all in under 5 minutes.",
     },
     {
       number: "02",
