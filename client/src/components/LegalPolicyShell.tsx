@@ -2,6 +2,7 @@
  * LegalPolicyShell — shared layout for policy pages (refund, terms, privacy)
  */
 
+import { useLayoutEffect } from "react";
 import { Link } from "wouter";
 import Navbar from "@/components/Navbar";
 import FooterSection from "@/components/FooterSection";
@@ -19,6 +20,16 @@ export function LegalPolicyShell({
   paragraphKeys,
 }: LegalPolicyShellProps) {
   const { t } = useLanguage();
+
+  // Client-side navigations (wouter) keep scrollY from the previous page; policy pages are short
+  // so the viewport lands near the footer. Reset scroll (and drop stray #hash) on mount.
+  useLayoutEffect(() => {
+    const { pathname, search, hash } = window.location;
+    if (hash) {
+      window.history.replaceState(null, "", pathname + (search || ""));
+    }
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#F7F3EC]">
