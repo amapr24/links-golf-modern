@@ -7,6 +7,7 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { scrollElementIntoViewMotionSafe } from "@/lib/scroll";
 import LanguageToggle from "./LanguageToggle";
 
 export default function Navbar() {
@@ -29,8 +30,7 @@ export default function Navbar() {
 
   const handleNavClick = (href: string) => {
     setMenuOpen(false);
-    const el = document.querySelector(href);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+    scrollElementIntoViewMotionSafe(document.querySelector(href));
   };
 
   return (

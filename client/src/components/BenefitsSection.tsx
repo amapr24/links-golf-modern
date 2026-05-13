@@ -5,6 +5,8 @@
 
 import { DollarSign, Smartphone, ShieldCheck, CalendarDays } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { PARTNER_COURSE_COUNT, MAX_PARTNER_DISCOUNT } from "@/data/partnerCourses";
+import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
@@ -85,7 +87,8 @@ export default function BenefitsSection() {
             </p>
             <div className="fade-up">
               <button
-                onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
+                type="button"
+                onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
                 className="btn-fairway text-xs py-3 px-6"
               >
                 {t("benefits.cta")}
@@ -94,12 +97,26 @@ export default function BenefitsSection() {
 
             {/* Stat row */}
             <div className="flex gap-8 mt-10 pt-10 border-t fade-up" style={{ borderColor: "rgba(255,255,255,0.1)" }}>
-              {[
-                { num: "15", label: "Courses" },
-                { num: "25%", label: "Max Discount" },
-                { num: "3–4", label: "Rounds to Break Even" },
-              ].map((s) => (
-                <div key={s.label}>
+              {(
+                [
+                  {
+                    id: "courses",
+                    num: String(PARTNER_COURSE_COUNT),
+                    labelKey: "benefits.stats.partnerCoursesLabel" as const,
+                  },
+                  {
+                    id: "discount",
+                    num: `${MAX_PARTNER_DISCOUNT}%`,
+                    labelKey: "benefits.stats.maxDiscountLabel" as const,
+                  },
+                  {
+                    id: "breakeven",
+                    num: t("benefits.stats.breakEvenRange"),
+                    labelKey: "benefits.stats.breakEvenLabel" as const,
+                  },
+                ] as const
+              ).map((s) => (
+                <div key={s.id}>
                   <div
                     className="text-white font-bold text-2xl"
                     style={{ fontFamily: "'Outfit', sans-serif" }}
@@ -110,7 +127,7 @@ export default function BenefitsSection() {
                     className="text-white/50 text-xs uppercase tracking-wider mt-0.5"
                     style={{ fontFamily: "'Outfit', sans-serif" }}
                   >
-                    {s.label}
+                    {t(s.labelKey)}
                   </div>
                 </div>
               ))}

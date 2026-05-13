@@ -4,11 +4,12 @@
  */
 
 import { useLanguage } from "@/contexts/LanguageContext";
+import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 export default function FooterSection() {
   const { t } = useLanguage();
   const scrollTo = (id: string) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+    scrollSelectorIntoViewMotionSafe(id);
   };
 
   return (

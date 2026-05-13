@@ -50,6 +50,26 @@ export default function Home() {
     return () => observer.disconnect();
   }, [language]);
 
+  // Deep-link targets: show animated content immediately (avoids invisible focus until IO runs)
+  useEffect(() => {
+    const revealInSection = (id: string) => {
+      const root = document.getElementById(id);
+      if (!root) return;
+      root.querySelectorAll(".fade-up, .underline-green").forEach((node) => {
+        node.classList.add("visible");
+      });
+    };
+
+    const syncFromHash = () => {
+      const id = window.location.hash.replace(/^#/, "");
+      if (id) revealInSection(id);
+    };
+
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, [language]);
+
   return (
     <div className="min-h-screen bg-[#F7F3EC]">
       <Navbar />

@@ -8,6 +8,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 const HERO_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/hero-golf-pr-CZJDsMr2L3k8yznVeYKFj5.webp";
 
@@ -21,10 +22,10 @@ export default function HeroSection() {
   }, []);
 
   const scrollToPricing = () => {
-    document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" });
+    scrollSelectorIntoViewMotionSafe("#pricing");
   };
   const scrollToCourses = () => {
-    document.querySelector("#courses")?.scrollIntoView({ behavior: "smooth" });
+    scrollSelectorIntoViewMotionSafe("#courses");
   };
 
   return (

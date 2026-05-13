@@ -48,6 +48,10 @@ const translations: Record<Language, Record<string, string>> = {
     "benefits.price.highlight": "NO BLACKOUT DATES",
     "benefits.price.title": "Play When You Want",
     "benefits.price.body": "Play whenever you want—weekdays, weekends, holidays.",
+    "benefits.stats.partnerCoursesLabel": "Partner courses",
+    "benefits.stats.maxDiscountLabel": "Max discount",
+    "benefits.stats.breakEvenLabel": "Rounds to break even",
+    "benefits.stats.breakEvenRange": "3–4",
 
     // Courses
     "courses.label": "OUR NETWORK",
@@ -58,6 +62,8 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filter.all": "ALL",
     "courses.filter.resort": "RESORT",
     "courses.filter.club": "CLUB",
+    "courses.discountOff": "OFF",
+    "courses.scrollHint": "← Scroll to see all →",
 
     // How It Works
     "howItWorks.title": "From sign-up to first tee in minutes.",
@@ -217,6 +223,10 @@ const translations: Record<Language, Record<string, string>> = {
     "benefits.price.highlight": "SIN FECHAS BLOQUEADAS",
     "benefits.price.title": "Juega Cuando Quieras",
     "benefits.price.body": "Juega cuando quieras — entre semana, fines de semana, días festivos.",
+    "benefits.stats.partnerCoursesLabel": "Campos asociados",
+    "benefits.stats.maxDiscountLabel": "Descuento máximo",
+    "benefits.stats.breakEvenLabel": "Rondas para recuperarlo",
+    "benefits.stats.breakEvenRange": "3 a 4",
 
     // Courses
     "courses.label": "NUESTRA RED",
@@ -227,6 +237,8 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filter.all": "TODOS",
     "courses.filter.resort": "RESORT",
     "courses.filter.club": "CLUB",
+    "courses.discountOff": "DTO",
+    "courses.scrollHint": "← Desliza para ver todos →",
 
     // How It Works
     "howItWorks.title": "Del registro al primer golpe en minutos.",

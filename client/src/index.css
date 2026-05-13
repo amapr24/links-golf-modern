@@ -175,6 +175,10 @@
   .btn-fairway:active {
     transform: scale(0.97);
   }
+  .btn-fairway:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
+  }
 
   .btn-outline-white {
     display: inline-flex;
@@ -202,6 +206,10 @@
   }
   .btn-outline-white:active {
     transform: scale(0.97);
+  }
+  .btn-outline-white:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 3px;
   }
 
   /* Section label */
@@ -247,6 +255,24 @@
     transform: translateY(0);
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .fade-up {
+      opacity: 1;
+      transform: none;
+      transition: none;
+    }
+    .underline-green::after {
+      transform: scaleX(1);
+      transition: none;
+    }
+    .course-card:hover {
+      transform: none;
+    }
+    .sticky-cta {
+      transition: none;
+    }
+  }
+
   /* Course discount card */
   .course-card {
     background: white;
@@ -275,5 +301,15 @@
   }
   .sticky-cta.visible {
     transform: translateY(0);
+  }
+
+  .filter-pill:focus-visible {
+    outline: 2px solid oklch(0.42 0.14 145);
+    outline-offset: 2px;
+  }
+
+  .fairway-text-control:focus-visible {
+    outline: 2px solid oklch(0.42 0.14 145);
+    outline-offset: 3px;
   }
 }

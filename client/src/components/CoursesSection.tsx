@@ -4,29 +4,13 @@
  * 15 partner courses with location and discount percentage
  */
 
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { MapPin, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { partnerCourses } from "@/data/partnerCourses";
+import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
-
-const courses = [
-  { name: "TPC Dorado Beach", location: "Dorado", discount: 25, tier: "resort" },
-  { name: "Royal Isabela", location: "Isabela", discount: 20, tier: "resort" },
-  { name: "Bahia Beach", location: "Rio Grande", discount: 20, tier: "resort" },
-  { name: "Wyndham Rio Mar", location: "Rio Grande", discount: 20, tier: "resort" },
-  { name: "El Conquistador", location: "Las Croabas", discount: 20, tier: "resort" },
-  { name: "Dorado del Mar", location: "Dorado", discount: 20, tier: "resort" },
-  { name: "El Legado", location: "Guayama", discount: 20, tier: "resort" },
-  { name: "Palmas del Mar", location: "Humacao", discount: 20, tier: "resort" },
-  { name: "Caguas Real", location: "Caguas", discount: 15, tier: "club" },
-  { name: "Coco Beach", location: "Rio Grande", discount: 15, tier: "club" },
-  { name: "Club Deportivo del Oeste", location: "Cabo Rojo", discount: 15, tier: "club" },
-  { name: "Fort Buchanan", location: "Guaynabo", discount: 15, tier: "club" },
-  { name: "Rio Bayamon", location: "Bayamón", discount: 15, tier: "club" },
-  { name: "Punta Borinquen", location: "Aguadilla", discount: 15, tier: "club" },
-  { name: "Costa Caribe", location: "Ponce", discount: 15, tier: "club" },
-];
 
 const discountColor = (d: number) => {
   if (d >= 25) return { bg: "oklch(0.42 0.14 145)", text: "white" };
@@ -38,7 +22,17 @@ export default function CoursesSection() {
   const { t } = useLanguage();
   const [filter, setFilter] = useState<"all" | "resort" | "club">("all");
 
-  const filtered = courses.filter((c) => filter === "all" || c.tier === filter);
+  const filtered = partnerCourses.filter((c) => filter === "all" || c.tier === filter);
+
+  // Course cards remount when `filter` changes; Home's IO only runs on mount/language,
+  // so new nodes never get `.visible` and stay opacity-0 without this.
+  useLayoutEffect(() => {
+    const root = document.getElementById("courses");
+    if (!root) return;
+    root.querySelectorAll(".course-card.fade-up").forEach((el) => {
+      el.classList.add("visible");
+    });
+  }, [filter]);
 
   const coursesBackgroundStyle = {
     backgroundImage: `url(${AERIAL_IMAGE})`,
@@ -99,8 +93,9 @@ export default function CoursesSection() {
             {(["all", "resort", "club"] as const).map((f) => (
               <button
                 key={f}
+                type="button"
                 onClick={() => setFilter(f)}
-                className="px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                className="filter-pill px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
                 style={{
                   fontFamily: "'Outfit', sans-serif",
                   borderRadius: "2px",
@@ -153,7 +148,7 @@ export default function CoursesSection() {
                     className="text-[9px] uppercase tracking-wider mt-0.5"
                     style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
                   >
-                    OFF
+                    {t("courses.discountOff")}
                   </span>
                 </div>
               </div>
@@ -202,7 +197,7 @@ export default function CoursesSection() {
                         className="text-[9px] uppercase tracking-wider mt-0.5"
                         style={{ color: colors.text, opacity: 0.75, fontFamily: "'Outfit', sans-serif" }}
                       >
-                        OFF
+                        {t("courses.discountOff")}
                       </span>
                     </div>
                   </div>
@@ -214,7 +209,7 @@ export default function CoursesSection() {
             className="text-center text-xs mt-3"
             style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.55 0.06 145)" }}
           >
-            ← Scroll to see all →
+            {t("courses.scrollHint")}
           </div>
         </div>
 
@@ -226,7 +221,7 @@ export default function CoursesSection() {
             </p>
             <a
               href="/courses"
-              className="text-sm font-semibold flex items-center gap-1 transition-colors duration-200"
+              className="fairway-text-control text-sm font-semibold flex items-center gap-1 transition-colors duration-200 rounded-sm"
               style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
               onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
               onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
@@ -236,8 +231,8 @@ export default function CoursesSection() {
           </div>
           <button
             type="button"
-            onClick={() => document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" })}
-            className="flex items-center gap-2 text-sm font-semibold"
+            onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
+            className="fairway-text-control flex items-center gap-2 text-sm font-semibold rounded-sm"
             style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
           >
             {t("nav.getCard")} <ArrowRight size={14} />

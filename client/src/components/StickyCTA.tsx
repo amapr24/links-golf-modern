@@ -4,13 +4,15 @@
  * Shows price and CTA button
  */
 
+import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
+
 interface StickyCTAProps {
   visible: boolean;
 }
 
 export default function StickyCTA({ visible }: StickyCTAProps) {
   const scrollToPricing = () => {
-    document.querySelector("#pricing")?.scrollIntoView({ behavior: "smooth" });
+    scrollSelectorIntoViewMotionSafe("#pricing");
   };
 
   return (
@@ -43,6 +45,7 @@ export default function StickyCTA({ visible }: StickyCTAProps) {
           </div>
         </div>
         <button
+          type="button"
           onClick={scrollToPricing}
           className="btn-fairway text-xs py-3 px-6 flex-shrink-0"
         >
