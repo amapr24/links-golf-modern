@@ -147,6 +147,8 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.postPhotoBody":
       "Your wallet pass is photo-bound, so we can't issue it without a verified photo. It only appears on your Digital ID and is never shared.",
     "pricing.postPhotoFooter": "Required · Front-facing · Used for your Digital ID only.",
+    "pricing.photoPickerHint":
+      "When you tap the button below, your phone should offer the camera and your photo library—use whichever you prefer.",
     "pricing.savingPhoto": "Saving…",
     "pricing.walletDisabledHint":
       "Add your photo above to enable Apple Wallet and Google Wallet.",
@@ -478,6 +480,8 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.postPhotoBody":
       "Tu pase de billetera va ligado a la foto; no podemos emitirlo sin una foto verificada. Solo aparece en tu ID digital y no se comparte.",
     "pricing.postPhotoFooter": "Obligatoria · De frente · Solo para tu ID digital.",
+    "pricing.photoPickerHint":
+      "Al tocar el botón de abajo, tu teléfono debería ofrecer la cámara y la galería: usa la que prefieras.",
     "pricing.savingPhoto": "Guardando…",
     "pricing.walletDisabledHint":
       "Sube tu foto arriba para activar Apple Wallet y Google Wallet.",

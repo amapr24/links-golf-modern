@@ -489,12 +489,17 @@ export default function PricingSection() {
                     >
                       {t("pricing.postPhotoFooter")}
                     </p>
+                    <p
+                      className="text-xs mb-3 leading-snug"
+                      style={{ color: "oklch(0.55 0.05 145)", fontFamily: "'Outfit', sans-serif" }}
+                    >
+                      {t("pricing.photoPickerHint")}
+                    </p>
                     <div className="flex flex-wrap items-center gap-3">
                       <input
                         ref={postPhotoRef}
                         type="file"
                         accept="image/*"
-                        capture="user"
                         className="hidden"
                         onChange={(e) => {
                           const file = e.currentTarget.files?.[0];
