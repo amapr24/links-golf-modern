@@ -12,8 +12,12 @@ import {
   signMemberSessionToken,
 } from "./memberJwt";
 import { readMemberSessionFromRequest } from "./memberSessionCookie";
-import { fetchMemberWelcomeFields } from "./memberWelcomeFromDb";
+import { fetchMemberWelcomeFields, markWelcomeEmailSentAtMember } from "./memberWelcomeFromDb";
 import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
+import {
+  getRequestClientIp,
+  recordSendOtpAttempt,
+} from "./sendOtpRateLimit";
 import {
   hasWelcomeEmailBeenSent,
   markWelcomeEmailSent,
@@ -51,8 +55,18 @@ export const appRouter = router({
 
     sendOtp: publicProcedure
       .input(z.object({ email: z.string().email() }))
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         try {
+          const clientIp = getRequestClientIp(ctx.req);
+          const rate = await recordSendOtpAttempt(input.email, clientIp);
+          if (!rate.allowed) {
+            return {
+              success: false,
+              error:
+                "Too many verification requests. Please try again later.",
+            };
+          }
+
           // Generate 6-digit OTP
           const otp = String(randomInt(0, 1_000_000)).padStart(6, "0");
 
@@ -116,14 +130,17 @@ export const appRouter = router({
             emailNorm
           );
           if (welcome) {
-            const alreadyWelcomed = await hasWelcomeEmailBeenSent(emailNorm);
-            if (!alreadyWelcomed) {
+            const alreadyFromDb = Boolean(welcome.welcomeEmailSentAt);
+            const alreadyFromCache =
+              alreadyFromDb ? false : await hasWelcomeEmailBeenSent(emailNorm);
+            if (!alreadyFromDb && !alreadyFromCache) {
               const mailed = await sendWelcomeEmail(
                 emailNorm,
                 welcome.firstName,
                 welcome.memberNumber
               );
               if (mailed) {
+                await markWelcomeEmailSentAtMember(input.memberId);
                 await markWelcomeEmailSent(emailNorm);
               }
             }

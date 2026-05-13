@@ -24,8 +24,10 @@ Status is approximate; update when you ship a slice.
 
 | # | Item | Status (repo) |
 |---|------|----------------|
-| 4 | Rate-limit `member.sendOtp` (per IP + per email; Redis or in-memory fallback) | **Not done** |
-| 5 | Optional: persist “welcome sent” on `members` (e.g. `welcome_email_sent_at`) so multi-region / restarts don’t rely only on Redis | **Not done** |
+| 4 | Rate-limit `member.sendOtp` (per IP + per email; Redis or in-memory fallback) | **Done** — [`server/sendOtpRateLimit.ts`](../server/sendOtpRateLimit.ts), wired in [`server/routers.ts`](../server/routers.ts) before Resend. |
+| 5 | Optional: persist “welcome sent” on `members` (e.g. `welcome_email_sent_at`) so multi-region / restarts don’t rely only on Redis | **Done** — column + [`markWelcomeEmailSentAtMember`](../server/memberWelcomeFromDb.ts); SQL in [`references/migrations/supabase/001_members_welcome_email_sent_at.sql`](../references/migrations/supabase/001_members_welcome_email_sent_at.sql). Redis/email key in [`welcomeEmailOnce`](../server/welcomeEmailOnce.ts) remains as fallback when the column is absent or for legacy sends. |
+
+Item **5** shipped with **dual write**: after Resend succeeds we set **`members.welcome_email_sent_at`** (when migration applied) and still call **`markWelcomeEmailSent`** for Redis/memory dedupe across processes without DB reads.
 
 ---
 

@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { appRouter } from "./routers";
 import { peekOtpForTests, resetOtpStoreForTests } from "./otpStore";
 import { resetWelcomeEmailSentForTests } from "./welcomeEmailOnce";
+import { resetSendOtpRateLimitForTests } from "./sendOtpRateLimit";
 
 // Mock the email service
 vi.mock("./email", () => ({
@@ -18,6 +19,7 @@ describe("member.sendOtp", () => {
   beforeEach(() => {
     resetOtpStoreForTests();
     resetWelcomeEmailSentForTests();
+    resetSendOtpRateLimitForTests();
     // Create a caller with minimal context (no user required for public procedure)
     caller = appRouter.createCaller({
       req: {
@@ -62,5 +64,58 @@ describe("member.sendOtp", () => {
 
     expect(result).toHaveProperty("success");
     expect(typeof result.success).toBe("boolean");
+  });
+});
+
+describe("member.sendOtp rate limits", () => {
+  let caller: ReturnType<typeof appRouter.createCaller>;
+
+  beforeEach(() => {
+    resetOtpStoreForTests();
+    resetWelcomeEmailSentForTests();
+    resetSendOtpRateLimitForTests();
+    vi.stubEnv("SEND_OTP_RATE_WINDOW_MS", "900000");
+    caller = appRouter.createCaller({
+      req: {
+        headers: {},
+        protocol: "https",
+        socket: { remoteAddress: "10.0.0.50" },
+      } as any,
+      res: {} as any,
+      user: null,
+    });
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("blocks after too many sends to the same email in the window", async () => {
+    vi.stubEnv("SEND_OTP_MAX_PER_EMAIL_PER_WINDOW", "2");
+
+    expect((await caller.member.sendOtp({ email: "same@example.com" })).success).toBe(
+      true
+    );
+    expect((await caller.member.sendOtp({ email: "same@example.com" })).success).toBe(
+      true
+    );
+    const blocked = await caller.member.sendOtp({ email: "same@example.com" });
+    expect(blocked.success).toBe(false);
+    expect(blocked.error).toMatch(/Too many verification requests/i);
+  });
+
+  it("blocks after too many sends from the same IP in the window", async () => {
+    vi.stubEnv("SEND_OTP_MAX_PER_IP_PER_WINDOW", "2");
+    vi.stubEnv("SEND_OTP_MAX_PER_EMAIL_PER_WINDOW", "99");
+
+    expect((await caller.member.sendOtp({ email: "u1@example.com" })).success).toBe(
+      true
+    );
+    expect((await caller.member.sendOtp({ email: "u2@example.com" })).success).toBe(
+      true
+    );
+    const blocked = await caller.member.sendOtp({ email: "u3@example.com" });
+    expect(blocked.success).toBe(false);
+    expect(blocked.error).toMatch(/Too many verification requests/i);
   });
 });

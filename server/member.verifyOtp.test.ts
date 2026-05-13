@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { appRouter } from "./routers";
 import { peekOtpForTests, resetOtpStoreForTests } from "./otpStore";
 import { resetWelcomeEmailSentForTests } from "./welcomeEmailOnce";
+import { resetSendOtpRateLimitForTests } from "./sendOtpRateLimit";
 
 const TEST_MEMBER_ID = "550e8400-e29b-41d4-a716-446655440000";
 
@@ -12,11 +13,18 @@ const emailMocks = vi.hoisted(() => ({
 
 vi.mock("./email", () => emailMocks);
 
-vi.mock("./memberWelcomeFromDb", () => ({
+const welcomeDbMocks = vi.hoisted(() => ({
   fetchMemberWelcomeFields: vi.fn(async () => ({
     firstName: "Pat",
     memberNumber: "LGM-001",
+    welcomeEmailSentAt: null as string | null,
   })),
+  markWelcomeEmailSentAtMember: vi.fn(async () => true),
+}));
+
+vi.mock("./memberWelcomeFromDb", () => ({
+  fetchMemberWelcomeFields: welcomeDbMocks.fetchMemberWelcomeFields,
+  markWelcomeEmailSentAtMember: welcomeDbMocks.markWelcomeEmailSentAtMember,
 }));
 
 describe("member.verifyOtp", () => {
@@ -26,7 +34,14 @@ describe("member.verifyOtp", () => {
   beforeEach(() => {
     resetOtpStoreForTests();
     resetWelcomeEmailSentForTests();
+    resetSendOtpRateLimitForTests();
     emailMocks.sendWelcomeEmail.mockClear();
+    welcomeDbMocks.fetchMemberWelcomeFields.mockImplementation(async () => ({
+      firstName: "Pat",
+      memberNumber: "LGM-001",
+      welcomeEmailSentAt: null,
+    }));
+    welcomeDbMocks.markWelcomeEmailSentAtMember.mockClear();
     Object.keys(cookies).forEach(k => delete cookies[k]);
     caller = appRouter.createCaller({
       req: {
@@ -133,5 +148,35 @@ describe("member.verifyOtp", () => {
       memberId: TEST_MEMBER_ID,
     });
     expect(emailMocks.sendWelcomeEmail).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not send welcome when DB already recorded welcome_email_sent_at", async () => {
+    welcomeDbMocks.fetchMemberWelcomeFields.mockResolvedValueOnce({
+      firstName: "Pat",
+      memberNumber: "LGM-001",
+      welcomeEmailSentAt: "2020-01-01T00:00:00.000Z",
+    });
+    await caller.member.sendOtp({ email: "dbdone@example.com" });
+    const otp = peekOtpForTests("dbdone@example.com")!;
+    await caller.member.verifyOtp({
+      email: "dbdone@example.com",
+      otp,
+      memberId: TEST_MEMBER_ID,
+    });
+    expect(emailMocks.sendWelcomeEmail).not.toHaveBeenCalled();
+    expect(welcomeDbMocks.markWelcomeEmailSentAtMember).not.toHaveBeenCalled();
+  });
+
+  it("persists welcome sent time on member after welcome email succeeds", async () => {
+    await caller.member.sendOtp({ email: "markdb@example.com" });
+    const otp = peekOtpForTests("markdb@example.com")!;
+    await caller.member.verifyOtp({
+      email: "markdb@example.com",
+      otp,
+      memberId: TEST_MEMBER_ID,
+    });
+    expect(welcomeDbMocks.markWelcomeEmailSentAtMember).toHaveBeenCalledWith(
+      TEST_MEMBER_ID
+    );
   });
 });
