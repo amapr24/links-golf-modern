@@ -1,8 +1,8 @@
 Links Golf Membership — brand kit (LGM Logos)
 ============================================
 
-Canonical copy (Google Drive — same kit as in this repo):
-https://drive.google.com/drive/folders/1Bgsj2s0aoC3TsnbKgPD_VBkaY_b_I7Kq?usp=share_link
+Canonical copy (Google Drive — same kit as in this repo; **anyone with the link** = viewer, no sign-in required):
+https://drive.google.com/drive/folders/180FaEc3UYn0_3-oaQat2B1Vd_01hPiNH?usp=share_link
 
 Use Drive when you want the latest exports without cloning; use this folder when
 you need assets in CI or pinned to a git revision. Keep both in sync when the
