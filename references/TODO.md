@@ -5,6 +5,23 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 ---
 
+## Status: next main commit (2026-05-13, Prototype #1)
+
+**Shipped (ready to commit / push):**
+
+- [x] **Public marketing vs OAuth:** On `/`, `/courses`, `/login`, and `/404`, the global tRPC error handler no longer redirects visitors to the OAuth portal when the API returns `UNAUTHORIZED` (`client/src/main.tsx`). Member-only flows elsewhere are unchanged.
+- [x] **Share previews (Open Graph + Twitter):** `client/index.html` now declares `og:*` and `twitter:*` tags (title, description, locale hints) so iMessage, WhatsApp, Slack, Facebook, X, etc. can show a proper card.
+- [x] **Resolvable share image URL:** `client/public/og-share.png` is wired as `og:image` and `twitter:image` using a **relative** path (`/og-share.png`) so previews use whatever origin is being shared (preview vs production).
+
+**Follow-up (not closed by this commit — do not check off P0 bullets below until these are done):**
+
+- [ ] **Branded `og-share.png`:** Current file is a **tiny 1×1 placeholder** so the tag is valid. Replace with a **1200×630** branded raster (PNG or JPEG per platform guidance); update `index.html` only if the filename or path changes.
+- [ ] **Bilingual social copy:** Static HTML meta is **EN-first**; add Spanish (and parity) for `og:description` / `twitter:description` when you pick an approach (separate routes, build-time env, or SSR).
+- [ ] **`og:url` + canonical:** Deliberately omitted until a single canonical origin is guaranteed (avoid wrong-domain canonical on Manus previews). Wire `VITE_PUBLIC_SITE_ORIGIN` (or similar) at build time when `linksgolfpr.com` is live.
+- [ ] **Deploy smoke test:** Confirm the hosted Manus/preview URL does not apply any *other* forced login before first paint; this repo’s home page already uses public `member.session` only.
+
+---
+
 ## P0 — Launch Blockers
 
 ### Responsive / layout
@@ -14,10 +31,13 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 - [ ] Fix "Why Join" section so the left-column copy and the right-column feature cards reflow together (single column under ~900px), instead of the cards growing absurdly tall next to a fixed-width left column.
 
 ### Trust / credibility
+
+*Prototype #1 partially advances this block — see **Status: next main commit** at the top of this file. Original P0 acceptance criteria stay open until domain, ES meta, branded image, and live-host verification are done.*
+
 - [ ] Move the site to the production domain `linksgolfpr.com` (currently lives at `linksgolfpr.manus.space`, mismatching the `info@linksgolfpr.com` contact email). Provision SSL on the production domain.
-- [ ] Remove the initial OAuth redirect to `manus.im` for anonymous visitors. The marketing site must be publicly viewable without any login.
-- [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES.
-- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image.
+- [ ] Remove the initial OAuth redirect to `manus.im` for anonymous visitors. The marketing site must be publicly viewable without any login. *(Repo: guarded on public paths; still verify full “no surprise login” behavior on the deployed preview/host.)*
+- [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES. *(Repo: real EN copy in `index.html` + `meta name="description"`; ES-specific OG/Twitter strings not yet in static head.)*
+- [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: uses same-origin `/og-share.png` instead of manuscdn; file is still a placeholder — swap for branded 1200×630 asset.)*
 
 ### Residency verification
 - [ ] Surface the Puerto Rico residency requirement *before* the form, not in fine print at the bottom. Add a prominent residency confirmation gate (radio or checkbox) at the top of the signup flow.
@@ -122,3 +142,65 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 - [ ] Verify the "Add to Apple Wallet" / "Add to Google Wallet" flows succeed on iOS and Android after a test purchase.
 - [ ] Verify ATH Móvil and credit-card payment paths both complete and issue a digital pass.
 - [ ] Verify the residency-verification step blocks non-PR users before charging.
+
+---
+
+## Review annotations (codebase + product)
+
+*Reviewed against this repository on 2026-05-13. Where the deployed Manus preview differs, items are called out.*
+
+### Overall
+
+- **Concurrence:** The backlog is well-prioritized: P0 correctly clusters layout, trust, residency, and legal/refund risks that block a credible launch.
+- **Finding:** Several bullets read as observations from **linksgolfpr.manus.space**; this repo may already diverge (e.g. `client/index.html` has substantive marketing `meta name="description"`, not the generic “conversion-focused website” string). Treat Manus-specific items as **environment / deploy** checks, not only code edits.
+- **Proposal:** Add a one-line **“Source of truth”** note at the top after deploy: either “canonical = production build of this repo” or “canonical = Manus preview until cutover,” so implementers know which checklist row applies.
+
+### P0 — Responsive / layout
+
+- **Concurrence:** Raising the nav breakpoint is justified; dense horizontal nav + logo + utilities is a classic failure mode between tablet and small laptop widths.
+- **Finding:** The header uses Tailwind **`md:` (768px)** for “desktop” behavior: desktop nav and hamburger are `hidden md:flex` / `md:hidden` in `Navbar.tsx`, and `useIsMobile` uses **`MOBILE_BREAKPOINT = 768`**. Aligning “hamburger by ~1024px” means moving these to **`lg:` (1024px)** or a custom breakpoint consistently across `Navbar` and any consumer of `useIsMobile` that assumes 768 for marketing layout.
+- **Proposal:** Prefer **one shared breakpoint token** (CSS variable or TS constant) for “marketing compact header” so `Navbar`, course grids, and `useIsMobile` do not drift again.
+
+### P0 — Trust / credibility
+
+- **Concurrence:** Domain + SSL + email alignment is non-negotiable for trust; OAuth wall on a marketing site is a launch blocker if still true on production.
+- **Finding:** This app’s **`/` route is not wrapped in auth** (`App.tsx` renders `Home` publicly). Unauthorized **tRPC** responses trigger `window.location.href = getLoginUrl()` in `main.tsx`—so anonymous users only get sent to OAuth if something fires an authed query and gets 401. Worth verifying **Home** and marketing routes never prefetch member-only procedures for guests.
+- **Finding:** **`client/index.html`** has no `og:title`, `og:description`, `og:image`, or Twitter card tags—social previews may be worse than “placeholder copy”: platforms may **infer** previews. Filling P0 meta bullets here is still correct; the exact “placeholder” string may be Manus-only.
+- **Proposal:** Add OG/Twitter tags **and** per-locale variants if ES is a first-class URL or `?lang=` strategy; document the chosen pattern (static HTML vs. SSR later).
+
+### P0 — Residency verification
+
+- **Concurrence:** Gating residency **before** payment and reconciling FAQ vs. form copy is essential for chargebacks and regulatory posture.
+- **Proposal:** Split into two deliverables: (1) **UX/legal copy** alignment in one pass; (2) **technical verification** (document of record + implementation). Avoid blocking launch on perfect ID upload if legal accepts staged rollout—**but** then FAQ and checkout copy must honestly describe what is verified when.
+
+### P0 — Refund / cancellation
+
+- **Concurrence:** Visible refund/cancel terms for a prepaid annual SKU is both a trust and compliance baseline.
+- **Proposal:** Link the policy from the **payment step** and the **receipt/email** template, not only footer/FAQ.
+
+### P1 — Hero, nav, courses, form, FAQ
+
+- **Concurrence:** Hero scrim + WCAG check, stat-strip deduplication, nav grouping, filter `aria-pressed`, stepper, address split, explicit ToS/Privacy checkboxes, and FAQ layout/sticky issues are all sound UX engineering.
+- **Finding:** The **“Scroll sideways…”** string is present in-repo as `courses.scrollHint` in `LanguageContext.tsx`—removing it tracks directly with the carousel → grid change.
+- **Proposal:** **Map toggle:** confirm whether `Map.tsx` / Forge integration is wired on the marketing **Courses** section; “remove toggle” is often faster than half-built map for launch. **Per-course detail pages** are a larger slice—consider tagging as **P1.5** or first ship as **modal/drawer** from the same card to reduce routing + SEO scope.
+- **Proposal:** **ATH Móvil:** depends on payment processor support (Stripe vs. local rails); add a spike task to pick provider + UX before promising on the primary CTA.
+
+### P2 — Brand / social proof
+
+- **Concurrence:** Typography ladder and eyebrow vs. button styling are high leverage for perceived quality.
+- **Proposal:** Logos and Tourism Co. endorsement depend on **legal/partner approval**—track as dependencies with “blocked on X” sub-notes so engineering sprints are not blamed for business latency.
+
+### P3 — Accessibility
+
+- **Concurrence:** Full WCAG AA pass + focus management for mobile menu matches the code’s existing intent (`aria-label` on toggle is a good start; focus trap is the missing bar).
+- **Proposal:** Run **axe** in CI on static routes plus one Playwright smoke with keyboard nav for nav + accordion + filters.
+
+### P4 — Content / polish
+
+- **Concurrence:** Concrete savings per course and network-change policy reduce skepticism; members FAQ and contact form are appropriate post-launch polish if P0–P1 slip.
+- **Proposal:** Contact form needs **spam handling** (honeypot, rate limit, or Turnstile) and a **delivery path** (email service, ticket inbox)—add to backlog as sub-tasks.
+
+### QA checklist
+
+- **Concurrence:** Device + browser matrix and share-preview checks are the right closure gate.
+- **Proposal:** Add **Edge** or **Chromium-only** if the team is tiny (Safari + Chrome often enough); add **Lighthouse** mobile perf once for hero image weight after OG image work.

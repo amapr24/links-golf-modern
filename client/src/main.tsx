@@ -25,9 +25,20 @@ injectAnalyticsIfConfigured();
 
 const queryClient = new QueryClient();
 
+/** Marketing routes must stay usable without platform OAuth (see references/TODO.md P0). */
+function isPublicMarketingPath(pathname: string): boolean {
+  return (
+    pathname === "/" ||
+    pathname === "/courses" ||
+    pathname === "/login" ||
+    pathname === "/404"
+  );
+}
+
 const redirectToLoginIfUnauthorized = (error: unknown) => {
   if (!(error instanceof TRPCClientError)) return;
   if (typeof window === "undefined") return;
+  if (isPublicMarketingPath(window.location.pathname)) return;
 
   const isUnauthorized = error.message === UNAUTHED_ERR_MSG;
 
