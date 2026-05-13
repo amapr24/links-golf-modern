@@ -146,17 +146,16 @@ export default function PricingSection() {
 
       const origin = window.location.origin;
       const cancelUrl = `${origin}/pricing`;
-      const memberIdNum = parseInt(memberId, 10);
       // Stripe substitutes {CHECKOUT_SESSION_ID} on redirect. Without it, /success cannot
       // verify payment or call createSessionAfterCheckout. sessionStorage is not visible
       // in a separate checkout tab opened via window.open.
-      const successUrlForStripe = `${origin}/success?sessionId={CHECKOUT_SESSION_ID}&memberId=${memberIdNum}&email=${encodeURIComponent(signupEmail)}`;
+      const successUrlForStripe = `${origin}/success?sessionId={CHECKOUT_SESSION_ID}&memberId=${encodeURIComponent(memberId)}&email=${encodeURIComponent(signupEmail)}`;
 
       const result = await createCheckoutMutation.mutateAsync({
         paymentType,
         successUrl: successUrlForStripe,
         cancelUrl,
-        memberId: memberIdNum,
+        memberId,
         memberEmail: signupEmail,
         memberName: `${signupFirstName} ${signupLastName}`.trim(),
       });
@@ -169,7 +168,7 @@ export default function PricingSection() {
 
       // Store in sessionStorage as fallback
       sessionStorage.setItem("checkout_session_id", result.sessionId || "");
-      sessionStorage.setItem("checkout_member_id", memberIdNum.toString());
+      sessionStorage.setItem("checkout_member_id", memberId);
       sessionStorage.setItem("checkout_member_email", signupEmail);
 
       toast.info("Redirecting to checkout...");

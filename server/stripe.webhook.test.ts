@@ -102,6 +102,62 @@ describe("Stripe Webhook", () => {
       expect(result).toEqual({ received: true });
     });
 
+    it("should skip MySQL upsert when client_reference_id is a Supabase UUID", async () => {
+      const session: Stripe.Checkout.Session = {
+        id: "cs_test_uuid",
+        object: "checkout.session",
+        after_expiration: null,
+        allow_promotion_codes: true,
+        amount_subtotal: 19900,
+        amount_total: 19900,
+        automatic_tax: { enabled: false, status: null },
+        billing_address_collection: null,
+        cancel_url: "https://example.com/cancel",
+        client_reference_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479",
+        consent: null,
+        consent_collection: null,
+        currency: "usd",
+        customer: "cus_test_uuid",
+        customer_creation: "if_required",
+        customer_email: "test@example.com",
+        expires_at: Math.floor(Date.now() / 1000) + 86400,
+        livemode: false,
+        locale: null,
+        metadata: { payment_type: "one-time", user_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479" },
+        mode: "payment",
+        payment_intent: "pi_test_uuid",
+        payment_link: null,
+        payment_method_collection: "if_required",
+        payment_status: "paid",
+        phone_number_collection: { enabled: false },
+        recovered_from: null,
+        setup_intent: null,
+        status: "complete",
+        submit_type: null,
+        subscription: null,
+        success_url: "https://example.com/success",
+        total_details: { amount_discount: 0, amount_shipping: 0, amount_tax: 0 },
+        url: null,
+        created: Math.floor(Date.now() / 1000),
+      };
+
+      const event: Stripe.Event = {
+        id: "evt_uuid_checkout",
+        object: "event",
+        api_version: "2024-01-01",
+        created: Math.floor(Date.now() / 1000),
+        data: { object: session },
+        livemode: false,
+        pending_webhooks: 0,
+        request: { id: null, idempotency_key: null },
+        type: "checkout.session.completed",
+      };
+
+      const result = await handleStripeWebhook(event);
+      expect(upsertMember).not.toHaveBeenCalled();
+      expect(result).toEqual({ received: true });
+    });
+
     it("should handle customer.subscription.updated event", async () => {
       const subscription: Stripe.Subscription = {
         id: "sub_updated_123",

@@ -6,7 +6,8 @@ import { STRIPE_PRODUCTS } from "./products";
  * Supports both subscription (auto-renew) and one-time payment options
  */
 export async function createCheckoutSession(options: {
-  userId: number;
+  /** Supabase `members.id` (UUID) or legacy numeric id — must match success-page verification. */
+  memberId: string;
   userEmail: string;
   userName: string;
   paymentType: "subscription" | "one-time";
@@ -14,7 +15,7 @@ export async function createCheckoutSession(options: {
   cancelUrl: string;
 }) {
   const stripe = requireStripeApi();
-  const { userId, userEmail, userName, paymentType, successUrl, cancelUrl } = options;
+  const { memberId, userEmail, userName, paymentType, successUrl, cancelUrl } = options;
 
   const product = paymentType === "subscription" 
     ? STRIPE_PRODUCTS.MEMBERSHIP_ANNUAL_SUBSCRIPTION 
@@ -47,9 +48,9 @@ export async function createCheckoutSession(options: {
     payment_method_types: ["card"],
     mode: paymentType === "subscription" ? "subscription" : "payment",
     customer_email: userEmail,
-    client_reference_id: userId.toString(),
+    client_reference_id: memberId,
     metadata: {
-      user_id: userId.toString(),
+      user_id: memberId,
       customer_email: userEmail,
       customer_name: userName,
       payment_type: paymentType,

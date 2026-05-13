@@ -37,6 +37,16 @@ import {
 } from "./member.payments";
 import { getMemberByUserId } from "./db";
 
+/** Legacy MySQL `members.userId` (integer). Supabase checkout uses UUID `members.id` as session `sub`. */
+function legacyMysqlUserIdFromMemberKey(key: string): number | null {
+  const t = key.trim();
+  if (/^\d+$/.test(t)) {
+    const n = parseInt(t, 10);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  }
+  return null;
+}
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -210,15 +220,15 @@ export const appRouter = router({
           paymentType: z.enum(["subscription", "one-time"]),
           successUrl: z.string().url(),
           cancelUrl: z.string().url(),
-          // Optional: if provided, use this member ID directly (from pricing signup)
-          memberId: z.number().optional(),
+          // Supabase `members.id` (UUID) from pricing signup, or existing session sub
+          memberId: z.string().min(1).optional(),
           memberEmail: z.string().email().optional(),
           memberName: z.string().optional(),
         })
       )
       .mutation(async ({ input, ctx }) => {
         try {
-          let userId: number;
+          let memberRefId: string;
           let userEmail: string;
           let userName: string;
 
@@ -235,12 +245,12 @@ export const appRouter = router({
                 error: "Member profile not found.",
               };
             }
-            userId = parseInt(session.memberId, 10);
+            memberRefId = session.memberId;
             userEmail = session.email;
             userName = `${profile.firstName} ${profile.lastName}`.trim() || "Member";
           } else if (input.memberId && input.memberEmail) {
             // Fall back to provided member info (from pricing signup)
-            userId = input.memberId;
+            memberRefId = input.memberId;
             userEmail = input.memberEmail;
             userName = input.memberName || "Member";
           } else {
@@ -251,7 +261,7 @@ export const appRouter = router({
           }
 
           const checkoutSession = await createCheckoutSession({
-            userId,
+            memberId: memberRefId,
             userEmail,
             userName,
             paymentType: input.paymentType,
@@ -281,14 +291,15 @@ export const appRouter = router({
     createSessionAfterCheckout: publicProcedure
       .input(
         z.object({
-          memberId: z.number(),
+          /** Supabase `members.id` (UUID); must match Stripe `client_reference_id`. */
+          memberId: z.string().min(1),
           email: z.string().email(),
           checkoutSessionId: z.string(),
         })
       )
       .mutation(async ({ input, ctx }) => {
         try {
-          const memberId = String(input.memberId);
+          const memberId = input.memberId.trim();
           const emailNorm = input.email.toLowerCase();
 
           console.log(
@@ -328,7 +339,12 @@ export const appRouter = router({
             `[createSessionAfterCheckout] Session payment_status=${checkoutSession.payment_status}, client_reference_id=${checkoutSession.client_reference_id}`,
           );
 
-          if (checkoutSession.payment_status !== "paid") {
+
+          const paymentOk =
+            checkoutSession.payment_status === "paid" ||
+            checkoutSession.payment_status === "no_payment_required";
+
+          if (!paymentOk) {
             console.warn(
               `[createSessionAfterCheckout] Payment not completed. Status: ${checkoutSession.payment_status}`,
             );
@@ -406,6 +422,7 @@ export const appRouter = router({
 
           const profile = await fetchMemberProfileForSession(memberId, emailNorm);
 
+
           return {
             success: true,
             profile,
@@ -434,7 +451,16 @@ export const appRouter = router({
           };
         }
 
-        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        const legacyUserId = legacyMysqlUserIdFromMemberKey(session.memberId);
+        if (legacyUserId === null) {
+          return {
+            success: true,
+            error: null,
+            payments: [],
+          };
+        }
+
+        const member = await getMemberByUserId(legacyUserId);
         if (!member || !member.stripeCustomerId) {
           return {
             success: true,
@@ -477,7 +503,16 @@ export const appRouter = router({
           };
         }
 
-        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        const legacyUserId = legacyMysqlUserIdFromMemberKey(session.memberId);
+        if (legacyUserId === null) {
+          return {
+            success: true,
+            error: null,
+            subscription: null,
+          };
+        }
+
+        const member = await getMemberByUserId(legacyUserId);
         if (!member) {
           return {
             success: false,
@@ -521,7 +556,15 @@ export const appRouter = router({
           };
         }
 
-        const member = await getMemberByUserId(parseInt(session.memberId, 10));
+        const legacyUserId = legacyMysqlUserIdFromMemberKey(session.memberId);
+        if (legacyUserId === null) {
+          return {
+            success: false,
+            error: "No active subscription found",
+          };
+        }
+
+        const member = await getMemberByUserId(legacyUserId);
         if (!member || !member.stripeSubscriptionId) {
           return {
             success: false,

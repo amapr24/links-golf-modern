@@ -51,11 +51,14 @@ export async function handleStripeWebhook(event: Stripe.Event) {
  * Called when a customer completes checkout (payment or subscription started)
  */
 async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) {
-  const userId = parseInt(session.client_reference_id || "", 10);
+  const ref = (session.client_reference_id || session.metadata?.user_id || "").trim();
+  const legacyUserId = /^\d+$/.test(ref) ? parseInt(ref, 10) : NaN;
   const paymentType = (session.metadata?.payment_type as "subscription" | "one-time") || "one-time";
 
-  if (!userId) {
-    console.error("[Webhook] Missing userId in session metadata");
+  if (!Number.isFinite(legacyUserId) || legacyUserId <= 0) {
+    console.log(
+      `[Webhook] Skipping MySQL upsert (non-legacy member key or missing id). client_reference_id=${session.client_reference_id ?? ""}`,
+    );
     return;
   }
 
@@ -66,7 +69,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
   try {
     // Upsert member record
     await upsertMember({
-      userId,
+      userId: legacyUserId,
       stripeCustomerId: session.customer as string,
       stripeSubscriptionId: session.subscription as string,
       stripePaymentIntentId: session.payment_intent as string,
@@ -77,7 +80,7 @@ async function handleCheckoutSessionCompleted(session: Stripe.Checkout.Session) 
       isCanceled: false,
     });
 
-    console.log(`[Webhook] Created/updated member ${userId}`);
+    console.log(`[Webhook] Created/updated member ${legacyUserId}`);
   } catch (error) {
     console.error(`[Webhook] Error handling checkout.session.completed:`, error);
     throw error;

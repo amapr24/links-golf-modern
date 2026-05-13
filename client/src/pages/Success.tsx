@@ -7,48 +7,58 @@ export default function Success() {
   const [, setLocation] = useLocation();
   const [isCreatingSession, setIsCreatingSession] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const createSessionMutation = trpc.member.createSessionAfterCheckout.useMutation();
+  const { mutateAsync: createSessionAfterCheckout } =
+    trpc.member.createSessionAfterCheckout.useMutation();
 
   useEffect(() => {
+    let cancelled = false;
+
     const createSession = async () => {
       try {
         // Get checkout data from URL query parameters and sessionStorage
         const params = new URLSearchParams(window.location.search);
-        
+
         // Try to get sessionId from multiple sources
-        let sessionId = params.get("sessionId") || 
-                        params.get("session_id") || 
-                        params.get("checkout_session_id") ||
-                        sessionStorage.getItem("checkout_session_id");
-        
-        const memberId = params.get("memberId") || 
-                         sessionStorage.getItem("checkout_member_id");
-        
-        const email = params.get("email") || 
-                      sessionStorage.getItem("checkout_member_email");
+        let sessionId =
+          params.get("sessionId") ||
+          params.get("session_id") ||
+          params.get("checkout_session_id") ||
+          sessionStorage.getItem("checkout_session_id");
+
+        const memberId =
+          params.get("memberId") || sessionStorage.getItem("checkout_member_id");
+
+        const email =
+          params.get("email") || sessionStorage.getItem("checkout_member_email");
 
         console.log("[Success] Received params:", { sessionId, memberId, email });
 
         if (!memberId || !email) {
           console.error("[Success] Missing parameters:", { sessionId, memberId, email });
-          setError("Missing checkout information. Please contact support.");
-          setIsCreatingSession(false);
+          if (!cancelled) {
+            setError("Missing checkout information. Please contact support.");
+            setIsCreatingSession(false);
+          }
           return;
         }
 
         if (!sessionId) {
           console.error("[Success] Missing session ID");
-          setError("Missing session information. Please contact support.");
-          setIsCreatingSession(false);
+          if (!cancelled) {
+            setError("Missing session information. Please contact support.");
+            setIsCreatingSession(false);
+          }
           return;
         }
 
         // Create session and set cookie
-        const result = await createSessionMutation.mutateAsync({
-          memberId: parseInt(memberId, 10),
+        const result = await createSessionAfterCheckout({
+          memberId: memberId.trim(),
           email,
           checkoutSessionId: sessionId,
         });
+
+        if (cancelled) return;
 
         console.log("[Success] Session creation result:", result);
 
@@ -57,22 +67,29 @@ export default function Success() {
           sessionStorage.removeItem("checkout_session_id");
           sessionStorage.removeItem("checkout_member_id");
           sessionStorage.removeItem("checkout_member_email");
-          
-          // Redirect to dashboard
-          setLocation("/dashboard");
+
+          if (!cancelled) {
+            setLocation("/dashboard");
+          }
         } else {
-          setError(result.error || "Failed to create session");
-          setIsCreatingSession(false);
+          if (!cancelled) {
+            setError(result.error || "Failed to create session");
+            setIsCreatingSession(false);
+          }
         }
       } catch (err) {
+        if (cancelled) return;
         console.error("[Success] Error creating session:", err);
         setError("An error occurred. Please try again.");
         setIsCreatingSession(false);
       }
     };
 
-    createSession();
-  }, [createSessionMutation, setLocation]);
+    void createSession();
+    return () => {
+      cancelled = true;
+    };
+  }, [createSessionAfterCheckout, setLocation]);
 
   if (isCreatingSession) {
     return (
