@@ -26,6 +26,7 @@ export default function Login() {
   const [memberProfile, setMemberProfile] = useState<MemberRow | null>(null);
 
   const verifyOtpMutation = trpc.member.verifyOtp.useMutation();
+  const trpcUtils = trpc.useUtils();
 
   // Step 1: Send OTP to email
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -98,13 +99,10 @@ export default function Login() {
         return;
       }
 
-      const memberNumber = `LGM-${String(memberProfile.id).replace(/-/g, "").slice(0, 6).toUpperCase()}`;
-
       const result = await verifyOtpMutation.mutateAsync({
         email: email.toLowerCase(),
         otp,
-        firstName: memberProfile.first_name,
-        memberNumber,
+        memberId,
       });
 
       if (!result.success) {
@@ -113,10 +111,7 @@ export default function Login() {
         return;
       }
 
-      const sessionToken = btoa(`${memberId}:${Date.now()}`);
-      localStorage.setItem("member_session", sessionToken);
-      localStorage.setItem("member_id", memberId);
-      localStorage.setItem("member_email", email);
+      await trpcUtils.member.session.invalidate();
 
       localStorage.removeItem("login_email");
       localStorage.removeItem("login_member_id");

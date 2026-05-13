@@ -1,15 +1,24 @@
 import { randomInt } from "node:crypto";
 import { z } from "zod";
-import { getSessionCookieOptions } from "./_core/cookies";
+import {
+  getMemberSessionCookieOptions,
+  getSessionCookieOptions,
+} from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router } from "./_core/trpc";
 import { sendOtpEmail, sendWelcomeEmail } from "./email";
+import {
+  MEMBER_SESSION_MAX_AGE_SEC,
+  signMemberSessionToken,
+} from "./memberJwt";
+import { readMemberSessionFromRequest } from "./memberSessionCookie";
+import { fetchMemberWelcomeFields } from "./memberWelcomeFromDb";
 import { saveOtp, verifyAndConsumeOtp } from "./otpStore";
 import {
   hasWelcomeEmailBeenSent,
   markWelcomeEmailSent,
 } from "./welcomeEmailOnce";
-import { COOKIE_NAME } from "@shared/const";
+import { COOKIE_NAME, MEMBER_SESSION_COOKIE } from "@shared/const";
 
 export const appRouter = router({
   system: systemRouter,
@@ -26,6 +35,20 @@ export const appRouter = router({
 
   // Member authentication (OTP-based login)
   member: router({
+    /** Current member session from httpOnly cookie (server-verified JWT). */
+    session: publicProcedure.query(async ({ ctx }) => {
+      return readMemberSessionFromRequest(ctx.req);
+    }),
+
+    logout: publicProcedure.mutation(({ ctx }) => {
+      const opts = getMemberSessionCookieOptions(ctx.req);
+      ctx.res.clearCookie(MEMBER_SESSION_COOKIE, {
+        ...opts,
+        maxAge: 0,
+      });
+      return { success: true as const };
+    }),
+
     sendOtp: publicProcedure
       .input(z.object({ email: z.string().email() }))
       .mutation(async ({ input }) => {
@@ -67,11 +90,10 @@ export const appRouter = router({
         z.object({
           email: z.string().email(),
           otp: z.string().length(6),
-          firstName: z.string().min(1).max(120).optional(),
-          memberNumber: z.string().min(1).max(64).optional(),
+          memberId: z.string().uuid(),
         })
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
         try {
           if (!/^\d{6}$/.test(input.otp)) {
             return {
@@ -88,19 +110,34 @@ export const appRouter = router({
             };
           }
 
-          if (input.firstName && input.memberNumber) {
-            const alreadyWelcomed = await hasWelcomeEmailBeenSent(input.email);
+          const emailNorm = input.email.toLowerCase();
+          const welcome = await fetchMemberWelcomeFields(
+            input.memberId,
+            emailNorm
+          );
+          if (welcome) {
+            const alreadyWelcomed = await hasWelcomeEmailBeenSent(emailNorm);
             if (!alreadyWelcomed) {
               const mailed = await sendWelcomeEmail(
-                input.email,
-                input.firstName,
-                input.memberNumber
+                emailNorm,
+                welcome.firstName,
+                welcome.memberNumber
               );
               if (mailed) {
-                await markWelcomeEmailSent(input.email);
+                await markWelcomeEmailSent(emailNorm);
               }
             }
           }
+
+          const token = await signMemberSessionToken({
+            sub: input.memberId,
+            email: emailNorm,
+          });
+          const cookieOpts = getMemberSessionCookieOptions(ctx.req);
+          ctx.res.cookie(MEMBER_SESSION_COOKIE, token, {
+            ...cookieOpts,
+            maxAge: MEMBER_SESSION_MAX_AGE_SEC * 1000,
+          });
 
           return {
             success: true,

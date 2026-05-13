@@ -1,12 +1,10 @@
 import { describe, it, expect } from "vitest";
 
-describe("Resend API", () => {
+const hasResendKey = Boolean(process.env.RESEND_API_KEY?.trim());
+
+describe.skipIf(!hasResendKey)("Resend API", () => {
   it("should validate Resend API key by sending a test email", async () => {
-    const apiKey = process.env.RESEND_API_KEY;
-    
-    if (!apiKey) {
-      throw new Error("RESEND_API_KEY environment variable not set");
-    }
+    const apiKey = process.env.RESEND_API_KEY!;
 
     try {
       const response = await fetch("https://api.resend.com/emails", {

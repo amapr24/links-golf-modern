@@ -21,6 +21,20 @@ function isSecureRequest(req: Request) {
   return protoList.some(proto => proto.trim().toLowerCase() === "https");
 }
 
+/**
+ * Same-origin member session: use Lax when not on HTTPS so browsers accept the cookie
+ * (SameSite=None requires Secure, which breaks plain http://localhost).
+ */
+export function getMemberSessionCookieOptions(
+  req: Request
+): Pick<CookieOptions, "httpOnly" | "path" | "sameSite" | "secure"> {
+  const base = getSessionCookieOptions(req);
+  if (!base.secure) {
+    return { ...base, sameSite: "lax" };
+  }
+  return base;
+}
+
 export function getSessionCookieOptions(
   req: Request
 ): Pick<CookieOptions, "domain" | "httpOnly" | "path" | "sameSite" | "secure"> {

@@ -7,6 +7,7 @@
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { trpc } from "@/lib/trpc";
 import { Download, LogOut, HelpCircle, Calendar, MapPin, QrCode, Copy, Check } from "lucide-react";
 
 interface MemberData {
@@ -24,18 +25,14 @@ export default function Dashboard() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
   const [copied, setCopied] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { data: session, isPending } = trpc.member.session.useQuery();
+  const logoutMutation = trpc.member.logout.useMutation();
+  const trpcUtils = trpc.useUtils();
 
   useEffect(() => {
-    const sessionToken = localStorage.getItem("member_session");
-    if (!sessionToken) {
-      setLocation("/login");
-      return;
-    }
-    setIsAuthenticated(true);
-    setLoading(false);
-  }, [setLocation]);
+    if (isPending) return;
+    if (!session) setLocation("/login");
+  }, [isPending, session, setLocation]);
   const [member] = useState<MemberData>({
     firstName: "Juan",
     lastName: "Pérez",
@@ -53,14 +50,16 @@ export default function Dashboard() {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("member_session");
-    localStorage.removeItem("member_id");
-    localStorage.removeItem("member_email");
-    setLocation("/");
+  const handleLogout = async () => {
+    try {
+      await logoutMutation.mutateAsync();
+    } finally {
+      await trpcUtils.member.session.invalidate();
+      setLocation("/");
+    }
   };
 
-  if (loading) {
+  if (isPending) {
     return (
       <div className="min-h-screen bg-[#F7F3EC] flex items-center justify-center">
         <div className="text-center">
@@ -71,7 +70,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!isAuthenticated) {
+  if (!session) {
     return null;
   }
 
