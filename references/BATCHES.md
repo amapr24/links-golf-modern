@@ -44,10 +44,17 @@ Item **5** shipped with **dual write**: after Resend succeeds we set **`members.
 
 **Goal:** Layout, mobile course UX, social proof — best **after** A–C so auth/data paths are stable.
 
-Many **map / “02 · Our Network”** items live in [`BACKLOG.md`](BACKLOG.md) under **Courses map & partner UI**.
+**All Batch D–related tickets** live in [`BACKLOG.md`](BACKLOG.md) (open the file and jump to these headings):
+
+- **Courses map & partner UI** — pins, hover popover, click card width, desktop pin typography, “View full course directory” mobile-only, decorative arrows.
+- **Marketing & conversion (Batch D — beyond map)** — section shell / rhythm, broader mobile course UX, featured row / social proof.
+- **Internationalization (optional)** — e.g. Spanish display names for `partnerCourses` in map/list/pages.
+
+**Auth remainder (Batch A #2)** — same file, **Still operational / follow-up** item **7** (server-resolved member id after OTP; no client-supplied `memberId`).
 
 ---
 
 ## Suggested order (when unsure)
 
-1. **D** / **BACKLOG** — Map, Our Network, and conversion polish (A–C are done in repo).
+1. **[`BACKLOG.md`](BACKLOG.md)** — Work down the sections (ops → map → i18n → marketing → sign-up) as priority dictates.
+2. **[`BATCHES.md`](BATCHES.md)** — Use only for **done vs open** at the batch level; every open slice should map to a **BACKLOG** heading or numbered item.

@@ -1,6 +1,6 @@
 # Engineering backlog
 
-Tracked follow-ups that are not yet implemented in code.
+Tracked follow-ups that are **not yet implemented in code**. This file is the **single inventory** of pending work (ops, auth hardening, map UX, i18n, sign-up, marketing polish). Roadmap **batch status** (A–D) lives in [`BATCHES.md`](BATCHES.md); any item called out there as “mostly done” has a matching ticket below so nothing is only in BATCHES.
 
 **Roadmap grouping (batches A–D, what’s done vs open):** see [`BATCHES.md`](BATCHES.md).
 
@@ -24,8 +24,11 @@ Tracked follow-ups that are not yet implemented in code.
 2. **`REDIS_URL`** — Set in **production** when running **more than one Node instance** or horizontal scale; otherwise in-memory fallback is single-process only. **Welcome-once** also benefits from Redis in multi-instance setups (otherwise each process has its own `Set`).
 3. **`MEMBER_JWT_SECRET`** — Required in **production** (at least 32 characters). Signs the member session JWT; dev/test uses an in-code fallback only when `NODE_ENV` is not `production`.
 4. **`SUPABASE_SERVICE_ROLE_KEY`** (plus `SUPABASE_URL` or `VITE_SUPABASE_URL`) — Optional for OTP alone; **required** for welcome-from-DB, `welcome_email_sent_at`, and **`member.me`** / dashboard profile loads.
-5. **E2E** — Manual or automated flow: OTP path, httpOnly cookie + `member.session`, real Resend inbox, Redis in staging, multi-replica check.
+5. **E2E** — Manual or automated flow: OTP path, httpOnly cookie + `member.session`, **`member.me`** / dashboard load, real Resend inbox, Redis in staging, multi-replica check.
 6. **Renewal / lifecycle emails (later)** — e.g. “Renews in X days” — not implemented; will need renewal dates in data + scheduler or Resend batch when product is ready.
+7. **Stricter OTP verify (no client-supplied `memberId`)** — Today [`member.verifyOtp`](../server/routers.ts) accepts **`memberId` from the browser** after anon Supabase lookup; OTP still proves email ownership. **Hardening:** after OTP consumption, resolve `members.id` **only on the server** from the verified email (service role), then issue the session JWT — so a modified client cannot bind the cookie to another member row. (Tracked as the remaining slice of Batch A #2 in [`BATCHES.md`](BATCHES.md).)
+8. **Reverse proxy / client IP** — Behind a load balancer or CDN, configure Express **`trust proxy`** (and validate **`x-forwarded-for`**) so [`getRequestClientIp`](../server/sendOtpRateLimit.ts) and any IP-based limits or logs reflect the real visitor.
+9. **OTP rate-limit tuning (optional)** — Defaults are in [`sendOtpRateLimit.ts`](../server/sendOtpRateLimit.ts); override with **`SEND_OTP_RATE_WINDOW_MS`**, **`SEND_OTP_MAX_PER_EMAIL_PER_WINDOW`**, **`SEND_OTP_MAX_PER_IP_PER_WINDOW`** per environment once you have abuse telemetry.
 
 ---
 
@@ -39,6 +42,22 @@ _Scope: primarily the Home **02 · Our Network** experience in [`CoursesSection`
 4. **Map pin click / info panel typography** — Clicking a course map pin opens content with **very small, almost unreadable type on desktop**; increase base font size, hierarchy, and line-height for that state (and verify on common breakpoints).
 5. **“View full course directory”** (`courses.viewAll` in [`CoursesSection`](../client/src/components/CoursesSection.tsx), the **02 · Our Network** block with the Google Maps container on Home) — Show that link **only on mobile**; on desktop, list/grid mode already exposes the full set, so navigating to the standalone [`Courses`](../client/src/pages/Courses.tsx) directory page is redundant when a list mode is selected.
 6. **Arrows in UI** — Remove decorative arrows across the marketing site **except** keep the arrow on **Continue to Payment** (or equivalent primary checkout CTA).
+
+---
+
+## Internationalization (optional)
+
+1. **`partnerCourses` localized display names** — Add Spanish (or `t()`-keyed) names for ES mode on the Home map/list ([`CoursesSection`](../client/src/components/CoursesSection.tsx), [`CoursesMap`](../client/src/components/CoursesMap.tsx)) and on [`Courses.tsx`](../client/src/pages/Courses.tsx), without duplicating the whole dataset if a lighter pattern (e.g. `nameKey` + `LanguageContext`) is enough.
+
+---
+
+## Marketing & conversion (Batch D — beyond map)
+
+_General polish after auth/data paths are stable; complements **Courses map & partner UI** above._
+
+1. **Section shell / layout rhythm** — Consistent section spacing, headings, and breakpoints across home and key marketing pages (P2 “section shell”).
+2. **Mobile course UX (broader)** — A dedicated pass on **02 · Our Network** small-screen layout and touch targets beyond the map-specific bullets (filters, list/grid, map chrome).
+3. **Featured row / social proof** — Trust strip near pricing: testimonials, partner logos row, press quotes, or similar to support conversion.
 
 ---
 
