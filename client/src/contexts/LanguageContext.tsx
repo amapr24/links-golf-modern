@@ -64,6 +64,7 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filter.all": "ALL",
     "courses.filter.resort": "RESORT",
     "courses.filter.club": "CLUB",
+    "courses.filterLabel": "Filter by tier",
     "courses.discountOff": "OFF",
     "courses.scrollHint": "← Scroll to see all →",
 
@@ -241,6 +242,7 @@ const translations: Record<Language, Record<string, string>> = {
     "courses.filter.all": "TODOS",
     "courses.filter.resort": "RESORT",
     "courses.filter.club": "CLUB",
+    "courses.filterLabel": "Filtrar por categoría",
     "courses.discountOff": "DTO",
     "courses.scrollHint": "← Desliza para ver todos →",
 

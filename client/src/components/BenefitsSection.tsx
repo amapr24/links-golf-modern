@@ -6,12 +6,14 @@
 import { DollarSign, Smartphone, ShieldCheck, CalendarDays } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PARTNER_COURSE_COUNT, MAX_PARTNER_DISCOUNT } from "@/data/partnerCourses";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 
 const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
 
   const benefits = [
     {
@@ -52,7 +54,7 @@ export default function BenefitsSection() {
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: coarsePointer ? "scroll" : "fixed",
       }}
     >
       {/* Dark overlay - continues hero fade */}

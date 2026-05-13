@@ -34,24 +34,11 @@ export default function CoursesSection() {
     });
   }, [filter]);
 
-  const coursesBackgroundStyle = {
-    backgroundImage: `url(${AERIAL_IMAGE})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundAttachment: "fixed",
-  };
+  const tabIds = { all: "courses-tab-all", resort: "courses-tab-resort", club: "courses-tab-club" } as const;
+  const activeTabId = tabIds[filter];
 
   return (
-    <section id="courses" className="relative" style={coursesBackgroundStyle}>
-      {/* Medium overlay - reveals image gradually */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(180deg, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0.2) 100%)",
-        }}
-      />
-      {/* Top image band */}
+    <section id="courses" className="relative bg-[#F7F3EC]">
       <div
         className="w-full h-56 md:h-72 bg-cover bg-center relative overflow-hidden"
         style={{ backgroundImage: `url(${AERIAL_IMAGE})` }}
@@ -88,27 +75,49 @@ export default function CoursesSection() {
           >
             {t("courses.description")}
           </p>
-          {/* Filter tabs */}
-          <div className="flex gap-1 fade-up" style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}>
-            {(["all", "resort", "club"] as const).map((f) => (
-              <button
-                key={f}
-                type="button"
-                onClick={() => setFilter(f)}
-                className="filter-pill px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  borderRadius: "2px",
-                  background: filter === f ? "oklch(0.42 0.14 145)" : "transparent",
-                  color: filter === f ? "white" : "oklch(0.45 0.06 145)",
-                }}
-              >
-                {f === "all" ? t("courses.filter.all") : f === "resort" ? t("courses.filter.resort") : t("courses.filter.club")}
-              </button>
-            ))}
+          <div className="flex flex-col gap-2 w-full md:w-auto md:items-end">
+            <p
+              className="text-xs font-semibold uppercase tracking-wider fade-up"
+              style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+              id="courses-filter-label"
+            >
+              {t("courses.filterLabel")}
+            </p>
+            <div
+              role="tablist"
+              aria-labelledby="courses-filter-label"
+              className="flex gap-1 fade-up self-stretch md:self-end"
+              style={{ background: "rgba(0,0,0,0.06)", borderRadius: "4px", padding: "3px" }}
+            >
+              {(["all", "resort", "club"] as const).map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  role="tab"
+                  id={tabIds[f]}
+                  aria-selected={filter === f}
+                  aria-controls="courses-network-panel"
+                  onClick={() => setFilter(f)}
+                  className="filter-pill px-4 py-1.5 text-xs font-semibold uppercase tracking-wider transition-all duration-200"
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    borderRadius: "2px",
+                    background: filter === f ? "oklch(0.42 0.14 145)" : "transparent",
+                    color: filter === f ? "white" : "oklch(0.45 0.06 145)",
+                  }}
+                >
+                  {f === "all" ? t("courses.filter.all") : f === "resort" ? t("courses.filter.resort") : t("courses.filter.club")}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
+        <div
+          id="courses-network-panel"
+          role="tabpanel"
+          aria-labelledby={activeTabId}
+        >
         {/* Desktop: Grid layout */}
         <div className="hidden lg:grid grid-cols-3 gap-3">
           {filtered.map((course, i) => {
@@ -212,19 +221,18 @@ export default function CoursesSection() {
             {t("courses.scrollHint")}
           </div>
         </div>
+        </div>
 
-        {/* Bottom CTA */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mt-10 pt-8 fade-up" style={{ borderTop: "1px solid oklch(0.88 0.02 85)" }}>
-          <div className="flex flex-col gap-2">
+        {/* Bottom CTA — primary membership vs secondary directory link */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mt-10 pt-8 fade-up" style={{ borderTop: "1px solid oklch(0.88 0.02 85)" }}>
+          <div className="flex flex-col gap-2 max-w-md">
             <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.06 145)" }}>
               {t("courses.bottomText")}
             </p>
             <a
               href="/courses"
-              className="fairway-text-control text-sm font-semibold flex items-center gap-1 transition-colors duration-200 rounded-sm"
-              style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
-              onMouseEnter={(e) => (e.currentTarget.style.opacity = "0.7")}
-              onMouseLeave={(e) => (e.currentTarget.style.opacity = "1")}
+              className="courses-directory-link fairway-text-control inline-flex text-sm font-medium w-fit rounded-sm underline-offset-4 decoration-1 hover:underline"
+              style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
             >
               {t("courses.viewAll")}
             </a>
@@ -232,8 +240,7 @@ export default function CoursesSection() {
           <button
             type="button"
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-            className="fairway-text-control flex items-center gap-2 text-sm font-semibold rounded-sm"
-            style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+            className="btn-fairway text-xs py-3 px-6 inline-flex items-center gap-2 flex-shrink-0"
           >
             {t("nav.getCard")} <ArrowRight size={14} />
           </button>
