@@ -8,6 +8,13 @@
       "when": 1778616115593,
       "tag": "0000_fixed_black_tom",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1778692701488,
+      "tag": "0001_rare_rictor",
+      "breakpoints": true
     }
   ]
 }

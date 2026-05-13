@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, members, InsertMember, Member } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -87,6 +87,56 @@ export async function getUserByOpenId(openId: string) {
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
 
   return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get member by user ID
+ */
+export async function getMemberByUserId(userId: number): Promise<Member | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get member: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(members).where(eq(members.userId, userId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Get member by Stripe customer ID
+ */
+export async function getMemberByStripeCustomerId(customerId: string): Promise<Member | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot get member: database not available");
+    return undefined;
+  }
+
+  const result = await db.select().from(members).where(eq(members.stripeCustomerId, customerId)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+/**
+ * Create or update member
+ */
+export async function upsertMember(member: InsertMember): Promise<Member | undefined> {
+  const db = await getDb();
+  if (!db) {
+    console.warn("[Database] Cannot upsert member: database not available");
+    return undefined;
+  }
+
+  try {
+    await db.insert(members).values(member).onDuplicateKeyUpdate({
+      set: member,
+    });
+
+    return getMemberByUserId(member.userId!);
+  } catch (error) {
+    console.error("[Database] Failed to upsert member:", error);
+    throw error;
+  }
 }
 
 // TODO: add feature queries here as your schema grows.

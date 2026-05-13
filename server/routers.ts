@@ -28,6 +28,7 @@ import {
   markWelcomeEmailSent,
 } from "./welcomeEmailOnce";
 import { COOKIE_NAME, MEMBER_SESSION_COOKIE } from "@shared/const";
+import { createCheckoutSession } from "./stripe/checkout";
 
 export const appRouter = router({
   system: systemRouter,
@@ -188,6 +189,62 @@ export const appRouter = router({
           return {
             success: false,
             error: "An error occurred. Please try again.",
+          };
+        }
+      }),
+
+    /**
+     * Create a Stripe Checkout Session for membership purchase
+     * Requires member session (logged in)
+     */
+    createCheckout: publicProcedure
+      .input(
+        z.object({
+          paymentType: z.enum(["subscription", "one-time"]),
+          successUrl: z.string().url(),
+          cancelUrl: z.string().url(),
+        })
+      )
+      .mutation(async ({ input, ctx }) => {
+        try {
+          const session = await readMemberSessionFromRequest(ctx.req);
+          if (!session) {
+            return {
+              success: false,
+              error: "Not authenticated. Please log in first.",
+            };
+          }
+
+          const profile = await fetchMemberProfileForSession(
+            session.memberId,
+            session.email
+          );
+          if (!profile) {
+            return {
+              success: false,
+              error: "Member profile not found.",
+            };
+          }
+
+          const checkoutSession = await createCheckoutSession({
+            userId: session.memberId,
+            userEmail: session.email,
+            userName: profile.displayName || "Member",
+            paymentType: input.paymentType,
+            successUrl: input.successUrl,
+            cancelUrl: input.cancelUrl,
+          });
+
+          return {
+            success: true,
+            sessionId: checkoutSession.id,
+            url: checkoutSession.url,
+          };
+        } catch (error) {
+          console.error("[createCheckout] Error:", error);
+          return {
+            success: false,
+            error: "Failed to create checkout session. Please try again.",
           };
         }
       }),
