@@ -16,6 +16,15 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 ---
 
+## Status: Sprint B — trust on the wire (2026-05-13)
+
+**Shipped in repo:**
+
+- [x] **Canonical + `og:url` + absolute share images:** `vite-plugin-site-seo-html.ts` + `vite.config.ts`. Set `VITE_PUBLIC_SITE_ORIGIN` before production build; optional `VITE_OG_TITLE_ES` / `VITE_OG_DESCRIPTION_ES` for JSON-LD Spanish hints. Documented in `.env.example` and `references/deploy-smoke.md`.
+- [x] **Deploy smoke (Playwright):** `pnpm smoke` → `e2e/screenshots/deploy-smoke.spec.ts` (public routes stay on app origin; no Manus OAuth host in URL after load).
+
+---
+
 ## Status: next main commit (2026-05-13, Prototype #1)
 
 **Shipped (ready to commit / push):**
@@ -27,9 +36,9 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 **Follow-up (not closed by this commit — do not check off P0 bullets below until these are done):**
 
 - [x] **Branded `og-share.png`:** **1200×630** PNG in `client/public/` (center-cropped from Drive master `PNG Files/LINKS-GOLF-MEMBERSHIP-9.png`; regen steps in `references/brand/lgm-logos/README.txt`). Optional later: add tagline/URL in a dedicated export from the `.ai` sources on Drive.
-- [ ] **Bilingual social copy:** Static HTML meta is **EN-first**; add Spanish (and parity) for `og:description` / `twitter:description` when you pick an approach (separate routes, build-time env, or SSR).
-- [ ] **`og:url` + canonical:** Deliberately omitted until a single canonical origin is guaranteed (avoid wrong-domain canonical on Manus previews). Wire `VITE_PUBLIC_SITE_ORIGIN` (or similar) at build time when `linksgolfpr.com` is live.
-- [ ] **Deploy smoke test:** Confirm the hosted Manus/preview URL does not apply any *other* forced login before first paint; this repo’s home page already uses public `member.session` only.
+- [x] **`og:url` + canonical (build-time):** Set `VITE_PUBLIC_SITE_ORIGIN` (e.g. `https://linksgolfpr.com`) before `pnpm build`. `vite-plugin-site-seo-html.ts` injects `<link rel="canonical">`, `<meta property="og:url">`, and absolute `og:image` / `twitter:image`. Leave unset on previews. See `.env.example` and `references/deploy-smoke.md`.
+- [x] **Deploy smoke (automated):** `pnpm smoke` runs Playwright `e2e/screenshots/deploy-smoke.spec.ts` (no OAuth redirect on load for `/`, `/courses`, `/login`). Hosted preview still needs a **manual** private-window check per `references/deploy-smoke.md`.
+- [ ] **Bilingual social copy (full parity):** EN remains in static `og:title` / `og:description` / `twitter:*`. Optional **`VITE_OG_TITLE_ES`** + **`VITE_OG_DESCRIPTION_ES`** add JSON-LD `alternateName` + `abstract` for Spanish crawlers; true duplicate-free `og:description` per locale still wants `/es` routes or SSR when you pick that approach.
 
 ---
 
@@ -47,7 +56,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 - [ ] Move the site to the production domain `linksgolfpr.com` (currently lives at `linksgolfpr.manus.space`, mismatching the `info@linksgolfpr.com` contact email). Provision SSL on the production domain.
 - [ ] Remove the initial OAuth redirect to `manus.im` for anonymous visitors. The marketing site must be publicly viewable without any login. *(Repo: guarded on public paths; still verify full “no surprise login” behavior on the deployed preview/host.)*
-- [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES. *(Repo: real EN copy in `index.html` + `meta name="description"`; ES-specific OG/Twitter strings not yet in static head.)*
+- [ ] Replace placeholder OpenGraph/Twitter meta description ("A modern conversion-focused membership website…") with real marketing copy in both EN and ES. *(Repo: real EN copy in `index.html` + `meta name="description"`; optional ES via `VITE_OG_TITLE_ES` / `VITE_OG_DESCRIPTION_ES` → JSON-LD in build. Full `og:description` parity per locale → `/es` or SSR — still open.)*
 - [ ] Replace the auto-generated `manuscdn.com` og:image with a branded social share image. *(Repo: **1200×630** `/og-share.png`; masters on [Google Drive](https://drive.google.com/drive/folders/180FaEc3UYn0_3-oaQat2B1Vd_01hPiNH?usp=share_link). Mark this P0 row done once production deploy is verified in Facebook/X debuggers.)*
 
 ### Residency verification

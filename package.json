@@ -12,6 +12,7 @@
     "test": "vitest run",
     "screenshots": "playwright test e2e/screenshots",
     "reflow-audit": "playwright test e2e/screenshots/reflow-audit.spec.ts",
+    "smoke": "playwright test e2e/screenshots/deploy-smoke.spec.ts",
     "playwright:install": "playwright install chromium",
     "db:push": "drizzle-kit generate && drizzle-kit migrate"
   },
