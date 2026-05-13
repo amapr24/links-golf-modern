@@ -9,7 +9,7 @@ import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Loader2 } from "lucide-
 import { Link } from "wouter";
 import { toast } from "sonner";
 import { trpc } from "@/lib/trpc";
-import { isSupabaseConfigured, saveMemberSignup } from "@/lib/supabase";
+import { isSupabaseConfigured, saveMemberSignup, classifyMemberSignupError } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 
@@ -107,7 +107,18 @@ export default function PricingSection() {
       setStep(2);
     } catch (err) {
       console.error("Error saving member:", err);
-      setError("Failed to save your information. Please try again.");
+      const kind = classifyMemberSignupError(err);
+      const key =
+        kind === "duplicate_email"
+          ? "pricing.errorSignupDuplicateEmail"
+          : kind === "photo_upload"
+            ? "pricing.errorSignupPhotoUpload"
+            : kind === "photo_format"
+              ? "pricing.errorSignupPhotoFormat"
+              : kind === "rls"
+                ? "pricing.errorSignupRLS"
+                : "pricing.errorSignupGeneric";
+      setError(t(key));
     } finally {
       setIsSubmitting(false);
     }

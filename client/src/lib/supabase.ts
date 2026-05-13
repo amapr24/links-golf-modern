@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { MEMBER_POLICIES_ACCEPTED_VERSION } from "@shared/const";
+import { normalizeMemberPhotoForUpload } from "./memberPhotoUpload";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL?.trim();
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim();
@@ -40,18 +41,67 @@ export interface MemberActivationData {
 }
 
 /**
- * Upload member photo to Supabase storage
+ * Map Supabase / client errors to a small set for localized UI copy.
+ */
+export type MemberSignupErrorKind =
+  | "generic"
+  | "duplicate_email"
+  | "photo_upload"
+  | "photo_format"
+  | "rls";
+
+export function classifyMemberSignupError(err: unknown): MemberSignupErrorKind {
+  if (err instanceof Error && err.message === "PHOTO_FORMAT_UNSUPPORTED") {
+    return "photo_format";
+  }
+  const o = err as { message?: string; code?: string };
+  const raw = (o?.message || (err instanceof Error ? err.message : "") || "").trim();
+  if (raw === "PHOTO_FORMAT_UNSUPPORTED") {
+    return "photo_format";
+  }
+  const m = raw.toLowerCase();
+  const code = String(o?.code || "");
+  if (code === "23505" || m.includes("23505") || m.includes("duplicate key") || m.includes("unique constraint")) {
+    return "duplicate_email";
+  }
+  if (m.includes("row-level security") || m.includes("new row violates")) {
+    return "rls";
+  }
+  if (m.includes("413") || m.includes("entity too large") || m.includes("payload too large")) {
+    return "photo_upload";
+  }
+  if (
+    m.includes("storage") ||
+    m.includes("bucket") ||
+    m.includes("mime") ||
+    m.includes("invalid mime")
+  ) {
+    return "photo_upload";
+  }
+  return "generic";
+}
+
+/**
+ * Upload member photo to Supabase storage (expects a browser File; re-encodes as JPEG when possible).
  */
 export async function uploadMemberPhoto(file: File, email: string) {
   const sb = requireSupabase();
   try {
-    const fileExt = file.name.split(".").pop();
-    const fileName = `${email}-${Date.now()}.${fileExt}`;
+    const normalized = await normalizeMemberPhotoForUpload(file);
+    const safeEmail = email
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-|-$/g, "")
+      .slice(0, 72);
+    const ext = normalized.type === "image/jpeg" ? "jpg" : (normalized.name.split(".").pop() || "jpg").toLowerCase();
+    const fileName = `${safeEmail || "member"}-${Date.now()}.${ext}`;
     const filePath = `member-photos/${fileName}`;
 
-    const { data, error } = await sb.storage
-      .from("members")
-      .upload(filePath, file, { upsert: false });
+    const { error } = await sb.storage.from("members").upload(filePath, normalized, {
+      upsert: false,
+      contentType: normalized.type || "image/jpeg",
+    });
 
     if (error) {
       console.error("Error uploading photo:", error);
@@ -59,9 +109,7 @@ export async function uploadMemberPhoto(file: File, email: string) {
     }
 
     // Get public URL
-    const { data: publicData } = sb.storage
-      .from("members")
-      .getPublicUrl(filePath);
+    const { data: publicData } = sb.storage.from("members").getPublicUrl(filePath);
 
     return publicData?.publicUrl;
   } catch (error) {

@@ -114,6 +114,16 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.photoRequired": "Required: Front-facing. Used for Digital ID only.",
     "pricing.takeUploadPhoto": "Take or Upload Photo",
     "pricing.removePhoto": "Remove",
+    "pricing.errorSignupGeneric":
+      "We couldn't save your information. Please try again. If it keeps failing, email us from the link below.",
+    "pricing.errorSignupDuplicateEmail":
+      "That email is already registered. Log in from the menu, or use a different email to join.",
+    "pricing.errorSignupPhotoUpload":
+      "We couldn't upload your photo. Try choosing an existing picture from your library, or take a new photo.",
+    "pricing.errorSignupPhotoFormat":
+      "We couldn't read that photo. Open the Photos app, pick a picture, use Share → Save Image, then try again here.",
+    "pricing.errorSignupRLS":
+      "Sign-up is temporarily unavailable. Please try again in a few minutes or contact support.",
     "pricing.continuePayment": "CONTINUE TO PAYMENT",
     "pricing.savingForm": "Saving…",
     "pricing.savePhoto": "Save photo",
@@ -435,6 +445,16 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.photoRequired": "Requerido: De frente. Se usa solo para ID Digital.",
     "pricing.takeUploadPhoto": "Tomar o Cargar Foto",
     "pricing.removePhoto": "Quitar",
+    "pricing.errorSignupGeneric":
+      "No pudimos guardar tu información. Inténtalo de nuevo. Si sigue fallando, escríbenos al correo de abajo.",
+    "pricing.errorSignupDuplicateEmail":
+      "Ese correo ya está registrado. Inicia sesión desde el menú o usa otro correo para unirte.",
+    "pricing.errorSignupPhotoUpload":
+      "No pudimos subir tu foto. Prueba eligiendo una imagen de tu galería o toma una foto nueva.",
+    "pricing.errorSignupPhotoFormat":
+      "No pudimos leer esa foto. Abre Fotos, elige una imagen, Compartir → Guardar imagen, y vuelve a intentarlo aquí.",
+    "pricing.errorSignupRLS":
+      "El registro no está disponible por ahora. Inténtalo en unos minutos o contacta soporte.",
     "pricing.continuePayment": "CONTINUAR AL PAGO",
     "pricing.savingForm": "Guardando…",
     "pricing.savePhoto": "Guardar foto",
