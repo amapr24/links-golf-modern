@@ -4,6 +4,8 @@
  * `slug` matches `partnerCourses` for localized labels.
  */
 
+import type { PartnerCourseType } from "./partnerCourses";
+
 export interface CourseCoordinate {
   slug: string;
   name: string;
@@ -12,6 +14,7 @@ export interface CourseCoordinate {
   lng: number;
   tier: "resort" | "club";
   discount: number;
+  courseType: PartnerCourseType;
 }
 
 export const courseCoordinates: CourseCoordinate[] = [
@@ -23,6 +26,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.2658,
     tier: "resort",
     discount: 25,
+    courseType: "Resort",
   },
   {
     slug: "royal_isabela",
@@ -32,6 +36,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -67.0667,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "bahia_beach",
@@ -41,6 +46,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.81621,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "wyndham_rio_mar",
@@ -50,6 +56,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.75967,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "el_conquistador",
@@ -59,6 +66,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.6298,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "dorado_del_mar",
@@ -68,6 +76,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.2722,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "el_legado",
@@ -77,6 +86,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.1167,
     tier: "resort",
     discount: 20,
+    courseType: "Resort",
   },
   {
     slug: "palmas_del_mar",
@@ -86,6 +96,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.8167,
     tier: "resort",
     discount: 20,
+    courseType: "Country Club",
   },
   {
     slug: "caguas_real",
@@ -95,6 +106,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.05013,
     tier: "club",
     discount: 15,
+    courseType: "Semi-Private",
   },
   {
     slug: "coco_beach",
@@ -104,6 +116,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -65.79694,
     tier: "club",
     discount: 15,
+    courseType: "Semi-Private",
   },
   {
     slug: "club_deportivo_oeste",
@@ -113,6 +126,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -67.2,
     tier: "club",
     discount: 15,
+    courseType: "Public",
   },
   {
     slug: "fort_buchanan",
@@ -122,6 +136,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.1167,
     tier: "club",
     discount: 15,
+    courseType: "Public",
   },
   {
     slug: "rio_bayamon",
@@ -131,6 +146,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.1667,
     tier: "club",
     discount: 15,
+    courseType: "Public",
   },
   {
     slug: "punta_borinquen",
@@ -140,6 +156,7 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -67.1167,
     tier: "club",
     discount: 15,
+    courseType: "Semi-Private",
   },
   {
     slug: "costa_caribe",
@@ -149,5 +166,6 @@ export const courseCoordinates: CourseCoordinate[] = [
     lng: -66.6167,
     tier: "club",
     discount: 15,
+    courseType: "Semi-Private",
   },
 ];

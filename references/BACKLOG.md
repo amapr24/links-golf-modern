@@ -7,9 +7,9 @@ Inventory of **implemented behavior** (with file links), **deployment checklists
 | Area | What’s still open |
 |------|-------------------|
 | **Resend / OTP** | Automated or manual **E2E** (OTP → cookie → `member.me` / dashboard, Resend, Redis, multi-replica); **renewal / lifecycle emails** (product + data + scheduler, later); **optional** OTP rate-limit env tuning once you have telemetry. |
-| **Courses map** | **Optional polish:** custom pin art, extra breakpoint QA on click card, styled rich hover (no `InfoWindow`). |
-| **Marketing** | Broader **mobile course UX** on Home §02; **social proof** strip near pricing. |
-| **Sign-up / card** | **Stripe** checkout; **recovery** if user closes tab between payment and photo; **card polish**; **brand-compliant** Apple / Google wallet marks. |
+| **Courses map** | **Optional polish (remaining):** richer branded pin art, styled rich hover on pins, extra click-card breakpoint QA if issues show up. *(Shipped: teardrop SVG pins, responsive map height, larger detail close control, improved mobile controls in §02.)* |
+| **Marketing** | **Featured / social proof** row (testimonials, logos, press) if you want more than the stats strip. *(Shipped: trust stats strip before pricing; §02 touch targets, scroll, directory link to `lg`.)* |
+| **Sign-up / card** | **Stripe** checkout; **recovery** if the user closes the tab between payment and photo; deeper **card polish**; **official** Apple / Google wallet marks when you have brand assets. *(Shipped: “Links Golf Membership” wordmark on the digital card; wallet CTAs with generic Wallet / Smartphone icons.)* |
 
 Everything else called out in the sections below is either **done in repo** or an **ops/configure** reminder (not a missing feature).
 
@@ -55,14 +55,16 @@ _Scope: Home **02 · Our Network** in [`CoursesSection`](../client/src/component
 
 - **Map hover** — Pins use native **`title`** tooltip; details on **click** in the panel below ([`CoursesMap`](../client/src/components/CoursesMap.tsx)).
 - **Click / info panel** — Cormorant title, body type, `max-w-lg`, close control (`X`), tier + discount.
-- **Pins** — Circle markers with larger default / selected scale.
-- **“View full course directory”** — **`md:hidden`** in [`CoursesSection`](../client/src/components/CoursesSection.tsx) (mobile only).
+- **Pins** — Teardrop **SVG** markers (resort vs club fill), selected state scales up ([`CoursesMap`](../client/src/components/CoursesMap.tsx)).
+- **Map frame** — Responsive height (`min` viewport height on small screens), light shadow / ring on the map container.
+- **“View full course directory”** — Hidden from **`lg`** and up (tablet/phone see the link) in [`CoursesSection`](../client/src/components/CoursesSection.tsx).
+- **Mobile controls (§02)** — ~44px min touch targets, full-width tier tabs on small screens, list/map toggle labels on `xs`, horizontal list `touch-pan-x` / `overscroll-x-contain`, wider course cards (`min` viewport-based width).
 - **Decorative arrows** — Removed from hero, courses CTA, login, directory CTA, and i18n copy; **kept** on pricing checkout in [`PricingSection`](../client/src/components/PricingSection.tsx).
 - **Localized partner names (ES)** — Stable `slug` on [`partnerCourses`](../client/src/data/partnerCourses.ts) and [`courseCoordinates`](../client/src/data/courseCoordinates.ts); [`partnerCourseName`](../client/src/lib/partnerCourseName.ts) + Spanish keys `courses.partner.{slug}` in [`LanguageContext`](../client/src/contexts/LanguageContext.tsx); used in [`CoursesSection`](../client/src/components/CoursesSection.tsx), [`CoursesMap`](../client/src/components/CoursesMap.tsx), and [`Courses.tsx`](../client/src/pages/Courses.tsx).
 
 ### Optional polish
 
-1. **Map pins** — Custom pin art / brand glyph beyond circles.
+1. **Map pins** — Optional **brand** glyph or illustration beyond the current teardrop pin.
 2. **Map click cards** — Extra breakpoint QA if issues appear in the field.
 3. **Rich hover** — Custom overlay instead of native `title` only, if product wants it.
 
@@ -72,12 +74,13 @@ _Scope: Home **02 · Our Network** in [`CoursesSection`](../client/src/component
 
 ### Implemented in code
 
-- **Section shell / layout rhythm** — [`.marketing-section-inner`](../client/src/index.css) on Benefits, How it works, Pricing, FAQ; courses block uses aligned bottom padding (`pb-20 md:pb-28`).
+- **Section shell / layout rhythm** — Shared inner wrapper `container relative z-10 py-20 md:py-28` on Benefits, How it works, Pricing, FAQ; courses block uses aligned bottom padding (`pb-20 md:pb-28`).
+- **Trust stats strip** — [`TrustStrip`](../client/src/components/TrustStrip.tsx) on [`Home`](../client/src/pages/Home.tsx) between How it works and Pricing (localized headline + three stats).
 
 ### Open follow-up
 
-1. **Mobile course UX (broader)** — Dedicated pass on **02 · Our Network** small-screen layout and touch targets (filters, list/grid, map chrome).
-2. **Featured row / social proof** — Trust strip near pricing (testimonials, logos, press quotes).
+1. **Mobile course UX (broader)** — Iterate on **02 · Our Network** after device QA if anything still feels tight (first pass: touch targets, map height, scroll, directory link visibility).
+2. **Featured row / social proof** — Testimonials, partner logos, or press quotes (beyond the stats strip).
 
 ---
 
@@ -90,14 +93,15 @@ _Reference UI — post-payment **“You’re in”**: digital member card, **pho
 ### Implemented in code
 
 - **Photo after payment (mock checkout)** — [`PricingSection`](../client/src/components/PricingSection.tsx): details → payment → success + **DigitalMemberCard**, photo upload, wallet CTAs after save. Supabase: `updateMemberPhotoUrl`, `memberId` as UUID, `activateMembership` on step 3.
-- **Shared member card** — [`DigitalMemberCard`](../client/src/components/DigitalMemberCard.tsx) + [`memberCardDisplay`](../client/src/lib/memberCardDisplay.ts): Home pricing success, [`Dashboard`](../client/src/pages/Dashboard.tsx), [`HowItWorksSection`](../client/src/components/HowItWorksSection.tsx).
+- **Shared member card** — [`DigitalMemberCard`](../client/src/components/DigitalMemberCard.tsx) + [`memberCardDisplay`](../client/src/lib/memberCardDisplay.ts): Home pricing success, [`Dashboard`](../client/src/pages/Dashboard.tsx), [`HowItWorksSection`](../client/src/components/HowItWorksSection.tsx). **Wordmark** line uses `memberCard.wordmark` (“Links Golf Membership” / ES).
+- **Wallet CTAs (icons)** — Apple / Google wallet rows use **Wallet** + **Smartphone** icons for clearer affordance (not official vendor badges).
 
 ### Open follow-up
 
 1. **Real Stripe payment** — Replace mock pay step with Stripe Checkout or Elements; keep post-payment photo + wallet gating.
 2. **Tab close between payment and photo** — Recovery (email deep link, dashboard banner, or resume token).
 3. **Member card polish** — Optional wordmark line, randomized aerial subset ([Unsplash golf collection](https://unsplash.com/collections/bJnL-rJ3zAM/golf)) with attribution, closer match to `./images/membership-youre-in-post-payment-reference.png`.
-4. **Wallet button icons** — Brand-compliant Apple / Google wallet SVG marks.
+4. **Wallet button icons** — Replace generic icons with **brand-compliant** Apple / Google wallet SVG marks when assets are available.
 
 ---
 

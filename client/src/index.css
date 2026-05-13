@@ -148,11 +148,6 @@
     }
   }
 
-  /* Home marketing sections — shared width + vertical rhythm */
-  .marketing-section-inner {
-    @apply container relative z-10 py-20 md:py-28;
-  }
-
   /* Links Golf CTA Button */
   .btn-fairway {
     display: inline-flex;

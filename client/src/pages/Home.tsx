@@ -1,7 +1,7 @@
 /*
  * LINKS GOLF MEMBERSHIP — Home Page
  * Design: "Links Modern" — Refined Athletic Modernism
- * Dark immersive hero → benefits → courses → how-it-works → pricing/signup → FAQ
+ * Dark immersive hero → benefits → courses → how-it-works → trust strip → pricing/signup → FAQ
  * Mobile-first, conversion-focused, golf-forward from the first viewport
  */
 
@@ -12,6 +12,7 @@ import HeroSection from "@/components/HeroSection";
 import BenefitsSection from "@/components/BenefitsSection";
 import CoursesSection from "@/components/CoursesSection";
 import HowItWorksSection from "@/components/HowItWorksSection";
+import TrustStrip from "@/components/TrustStrip";
 import PricingSection from "@/components/PricingSection";
 import FaqSection from "@/components/FaqSection";
 import FooterSection from "@/components/FooterSection";
@@ -79,6 +80,7 @@ export default function Home() {
       <BenefitsSection />
       <CoursesSection />
       <HowItWorksSection />
+      <TrustStrip />
       <PricingSection />
       <FaqSection />
       <FooterSection />

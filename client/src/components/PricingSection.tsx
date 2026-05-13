@@ -5,7 +5,7 @@
  */
 
 import { useState, useRef, useEffect } from "react";
-import { Check, ArrowRight, Camera, ChevronLeft } from "lucide-react";
+import { Check, ArrowRight, Camera, ChevronLeft, Wallet, Smartphone } from "lucide-react";
 import {
   activateMembership,
   isSupabaseConfigured,
@@ -222,7 +222,7 @@ export default function PricingSection() {
         }}
       />
 
-      <div className="marketing-section-inner">
+      <div className="container relative z-10 py-20 md:py-28">
         <div className="text-center mb-14">
           <p className="section-label mb-4 text-white/40">04 · Join Now</p>
           <h2
@@ -664,25 +664,27 @@ export default function PricingSection() {
                     <button
                       type="button"
                       disabled={!photoSaved}
-                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed"
+                      className="w-full min-h-[48px] py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 touch-manipulation"
                       style={{
                         background: "black",
                         color: "white",
                         fontFamily: "'Outfit', sans-serif",
                       }}
                     >
+                      <Wallet className="h-5 w-5 shrink-0 opacity-90" strokeWidth={2} aria-hidden />
                       {t("pricing.addAppleWallet")}
                     </button>
                     <button
                       type="button"
                       disabled={!photoSaved}
-                      className="w-full py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed"
+                      className="w-full min-h-[48px] py-3 px-4 rounded-sm text-sm font-semibold transition-all disabled:opacity-45 disabled:cursor-not-allowed flex items-center justify-center gap-2.5 touch-manipulation"
                       style={{
                         background: "oklch(0.42 0.14 145)",
                         color: "white",
                         fontFamily: "'Outfit', sans-serif",
                       }}
                     >
+                      <Smartphone className="h-5 w-5 shrink-0 opacity-95" strokeWidth={2} aria-hidden />
                       {t("pricing.addGoogleWallet")}
                     </button>
                     {!photoSaved && (

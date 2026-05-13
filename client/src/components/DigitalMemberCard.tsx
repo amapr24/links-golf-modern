@@ -53,10 +53,10 @@ export function DigitalMemberCard({
     >
       <div className={cn(compact ? "p-4" : "p-5", compact ? "min-h-[10.5rem]" : "min-h-[11rem]")} style={aerialPanelStyle}>
         <p
-          className="text-[10px] font-semibold uppercase tracking-[0.22em] text-white/75 mb-0.5"
+          className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/85 mb-0.5"
           style={{ fontFamily: "'Outfit', sans-serif" }}
         >
-          Links Golf
+          {t("memberCard.wordmark")}
         </p>
         <p
           className={cn(

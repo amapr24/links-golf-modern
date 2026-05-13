@@ -59,7 +59,7 @@ export default function HowItWorksSection() {
         style={{ background: "linear-gradient(135deg, oklch(0.13 0.05 145) 0%, oklch(0.18 0.07 145 / 0.8) 100%)" }}
       />
 
-      <div className="marketing-section-inner">
+      <div className="container relative z-10 py-20 md:py-28">
         <div className="text-center mb-14">
           <p className="section-label mb-4 text-white/40">03 · How It Works</p>
           <h2
