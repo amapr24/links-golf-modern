@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { appRouter } from "./routers";
+import { peekOtpForTests, resetOtpStoreForTests } from "./otpStore";
 
 // Mock the email service
 vi.mock("./email", () => ({
@@ -7,12 +8,14 @@ vi.mock("./email", () => ({
     console.log(`[Mock Email] Sending OTP ${otp} to ${email}`);
     return true;
   }),
+  sendWelcomeEmail: vi.fn(async () => true),
 }));
 
 describe("member.sendOtp", () => {
   let caller: ReturnType<typeof appRouter.createCaller>;
 
   beforeEach(() => {
+    resetOtpStoreForTests();
     // Create a caller with minimal context (no user required for public procedure)
     caller = appRouter.createCaller({
       req: {
@@ -31,6 +34,8 @@ describe("member.sendOtp", () => {
 
     expect(result.success).toBe(true);
     expect(result.message).toBe("OTP sent to your email");
+    const stored = peekOtpForTests("test@example.com");
+    expect(stored).toMatch(/^\d{6}$/);
   });
 
   it("should return error for invalid email format", async () => {

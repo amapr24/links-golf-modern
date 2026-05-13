@@ -1,5 +1,3 @@
-import { ENV } from "./_core/env";
-
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const RESEND_API_URL = "https://api.resend.com/emails";
 

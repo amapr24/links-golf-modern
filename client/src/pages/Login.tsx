@@ -7,6 +7,13 @@ import { trpc } from "@/lib/trpc";
 
 type Step = "email" | "otp" | "success";
 
+type MemberRow = {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+};
+
 export default function Login() {
   const { t } = useLanguage();
   const [, setLocation] = useLocation();
@@ -16,6 +23,9 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [memberName, setMemberName] = useState("");
+  const [memberProfile, setMemberProfile] = useState<MemberRow | null>(null);
+
+  const verifyOtpMutation = trpc.member.verifyOtp.useMutation();
 
   // Step 1: Send OTP to email
   const handleSendOtp = async (e: React.FormEvent) => {
@@ -43,12 +53,11 @@ export default function Login() {
         return;
       }
 
-      // Store member info for later
+      setMemberProfile(member as MemberRow);
       setMemberName(`${member.first_name} ${member.last_name}`);
       localStorage.setItem("login_email", email);
       localStorage.setItem("login_member_id", member.id);
 
-      // Call backend to send OTP email via tRPC
       const sendOtpMutation = trpc.member.sendOtp.useMutation();
       
       try {
@@ -76,36 +85,44 @@ export default function Login() {
     }
   };
 
-  // Step 2: Verify OTP and create session
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
-      const storedOtp = localStorage.getItem("login_otp");
       const memberId = localStorage.getItem("login_member_id");
-
-      if (otp !== storedOtp) {
-        setError(t("login.invalidOtp") || "Invalid OTP. Please try again.");
+      if (!memberId || !memberProfile) {
+        setError(t("login.error") || "An error occurred. Please try again.");
         setLoading(false);
         return;
       }
 
-      // Create session token (in production, use JWT)
+      const memberNumber = `LGM-${String(memberProfile.id).replace(/-/g, "").slice(0, 6).toUpperCase()}`;
+
+      const result = await verifyOtpMutation.mutateAsync({
+        email: email.toLowerCase(),
+        otp,
+        firstName: memberProfile.first_name,
+        memberNumber,
+      });
+
+      if (!result.success) {
+        setError(result.error || t("login.invalidOtp") || "Invalid OTP. Please try again.");
+        setLoading(false);
+        return;
+      }
+
       const sessionToken = btoa(`${memberId}:${Date.now()}`);
       localStorage.setItem("member_session", sessionToken);
-      localStorage.setItem("member_id", memberId || "");
+      localStorage.setItem("member_id", memberId);
       localStorage.setItem("member_email", email);
 
-      // Clean up temporary data
-      localStorage.removeItem("login_otp");
       localStorage.removeItem("login_email");
       localStorage.removeItem("login_member_id");
 
       setStep("success");
 
-      // Redirect to dashboard after 2 seconds
       setTimeout(() => {
         setLocation("/dashboard");
       }, 2000);
@@ -209,8 +226,6 @@ export default function Login() {
           <form onSubmit={handleVerifyOtp} className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
               {t("login.otpSent") || "Verification code sent to"} <strong>{email}</strong>
-              <br />
-              <small className="text-blue-600 mt-2 block">[DEMO] Check browser console for OTP</small>
             </div>
 
             <div>
