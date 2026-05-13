@@ -8,10 +8,15 @@ import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollElementIntoViewMotionSafe } from "@/lib/scroll";
+import { useAuth } from "@/_core/hooks/useAuth";
+import { getLoginUrl } from "@/const";
+import { useLocation } from "wouter";
 import LanguageToggle from "./LanguageToggle";
 
 export default function Navbar() {
   const { t } = useLanguage();
+  const { isAuthenticated, loading } = useAuth();
+  const [, navigate] = useLocation();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -81,12 +86,31 @@ export default function Navbar() {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-4">
             <LanguageToggle />
-            <button
-              onClick={() => handleNavClick("#pricing")}
-              className="btn-fairway text-xs py-2.5 px-5"
-            >
-              {t("nav.getCard")}
-            </button>
+            {!loading && (
+              isAuthenticated ? (
+                <button
+                  onClick={() => navigate("/dashboard")}
+                  className="btn-fairway text-xs py-2.5 px-5"
+                >
+                  {t("nav.dashboard") || "Dashboard"}
+                </button>
+              ) : (
+                <>
+                  <button
+                    onClick={() => window.location.href = getLoginUrl()}
+                    className="text-white/80 hover:text-white text-xs py-2.5 px-5 font-medium transition-colors"
+                  >
+                    {t("nav.login") || "Login"}
+                  </button>
+                  <button
+                    onClick={() => handleNavClick("#pricing")}
+                    className="btn-fairway text-xs py-2.5 px-5"
+                  >
+                    {t("nav.getCard")}
+                  </button>
+                </>
+              )
+            )}
           </div>
 
           {/* Mobile hamburger */}
@@ -136,12 +160,31 @@ export default function Navbar() {
             ))}
             <div className="pt-8 w-full space-y-4">
               <LanguageToggle />
-              <button
-                onClick={() => handleNavClick("#pricing")}
-                className="btn-fairway w-full text-sm py-4"
-              >
-                {t("nav.getCard")} — $199/yr
-              </button>
+              {!loading && (
+                isAuthenticated ? (
+                  <button
+                    onClick={() => { setMenuOpen(false); navigate("/dashboard"); }}
+                    className="btn-fairway w-full text-sm py-4"
+                  >
+                    {t("nav.dashboard") || "Dashboard"}
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => { setMenuOpen(false); window.location.href = getLoginUrl(); }}
+                      className="text-white/90 hover:text-white text-sm py-4 font-medium transition-colors block w-full text-left"
+                    >
+                      {t("nav.login") || "Login"}
+                    </button>
+                    <button
+                      onClick={() => handleNavClick("#pricing")}
+                      className="btn-fairway w-full text-sm py-4"
+                    >
+                      {t("nav.getCard")} — $199/yr
+                    </button>
+                  </>
+                )
+              )}
             </div>
           </div>
         </div>

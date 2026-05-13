@@ -19,6 +19,8 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.howItWorks": "How It Works",
     "nav.faq": "FAQ",
     "nav.getCard": "GET YOUR MEMBERSHIP",
+    "nav.login": "Login",
+    "nav.dashboard": "Dashboard",
 
     // Hero
     "hero.location": "EXCLUSIVE FOR PUERTO RICO RESIDENTS",
@@ -194,6 +196,8 @@ const translations: Record<Language, Record<string, string>> = {
     "nav.howItWorks": "Cómo Funciona",
     "nav.faq": "Preguntas",
     "nav.getCard": "OBTÉN TU MEMBRESIA",
+    "nav.login": "Iniciar Sesión",
+    "nav.dashboard": "Panel de Control",
 
     // Hero
     "hero.location": "EXCLUSIVO PARA RESIDENTES DE PUERTO RICO",
