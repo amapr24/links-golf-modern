@@ -15,7 +15,7 @@ interface CoursesMapProps {
 export function CoursesMap({ filter }: CoursesMapProps) {
   const { t } = useLanguage();
   const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<CourseCoordinate | null>(null);
 
   // Filter courses based on tier
@@ -34,7 +34,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     return bounds;
   };
 
-  // Create marker for a course
+  // Classic markers (no mapId / AdvancedMarker setup required for Forge keys)
   const createMarker = (
     map: google.maps.Map,
     course: CourseCoordinate,
@@ -42,15 +42,22 @@ export function CoursesMap({ filter }: CoursesMapProps) {
   ) => {
     const markerColor = course.tier === "resort" ? "#2d7a4a" : "#4a9d6f";
     const selectedColor = "#1a4d2e";
+    const color = isSelected ? selectedColor : markerColor;
 
-    const marker = new google.maps.marker.AdvancedMarkerElement({
+    const marker = new google.maps.Marker({
       map,
       position: { lat: course.lat, lng: course.lng },
       title: course.name,
-      content: createMarkerContent(course, isSelected ? selectedColor : markerColor),
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: color,
+        fillOpacity: 1,
+        strokeColor: "#ffffff",
+        strokeWeight: 2,
+        scale: isSelected ? 10 : 8,
+      },
     });
 
-    // Add click listener to select course
     marker.addListener("click", () => {
       setSelectedCourse(course);
     });
@@ -58,37 +65,11 @@ export function CoursesMap({ filter }: CoursesMapProps) {
     return marker;
   };
 
-  // Create custom marker HTML content
-  const createMarkerContent = (course: CourseCoordinate, color: string) => {
-    const div = document.createElement("div");
-    div.innerHTML = `
-      <div style="
-        width: 32px;
-        height: 32px;
-        background-color: ${color};
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid white;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        cursor: pointer;
-        transition: all 0.2s ease;
-      ">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6z"/>
-        </svg>
-      </div>
-    `;
-    return div;
-  };
-
   // Initialize map and add markers
   const handleMapReady = (map: google.maps.Map) => {
     mapRef.current = map;
 
-    // Clear existing markers
-    markersRef.current.forEach((marker) => marker.map = null);
+    markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
     // Add markers for filtered courses
@@ -108,8 +89,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
   useEffect(() => {
     if (!mapRef.current) return;
 
-    // Clear existing markers
-    markersRef.current.forEach((marker) => marker.map = null);
+    markersRef.current.forEach((marker) => marker.setMap(null));
     markersRef.current = [];
 
     // Add new markers for filtered courses

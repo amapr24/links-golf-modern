@@ -92,21 +92,45 @@ const FORGE_BASE_URL =
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
 
-function loadMapScript() {
-  return new Promise(resolve => {
+/** Single bootstrap; failed loads clear so a remount can retry. */
+let mapsBootstrapPromise: Promise<void> | null = null;
+
+function loadMapScript(): Promise<void> {
+  if (typeof window !== "undefined" && window.google?.maps?.Map) {
+    return Promise.resolve();
+  }
+  if (mapsBootstrapPromise) return mapsBootstrapPromise;
+
+  mapsBootstrapPromise = new Promise((resolve, reject) => {
+    if (!API_KEY) {
+      console.error("VITE_FRONTEND_FORGE_API_KEY is not set; map cannot load");
+      mapsBootstrapPromise = null;
+      reject(new Error("Missing VITE_FRONTEND_FORGE_API_KEY"));
+      return;
+    }
+
     const script = document.createElement("script");
-    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
+    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${encodeURIComponent(API_KEY)}&v=weekly&libraries=places,geocoding,geometry`;
     script.async = true;
     script.crossOrigin = "anonymous";
     script.onload = () => {
-      resolve(null);
-      script.remove(); // Clean up immediately
+      script.remove();
+      if (window.google?.maps?.Map) {
+        resolve();
+      } else {
+        mapsBootstrapPromise = null;
+        reject(new Error("Google Maps script ran but window.google.maps is missing"));
+      }
     };
     script.onerror = () => {
+      mapsBootstrapPromise = null;
       console.error("Failed to load Google Maps script");
+      reject(new Error("Failed to load Google Maps script"));
     };
     document.head.appendChild(script);
   });
+
+  return mapsBootstrapPromise;
 }
 
 interface MapViewProps {
@@ -126,9 +150,18 @@ export function MapView({
   const map = useRef<google.maps.Map | null>(null);
 
   const init = usePersistFn(async () => {
-    await loadMapScript();
+    try {
+      await loadMapScript();
+    } catch (e) {
+      console.error(e);
+      return;
+    }
     if (!mapContainer.current) {
       console.error("Map container not found");
+      return;
+    }
+    if (!window.google?.maps?.Map) {
+      console.error("Google Maps API unavailable after load");
       return;
     }
     map.current = new window.google.maps.Map(mapContainer.current, {
@@ -138,7 +171,6 @@ export function MapView({
       fullscreenControl: true,
       zoomControl: true,
       streetViewControl: true,
-      mapId: "DEMO_MAP_ID",
     });
     if (onMapReady) {
       onMapReady(map.current);
@@ -147,9 +179,18 @@ export function MapView({
 
   useEffect(() => {
     init();
+    return () => {
+      map.current = null;
+      if (mapContainer.current) {
+        mapContainer.current.replaceChildren();
+      }
+    };
   }, [init]);
 
   return (
-    <div ref={mapContainer} className={cn("w-full h-[500px]", className)} />
+    <div
+      ref={mapContainer}
+      className={cn("w-full min-h-[300px] h-[500px] bg-neutral-200", className)}
+    />
   );
 }

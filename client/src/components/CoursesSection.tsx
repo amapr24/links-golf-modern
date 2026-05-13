@@ -156,7 +156,7 @@ export default function CoursesSection() {
         >
         {/* Map View */}
         {viewMode === "map" && (
-          <div className="fade-up">
+          <div className="courses-map-mount">
             <CoursesMap filter={filter} />
           </div>
         )}
