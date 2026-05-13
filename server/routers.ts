@@ -290,28 +290,49 @@ export const appRouter = router({
           const memberId = input.memberId.toString();
           const emailNorm = input.email.toLowerCase();
 
+          console.log(`[createSessionAfterCheckout] Starting with memberId=${input.memberId}, email=${emailNorm}, sessionId=${input.checkoutSessionId}`);
+
           // Verify member exists
           const member = await getMemberByUserId(input.memberId);
           if (!member) {
+            console.error(`[createSessionAfterCheckout] Member not found: ${input.memberId}`);
             return {
               success: false,
               error: "Member not found.",
             };
           }
 
+          console.log(`[createSessionAfterCheckout] Member found: ${member.id}`);
+
           // Verify Stripe checkout session was completed
           const Stripe = (await import('stripe')).default;
           const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "");
-          const checkoutSession = await stripe.checkout.sessions.retrieve(input.checkoutSessionId);
+          
+          console.log(`[createSessionAfterCheckout] Retrieving Stripe session: ${input.checkoutSessionId}`);
+
+          let checkoutSession;
+          try {
+            checkoutSession = await stripe.checkout.sessions.retrieve(input.checkoutSessionId);
+          } catch (stripeError) {
+            console.error(`[createSessionAfterCheckout] Stripe API error:`, stripeError);
+            return {
+              success: false,
+              error: "Failed to verify checkout session.",
+            };
+          }
           
           if (!checkoutSession) {
+            console.error(`[createSessionAfterCheckout] Session not found: ${input.checkoutSessionId}`);
             return {
               success: false,
               error: "Checkout session not found.",
             };
           }
 
+          console.log(`[createSessionAfterCheckout] Session found. Payment status: ${checkoutSession.payment_status}, client_reference_id: ${checkoutSession.client_reference_id}`);
+
           if (checkoutSession.payment_status !== "paid") {
+            console.warn(`[createSessionAfterCheckout] Payment not completed. Status: ${checkoutSession.payment_status}`);
             return {
               success: false,
               error: "Payment not completed. Please try again.",
