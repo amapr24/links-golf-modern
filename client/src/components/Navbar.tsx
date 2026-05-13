@@ -84,32 +84,47 @@ export default function Navbar() {
           </div>
 
           {/* Desktop CTA */}
-          <div className="hidden md:flex items-center gap-4">
+          <div
+            className="hidden md:flex items-center gap-4"
+            aria-busy={loading}
+          >
             <LanguageToggle />
-            {!loading && (
-              isAuthenticated ? (
+            {loading ? (
+              <>
+                <span
+                  className="h-9 w-14 rounded-md bg-white/15 animate-pulse"
+                  aria-hidden
+                />
+                <span
+                  className="h-9 min-w-[9.5rem] rounded-md bg-white/15 animate-pulse"
+                  aria-hidden
+                />
+              </>
+            ) : isAuthenticated ? (
+              <button
+                type="button"
+                onClick={() => navigate("/dashboard")}
+                className="btn-fairway text-xs py-2.5 px-5"
+              >
+                {t("nav.dashboard")}
+              </button>
+            ) : (
+              <>
                 <button
-                  onClick={() => navigate("/dashboard")}
+                  type="button"
+                  onClick={() => (window.location.href = getLoginUrl())}
+                  className="text-white/80 hover:text-white text-xs py-2.5 px-5 font-medium transition-colors"
+                >
+                  {t("nav.login")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleNavClick("#pricing")}
                   className="btn-fairway text-xs py-2.5 px-5"
                 >
-                  {t("nav.dashboard") || "Dashboard"}
+                  {t("nav.getCard")}
                 </button>
-              ) : (
-                <>
-                  <button
-                    onClick={() => window.location.href = getLoginUrl()}
-                    className="text-white/80 hover:text-white text-xs py-2.5 px-5 font-medium transition-colors"
-                  >
-                    {t("nav.login") || "Login"}
-                  </button>
-                  <button
-                    onClick={() => handleNavClick("#pricing")}
-                    className="btn-fairway text-xs py-2.5 px-5"
-                  >
-                    {t("nav.getCard")}
-                  </button>
-                </>
-              )
+              </>
             )}
           </div>
 
@@ -158,32 +173,53 @@ export default function Navbar() {
                 {link.label}
               </button>
             ))}
-            <div className="pt-8 w-full space-y-4">
+            <div
+              className="pt-8 w-full space-y-4"
+              aria-busy={loading}
+            >
               <LanguageToggle />
-              {!loading && (
-                isAuthenticated ? (
+              {loading ? (
+                <>
+                  <span
+                    className="block h-12 w-full rounded-md bg-white/15 animate-pulse"
+                    aria-hidden
+                  />
+                  <span
+                    className="block h-12 w-full rounded-md bg-white/15 animate-pulse"
+                    aria-hidden
+                  />
+                </>
+              ) : isAuthenticated ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMenuOpen(false);
+                    navigate("/dashboard");
+                  }}
+                  className="btn-fairway w-full text-sm py-4"
+                >
+                  {t("nav.dashboard")}
+                </button>
+              ) : (
+                <>
                   <button
-                    onClick={() => { setMenuOpen(false); navigate("/dashboard"); }}
+                    type="button"
+                    onClick={() => {
+                      setMenuOpen(false);
+                      window.location.href = getLoginUrl();
+                    }}
+                    className="text-white/90 hover:text-white text-sm py-4 font-medium transition-colors block w-full text-left"
+                  >
+                    {t("nav.login")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleNavClick("#pricing")}
                     className="btn-fairway w-full text-sm py-4"
                   >
-                    {t("nav.dashboard") || "Dashboard"}
+                    {t("nav.getCard")} — $199/yr
                   </button>
-                ) : (
-                  <>
-                    <button
-                      onClick={() => { setMenuOpen(false); window.location.href = getLoginUrl(); }}
-                      className="text-white/90 hover:text-white text-sm py-4 font-medium transition-colors block w-full text-left"
-                    >
-                      {t("nav.login") || "Login"}
-                    </button>
-                    <button
-                      onClick={() => handleNavClick("#pricing")}
-                      className="btn-fairway w-full text-sm py-4"
-                    >
-                      {t("nav.getCard")} — $199/yr
-                    </button>
-                  </>
-                )
+                </>
               )}
             </div>
           </div>
