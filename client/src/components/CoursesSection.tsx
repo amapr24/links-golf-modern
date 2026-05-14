@@ -75,14 +75,25 @@ export default function CoursesSection() {
         }}
         aria-hidden
       />
-      {/* Top fade: same hand-off as How It Works → Join Now (forest into section) */}
+      {/* Top feather: mirror of Why Join bottom feather — keep opacity in sync with BenefitsSection. */}
       <div
-        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-10"
-        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
+        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
+      {/* Bottom feather: mirror How It Works top — same band as BenefitsSection bottom. */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
         aria-hidden
       />
 
-      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+      {/* Top padding matches BenefitsSection bottom; bottom matches HowItWorksSection top (tight band). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-10 pb-7 sm:pb-9 md:pb-10 px-4 sm:px-6 md:px-8">
         <div
           data-reveal
           data-frosted

@@ -216,12 +216,6 @@ export default function PricingSection() {
       className="relative"
       style={pricingBackgroundStyle}
     >
-      {/* Top fade: dark green from How It Works into aerial image */}
-      <div
-        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-10"
-        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
-        aria-hidden
-      />
       {/* Light overlay - reveals image clearly */}
       <div
         style={{
@@ -237,8 +231,24 @@ export default function PricingSection() {
           backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px)",
         }}
       />
+      {/* Top / bottom feathers: same band as Benefits ↔ Courses (stacked above light + texture, under content). */}
+      <div
+        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
 
-      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+      {/* Top / bottom padding matches HowItWorksSection (tight band). */}
+      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-4 sm:px-6 md:px-8">
         {/* Frosted container wrapper */}
         <div
           className="rounded-xl overflow-hidden"

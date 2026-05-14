@@ -62,8 +62,16 @@ export default function BenefitsSection() {
         }}
         aria-hidden
       />
+      {/* Bottom feather: pairs with Our Network top (same image + fixed bg reads as one hand-off). */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
 
-      <div className="container relative z-10 py-3 sm:py-4 md:py-5 px-3 sm:px-5 md:px-6">
+      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-3 sm:px-5 md:px-6">
         <div
           data-reveal
           data-frosted

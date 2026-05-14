@@ -60,7 +60,25 @@ export default function FaqSection() {
         }}
         aria-hidden
       />
-      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+      {/* Top feather: mirror Pricing bottom — keep in sync with BenefitsSection top feather. */}
+      <div
+        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
+      {/* Bottom feather: eases into solid footer — same band as BenefitsSection bottom. */}
+      <div
+        className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
+        style={{
+          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+        }}
+        aria-hidden
+      />
+
+      {/* Top / bottom padding matches PricingSection (tight band above footer). */}
+      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-4 sm:px-6 md:px-8">
         <div
           className="rounded-xl overflow-hidden"
           style={{
