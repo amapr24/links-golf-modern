@@ -1,7 +1,8 @@
 /*
  * CoursesSection — "Our Network" (02)
- * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
+ * Design: Full-bleed aerial photo (fixed attachment) with dark overlay;
  *         entire section wrapped in a single frosted container for cohesion.
+ *         Alternates with light 01/03/05 on the home aerial stack.
  * Animation: useScrollReveal drives fade-in on the container.
  * Mobile-optimized: heading + filters in a two-column band (filters bottom-right from md).
  */
@@ -68,6 +69,7 @@ export default function CoursesSection() {
         backgroundAttachment: "fixed",
       }}
     >
+      {/* Dark wash — alternates with light 01 / 03 / 05. */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{

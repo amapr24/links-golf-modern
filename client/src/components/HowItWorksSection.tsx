@@ -1,6 +1,7 @@
 /*
  * HowItWorksSection — "How It Works" (03)
- * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
+ * Design: Full-bleed aerial photo (fixed attachment) with light wash + texture;
+ *         alternates with dark 02/04 on the home aerial stack.
  *         entire section wrapped in a single frosted container for cohesion.
  * Animation: useScrollReveal drives fade-in on the container.
  * Mobile-optimized: tighter padding, steps + member card column layout on large screens.
@@ -84,10 +85,19 @@ export default function HowItWorksSection() {
         backgroundAttachment: "fixed",
       }}
     >
+      {/* Light wash + texture — home aerial stack: light 01 / 03 / 05, dark 02 / 04. */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 100%)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-5"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px)",
         }}
         aria-hidden
       />

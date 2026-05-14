@@ -1,7 +1,7 @@
 /*
  * PricingSection — Links Golf Membership
- * Design: Dark full-width panel, centered conversion card
- * Multi-step form: Player details + verification photo → Stripe checkout
+ * Design: Full-bleed aerial with dark wash (alternates light 01/03/05 on home stack);
+ *         frosted conversion shell + multi-step signup → Stripe checkout.
  */
 
 import { useState, useRef } from "react";
@@ -213,25 +213,18 @@ export default function PricingSection() {
   return (
     <section
       id="pricing"
-      className="relative"
+      className="relative overflow-hidden"
       style={pricingBackgroundStyle}
     >
-      {/* Light overlay - reveals image clearly */}
+      {/* Dark wash — home aerial stack: light 01 / 03 / 05, dark 02 / 04. */}
       <div
+        className="pointer-events-none absolute inset-0"
         style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
         }}
+        aria-hidden
       />
-      {/* Subtle texture overlay */}
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px)",
-        }}
-      />
-      {/* Top / bottom feathers: same band as Benefits ↔ Courses (stacked above light + texture, under content). */}
+      {/* Top / bottom feathers (stacked on dark wash, under content). */}
       <div
         className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
         style={{

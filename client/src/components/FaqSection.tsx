@@ -1,6 +1,6 @@
 /*
  * FaqSection — Links Golf Membership
- * Design: Same aerial + dark treatment as mid-page sections; frosted accordion shell.
+ * Design: Full-bleed aerial with light wash + texture; alternates with dark 02/04 on home stack.
  */
 
 import { useState, type ReactNode } from "react";
@@ -53,10 +53,19 @@ export default function FaqSection() {
 
   return (
     <section id="faq" className="relative overflow-hidden" style={faqBackgroundStyle}>
+      {/* Light wash + texture — home aerial stack: light 01 / 03 / 05, dark 02 / 04. */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.1) 100%)",
+        }}
+        aria-hidden
+      />
+      <div
+        className="pointer-events-none absolute inset-0 opacity-5"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px), repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.3) 40px, rgba(255,255,255,0.3) 41px)",
         }}
         aria-hidden
       />
