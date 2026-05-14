@@ -285,6 +285,42 @@
 
 ## Standards-based audits (follow-up passes)
 
+### PCI DSS SAQ-A boundary review
+
+> Verdict: **Eligible for SAQ-A** today (Stripe Checkout full redirect; no client-side Stripe SDK; no card data in merchant systems; webhook signature verified). But PCI DSS v4.0 (effective March 2025) tightened SAQ-A requirements 6.4.3 and 11.6.1 — the merchant now has to manage scripts and HTTP headers on the payment-adjacent pages. Two new operational items below cover that gap; the rest is record-keeping.
+
+**Confirmed positives (do not regress):**
+
+- Full-redirect Checkout via `stripe.checkout.sessions.create()` (`server/stripe/checkout.ts:47`) — no Elements, no Payment Element, no Stripe.js mounted on the merchant site.
+- No `@stripe/stripe-js`, `@stripe/react-stripe-js`, `CardElement`, `CardNumberElement`, `PaymentElement` anywhere in `client/` — confirmed by source search.
+- Server `stripe` SDK (`package.json` dep) only used in `server/stripe/*`, never imported by the client bundle.
+- Webhook signature verified with `stripe.webhooks.constructEvent` (`server/stripe/routes.ts:32-36`) and raw-body parser mounted before `express.json()`.
+- No PAN/CVV/expiry/cardholder-name logged in the payment flow — verified across `server/stripe/*`, `server/routers.ts`, and `client/src/pages/Success.tsx`.
+
+**New PCI v4.0-specific items to add to the backlog:**
+
+- [ ] **6.4.3 — Inventory and manage every script on payment-adjacent pages.** Required for SAQ-A under v4.0. Today there is no inventory and no review gate.
+  - **Fix:** Add `docs/pci/payment-page-scripts.md` listing every script loaded on `/`, `/pricing`, `/success`, `/dashboard` (the pages that initiate or terminate the redirect). For each: source, business justification, integrity-check method. Add a PR template checkbox: "Does this change add or modify a script on a payment-adjacent page? If yes, update the inventory."
+- [ ] **11.6.1 — Tamper-detection on payment-page headers and scripts.** Required for SAQ-A from 31 March 2025; the website must detect unauthorised modifications to HTTP headers and script content on the payment redirect pages.
+  - **Fix:** Cheapest compliant option — a synthetic monitor that hits `/`, `/pricing`, `/success` every ~5 minutes and verifies (a) the security-headers set matches an expected baseline and (b) the SHA-256 of each script `src` matches a recorded baseline. Alert on diff. Document the procedure. (More expensive options: client-side script integrity beacons such as Source Defense or Jscrambler.)
+- [ ] **MANUS_DEV_TOOLS hard-off in production.** The `vite-plugin-manus-runtime` debug collector injects a third-party script that captures console logs, network requests, and (in the worst case) session replay. If it ever ends up on a payment-adjacent page in production, the merchant falls into SAQ-A-EP scope. — `vite.config.ts:12-70,156-189`
+  - **Fix:** Wrap the plugin so it is _physically impossible_ to enable in a production build (`process.env.NODE_ENV === 'production' ? null : manusDebugCollector()`), not just a runtime env flag. Add a CI test that builds with `NODE_ENV=production` and greps the bundle for `__manus__` / `manus-logs` strings.
+- [ ] **HTTP security headers on payment-adjacent pages.** Currently none (covered under ASVS V9.2.1 / V14.4.1 above). For PCI specifically, the minimum is CSP that locks down `script-src` and a Permissions-Policy that disables payment APIs not in use.
+  - **Fix:** See the ASVS V9.2.1 item above. PCI adds the requirement that the CSP must be tight enough that an injected script on the pricing page cannot reach card-collection territory — practically that means `script-src 'self' https://js.stripe.com` (Stripe.js loaded **only** on routes that use it; for full-redirect it should not be loaded at all) and `frame-src https://js.stripe.com https://hooks.stripe.com`.
+- [ ] **Restrict the webhook endpoint to Stripe egress IPs.** Defence-in-depth on top of signature verification.
+  - **Fix:** Maintain an allowlist of [Stripe's documented egress IP ranges](https://docs.stripe.com/ips) at the WAF / reverse proxy. Reject other clients with 404.
+- [ ] **Record-keeping checklist for the annual SAQ-A submission:**
+  - [ ] Obtain Stripe's PCI DSS Level 1 Attestation of Compliance (renewed annually); store in `docs/pci/`.
+  - [ ] Designate a responsible person and submission cadence with the acquiring bank.
+  - [ ] Maintain a one-page network/data-flow diagram showing that card data never crosses merchant infrastructure.
+  - [ ] Retain SAQ-A signed AOCs for ≥1 year (PCI requirement 12.10.4) — many banks ask for 3.
+  - [ ] Document the change-control gate for anything that touches payment-adjacent pages.
+- [ ] **Vulnerability scan** (ASV scan) — not required for SAQ-A by default, but some acquirers ask for one. Confirm with the bank.
+
+**Risk if the items above are not done:** the merchant remains _technically_ SAQ-A but cannot honestly attest to PCI DSS v4.0 6.4.3 / 11.6.1 on the next renewal — banks will increasingly enforce this in 2026.
+
+---
+
 ### Stripe Integration Checklist — source-based audit
 
 > Walked against Stripe's official integration checklist for Checkout + subscriptions + webhooks. New findings below; existing P0 Payments items remain authoritative for those topics.
