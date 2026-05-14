@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "wouter";
 import { Loader2 } from "lucide-react";
 import { trpc } from "@/lib/trpc";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export default function Success() {
   const [, setLocation] = useLocation();
+  const { t } = useLanguage();
   const [isCreatingSession, setIsCreatingSession] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const { mutateAsync: createSessionAfterCheckout } =
@@ -36,7 +38,7 @@ export default function Success() {
         if (!memberId || !email) {
           console.error("[Success] Missing parameters:", { sessionId, memberId, email });
           if (!cancelled) {
-            setError("Missing checkout information. Please contact support.");
+            setError(t("success.errorMissingInfo"));
             setIsCreatingSession(false);
           }
           return;
@@ -45,7 +47,7 @@ export default function Success() {
         if (!sessionId) {
           console.error("[Success] Missing session ID");
           if (!cancelled) {
-            setError("Missing session information. Please contact support.");
+            setError(t("success.errorMissingSession"));
             setIsCreatingSession(false);
           }
           return;
@@ -73,14 +75,14 @@ export default function Success() {
           }
         } else {
           if (!cancelled) {
-            setError(result.error || "Failed to create session");
+            setError(result.error || t("success.errorCreateSession"));
             setIsCreatingSession(false);
           }
         }
       } catch (err) {
         if (cancelled) return;
         console.error("[Success] Error creating session:", err);
-        setError("An error occurred. Please try again.");
+        setError(t("success.errorGeneric"));
         setIsCreatingSession(false);
       }
     };
@@ -105,7 +107,7 @@ export default function Success() {
               color: "oklch(0.13 0.05 145)",
             }}
           >
-            Setting up your membership...
+            {t("success.settingUp")}
           </h1>
           <p
             className="text-sm"
@@ -114,7 +116,7 @@ export default function Success() {
               color: "oklch(0.45 0.06 145)",
             }}
           >
-            Redirecting to your dashboard...
+            {t("success.redirecting")}
           </p>
         </div>
       </div>
@@ -132,7 +134,7 @@ export default function Success() {
               color: "oklch(0.13 0.05 145)",
             }}
           >
-            Something went wrong
+            {t("success.somethingWentWrong")}
           </h1>
           <p
             className="text-sm mb-6"
@@ -152,7 +154,7 @@ export default function Success() {
               color: "white",
             }}
           >
-            Go Home
+            {t("success.goHome")}
           </button>
         </div>
       </div>

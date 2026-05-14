@@ -167,3 +167,10 @@
 - [ ] How It Works: Tighten vertical spacing — reduce gaps between steps
 - [ ] FAQ: Fix padding inconsistency between "Common Questions" heading and first question
 - [ ] Scrolling: Fix jumpy scroll behavior (investigate animation/transform issues)
+
+## Spanish Translation Fixes (Current Sprint)
+- [x] Add missing translation keys to LanguageContext (PricingSection savings example, errors, navbar, success page, login)
+- [x] Fix PricingSection hardcoded English strings (savings example, errors, toast)
+- [x] Fix Navbar mobile CTA hardcoded $199/yr suffix
+- [x] Fix Success page (fully untranslated — add useLanguage)
+- [x] Fix Login page English fallbacks

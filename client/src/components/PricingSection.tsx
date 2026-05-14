@@ -54,9 +54,9 @@ export default function PricingSection() {
   const handleContinueToPayment = async () => {
     setError("");
     if (!isSupabaseConfigured) {
-      setError(
+        setError(
         "Sign-up is unavailable in this environment (Supabase env vars are not set).",
-      );
+      ); // dev-only message, intentionally not translated
       return;
     }
     setIsSubmitting(true);
@@ -68,7 +68,7 @@ export default function PricingSection() {
       const address = (document.getElementById("inp-address") as HTMLInputElement)?.value;
 
       if (!firstName || !lastName || !email || phoneDigits.length === 0) {
-        setError("Please fill in all required fields");
+        setError(t("pricing.errorRequiredFields"));
         setIsSubmitting(false);
         return;
       }
@@ -141,7 +141,7 @@ export default function PricingSection() {
 
     try {
       if (!memberId || !signupEmail) {
-        setError("Please complete your profile before proceeding to checkout.");
+        setError(t("pricing.errorCompleteProfile"));
         setIsSubmitting(false);
         return;
       }
@@ -163,7 +163,7 @@ export default function PricingSection() {
       });
 
       if (!result.success || !result.url) {
-        setError(result.error || "Failed to create checkout session");
+        setError(result.error || t("pricing.errorCheckoutFailed"));
         setIsSubmitting(false);
         return;
       }
@@ -173,7 +173,7 @@ export default function PricingSection() {
       sessionStorage.setItem("checkout_member_id", memberId);
       sessionStorage.setItem("checkout_member_email", signupEmail);
 
-      toast.info("Redirecting to checkout...");
+      toast.info(t("pricing.toastRedirectingCheckout"));
       // Open Stripe checkout in a new window
       if (result.url) {
         window.open(result.url, "_blank");
@@ -181,7 +181,7 @@ export default function PricingSection() {
       setIsSubmitting(false);
     } catch (err) {
       console.error("Error starting checkout:", err);
-      setError("Failed to start checkout. Please try again.");
+      setError(t("pricing.errorCheckoutFailed"));
       setIsSubmitting(false);
     }
   };
@@ -359,22 +359,22 @@ export default function PricingSection() {
                 className="text-xs font-semibold uppercase tracking-widest mb-3"
                 style={{ color: "oklch(0.65 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
               >
-                Savings Example
+                {t("pricing.savingsExampleLabel")}
               </p>
               <div className="space-y-1.5 text-sm" style={{ fontFamily: "'Outfit', sans-serif" }}>
                 <div className="flex justify-between">
-                  <span className="text-white/50">4 rounds at TPC Dorado Beach</span>
-                  <span className="text-white/70">~$800</span>
+                  <span className="text-white/50">{t("pricing.savingsExampleRounds")}</span>
+                  <span className="text-white/70">{t("pricing.savingsExampleRoundsValue")}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-white/50">With 25% member discount</span>
-                  <span style={{ color: "oklch(0.65 0.14 145)" }}>Save ~$200</span>
+                  <span className="text-white/50">{t("pricing.savingsExampleDiscount")}</span>
+                  <span style={{ color: "oklch(0.65 0.14 145)" }}>{t("pricing.savingsExampleDiscountValue")}</span>
                 </div>
                 <div
                   className="flex justify-between font-semibold pt-1.5 mt-1.5"
                   style={{ borderTop: "1px solid oklch(0.42 0.14 145 / 0.2)" }}
                 >
-                  <span className="text-white/70">Membership already paid for</span>
+                  <span className="text-white/70">{t("pricing.savingsExamplePaidFor")}</span>
                   <span className="text-white">✓</span>
                 </div>
               </div>

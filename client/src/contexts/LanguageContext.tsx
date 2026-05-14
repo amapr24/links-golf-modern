@@ -174,6 +174,30 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.joinNow": "GET YOUR MEMBERSHIP",
     "pricing.sectionEyebrow": "Join Now",
 
+    // Pricing — savings example box
+    "pricing.savingsExampleLabel": "Savings Example",
+    "pricing.savingsExampleRounds": "4 rounds at TPC Dorado Beach",
+    "pricing.savingsExampleRoundsValue": "~$800",
+    "pricing.savingsExampleDiscount": "With 25% member discount",
+    "pricing.savingsExampleDiscountValue": "Save ~$200",
+    "pricing.savingsExamplePaidFor": "Membership already paid for",
+
+    // Pricing — inline errors
+    "pricing.errorRequiredFields": "Please fill in all required fields.",
+    "pricing.errorCompleteProfile": "Please complete your profile before proceeding to checkout.",
+    "pricing.errorCheckoutFailed": "Failed to start checkout. Please try again.",
+    "pricing.toastRedirectingCheckout": "Redirecting to checkout…",
+
+    // Success page
+    "success.settingUp": "Setting up your membership…",
+    "success.redirecting": "Redirecting to your dashboard…",
+    "success.somethingWentWrong": "Something went wrong",
+    "success.goHome": "Go Home",
+    "success.errorMissingInfo": "Missing checkout information. Please contact support.",
+    "success.errorMissingSession": "Missing session information. Please contact support.",
+    "success.errorCreateSession": "Failed to create session. Please contact support.",
+    "success.errorGeneric": "An error occurred. Please try again.",
+
     "trustStrip.headline": "Built for year-round play in Puerto Rico",
     "trustStrip.col1Value": "{{count}}",
     "trustStrip.col1Label": "Partner courses",
@@ -505,6 +529,30 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.paymentRefundReminder": "Estás a punto de pagar la cuota anual. Revisa",
     "pricing.joinNow": "OBTÉN TU MEMBRESÍA",
     "pricing.sectionEyebrow": "Unirse",
+
+    // Pricing — savings example box
+    "pricing.savingsExampleLabel": "Ejemplo de Ahorro",
+    "pricing.savingsExampleRounds": "4 rondas en TPC Dorado Beach",
+    "pricing.savingsExampleRoundsValue": "~$800",
+    "pricing.savingsExampleDiscount": "Con 25% de descuento de miembro",
+    "pricing.savingsExampleDiscountValue": "Ahorra ~$200",
+    "pricing.savingsExamplePaidFor": "Membresía ya amortizada",
+
+    // Pricing — inline errors
+    "pricing.errorRequiredFields": "Por favor completa todos los campos requeridos.",
+    "pricing.errorCompleteProfile": "Completa tu perfil antes de continuar al pago.",
+    "pricing.errorCheckoutFailed": "No se pudo iniciar el pago. Inténtalo de nuevo.",
+    "pricing.toastRedirectingCheckout": "Redirigiendo al pago…",
+
+    // Success page
+    "success.settingUp": "Configurando tu membresía…",
+    "success.redirecting": "Redirigiendo a tu panel…",
+    "success.somethingWentWrong": "Algo salió mal",
+    "success.goHome": "Ir al inicio",
+    "success.errorMissingInfo": "Información de pago incompleta. Contáctanos.",
+    "success.errorMissingSession": "Información de sesión incompleta. Contáctanos.",
+    "success.errorCreateSession": "No se pudo crear la sesión. Contáctanos.",
+    "success.errorGeneric": "Ocurrió un error. Inténtalo de nuevo.",
 
     "trustStrip.headline": "Pensado para jugar todo el año en Puerto Rico",
     "trustStrip.col1Value": "{{count}}",

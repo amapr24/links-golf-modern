@@ -33,9 +33,9 @@ export default function Login() {
     e.preventDefault();
     setError("");
     if (!supabase) {
-      setError(
+        setError(
         "Login is not configured (missing VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY).",
-      );
+      ); // dev-only, intentionally not translated
       return;
     }
     setLoading(true);
@@ -49,7 +49,7 @@ export default function Login() {
         .single();
 
       if (queryError || !member) {
-        setError(t("login.memberNotFound") || "Member not found. Please sign up first.");
+        setError(t("login.memberNotFound"));
         setLoading(false);
         return;
       }
@@ -64,7 +64,7 @@ export default function Login() {
         const result = await sendOtpMutation.mutateAsync({ email: email.toLowerCase() });
         
         if (!result.success) {
-          setError(result.error || "Failed to send OTP. Please try again.");
+          setError(result.error || t("login.error"));
           setLoading(false);
           return;
         }
@@ -73,12 +73,12 @@ export default function Login() {
         setStep("otp");
       } catch (emailErr) {
         console.error("[sendOtp] Error:", emailErr);
-        setError("Failed to send OTP email. Please try again.");
+        setError(t("login.error"));
         setLoading(false);
         return;
       }
     } catch (err) {
-      setError(t("login.error") || "An error occurred. Please try again.");
+      setError(t("login.error"));
       console.error(err);
     } finally {
       setLoading(false);
@@ -92,7 +92,7 @@ export default function Login() {
 
     try {
       if (!memberProfile) {
-        setError(t("login.error") || "An error occurred. Please try again.");
+        setError(t("login.error"));
         setLoading(false);
         return;
       }
@@ -103,7 +103,7 @@ export default function Login() {
       });
 
       if (!result.success) {
-        setError(result.error || t("login.invalidOtp") || "Invalid OTP. Please try again.");
+        setError(result.error || t("login.invalidOtp"));
         setLoading(false);
         return;
       }
@@ -119,7 +119,7 @@ export default function Login() {
         setLocation("/dashboard");
       }, 2000);
     } catch (err) {
-      setError(t("login.error") || "An error occurred. Please try again.");
+      setError(t("login.error"));
       console.error(err);
     } finally {
       setLoading(false);
@@ -148,10 +148,10 @@ export default function Login() {
         {/* Header */}
         <div className="mb-8 text-center">
           <h1 className="text-4xl font-light mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-            {t("login.title") || "Welcome Back"}
+            {t("login.title")}
           </h1>
           <p className="text-gray-600" style={{ fontFamily: "'Outfit', sans-serif" }}>
-            {t("login.subtitle") || "Access your Links Golf membership"}
+            {t("login.subtitle")}
           </p>
         </div>
 
@@ -160,7 +160,7 @@ export default function Login() {
           <form onSubmit={handleSendOtp} className="space-y-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("login.email") || "Email Address"}
+                {t("login.email")}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
@@ -190,21 +190,21 @@ export default function Login() {
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  {t("login.sending") || "Sending..."}
+                  {t("login.sending")}
                 </>
               ) : (
-                <>{t("login.sendOtp") || "Send Verification Code"}</>
+                <>{t("login.sendOtp")}</>
               )}
             </button>
 
             <p className="text-center text-sm text-gray-600">
-              {t("login.noAccount") || "Don't have an account?"}{" "}
+              {t("login.noAccount")}{" "}
               <button
                 type="button"
                 onClick={() => setLocation("/")}
                 className="text-[var(--color-fairway)] hover:underline font-semibold"
               >
-                {t("login.signUp") || "Sign up"}
+                {t("login.signUp")}
               </button>
             </p>
           </form>
@@ -214,12 +214,12 @@ export default function Login() {
         {step === "otp" && (
           <form onSubmit={handleVerifyOtp} className="space-y-6">
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
-              {t("login.otpSent") || "Verification code sent to"} <strong>{email}</strong>
+              {t("login.otpSent")} <strong>{email}</strong>
             </div>
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t("login.verificationCode") || "Verification Code"}
+                {t("login.verificationCode")}
               </label>
               <input
                 type="text"
@@ -247,10 +247,10 @@ export default function Login() {
               {loading ? (
                 <>
                   <Loader2 size={18} className="animate-spin" />
-                  {t("login.verifying") || "Verifying..."}
+                  {t("login.verifying")}
                 </>
               ) : (
-                <>{t("login.verify") || "Verify & Login"}</>
+                <>{t("login.verify")}</>
               )}
             </button>
 
@@ -263,7 +263,7 @@ export default function Login() {
               }}
               className="w-full text-gray-600 hover:text-gray-800 font-medium py-2"
             >
-              {t("login.backToEmail") || "Back to email"}
+              {t("login.backToEmail")}
             </button>
           </form>
         )}
@@ -278,10 +278,10 @@ export default function Login() {
             </div>
             <div>
               <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-                {t("login.welcome") || "Welcome back"}, {memberName}!
+                {t("login.welcome")}, {memberName}!
               </h2>
               <p className="text-gray-600">
-                {t("login.redirecting") || "Redirecting to your dashboard..."}
+                {t("login.redirecting")}
               </p>
             </div>
           </div>

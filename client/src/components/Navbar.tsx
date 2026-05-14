@@ -198,7 +198,7 @@ export default function Navbar() {
                     onClick={() => handleNavClick("#pricing")}
                     className="btn-fairway w-full text-base py-4"
                   >
-                    {t("nav.getCard")} — $199/yr
+                    {t("nav.getCard")}
                   </button>
                   <div className="flex justify-center pt-2">
                     <LanguageToggle variant="menu" />
