@@ -281,6 +281,55 @@
 
 ---
 
+---
+
+## Standards-based audits (follow-up passes)
+
+### WCAG 2.1 Level A + AA — per-criterion source walk
+
+> axe-core could not be run (no browser available in sandbox; Playwright Chromium download blocked). This is a source-based walk; criteria not listed below were N/A or PASS. Re-run axe-core in a browser once available to confirm.
+
+Pass summary (Level A + AA): **PASS** — 1.3.2, 1.3.3, 1.3.4, 1.3.5, 1.4.1, 1.4.4, 1.4.5, 1.4.10, 1.4.11, 1.4.12, 2.1.2, 2.1.4, 2.2.1, 2.3.1, 2.4.3, 2.4.4, 2.4.7, 2.5.1, 2.5.2, 2.5.3, 2.5.4, 3.2.1, 3.2.2, 3.2.3, 3.2.4, 3.3.1, 3.3.3, 4.1.1, 4.1.3.
+
+**New failures (not already in the P1 Accessibility section above):**
+
+- [ ] **1.3.1 / 3.3.2 / 2.4.6 — Form labels are not associated with their inputs.** `<label>` tags lack `htmlFor`; inputs have `id` but no programmatic binding. Screen readers cannot announce labels when focusing the input. — `client/src/components/PricingSection.tsx:454-510`, `client/src/pages/Login.tsx:162-176,221`
+  - **Fix:** Add `htmlFor="inp-firstname"` (etc.) on every `<label>`; or use Radix `<Label>` with `htmlFor`. Same for OTP / email fields on Login.
+- [ ] **2.1.1 / 2.4.1 — No skip-to-main-content link.** Keyboard users must tab through the full navbar on every page. — `client/src/App.tsx`, `client/index.html`
+  - **Fix:** Inject `<a href="#main" class="sr-only focus:not-sr-only">Skip to main content</a>` as the first focusable element, and wrap each page in `<main id="main" tabindex="-1">`.
+- [ ] **2.4.2 — Page Titled.** Every route shares one static `<title>`. Dashboard, Success, Login, 404, legal pages all announce as "Links Golf Membership · Play More, Pay Less". — `client/index.html:6`
+  - **Fix:** Update `document.title` per route (small `usePageTitle(title)` hook), or use `react-helmet-async`. Suggested titles: `"Member dashboard · Links Golf PR"`, `"Welcome aboard · Links Golf PR"`, `"Sign in · Links Golf PR"`, `"Page not found · Links Golf PR"`, `"Privacy policy · Links Golf PR"`, etc.
+- [ ] **2.4.5 — Multiple Ways.** No sitemap, no breadcrumbs, no search; only the in-page nav exposes content. — `client/public/`
+  - **Fix:** Adding the `sitemap.xml` listed in P1 SEO also satisfies this criterion.
+- [ ] **3.1.2 — Language of Parts.** When Spanish is selected, Spanish content inside an `<html lang="en">` document needs `lang="es"` on each translated block, OR the document `lang` must switch (preferred — see P1 Accessibility). Additionally any English brand name inside Spanish text (e.g. "Links Golf") could carry `lang="en"` for screen-reader pronunciation. — `client/index.html:2`, `client/src/contexts/LanguageContext.tsx`
+  - **Fix:** Switching `document.documentElement.lang` (already in P1) handles the page-level case. Apply `lang="en"` selectively to "Links Golf"/"Stripe" in Spanish copy if pronunciation testing reveals issues.
+- [ ] **3.3.4 — Error Prevention (Legal, Financial, Data).** Signup posts directly to Stripe with no confirmation step ("review your details"). Photo upload has no preview/crop before submit. — `client/src/components/PricingSection.tsx`
+  - **Fix:** Add a final review step (name / email / phone / photo preview) before triggering `createCheckout`. Allow "Edit" to go back without losing entered data.
+- [ ] **4.1.2 — Name, Role, Value.** The four legal-consent checkboxes (residency, terms, privacy, refund) have visible text adjacent but no programmatic name. — `client/src/components/PricingSection.tsx:435,584,600,616`
+  - **Fix:** Each `<input type="checkbox">` needs an `id` and the surrounding text needs a `<label htmlFor>` (or an `aria-labelledby`).
+- [ ] **Navbar logo `href="#"` with `e.preventDefault()`.** Not an A/AA failure in itself, but `href="#"` is a known anti-pattern for keyboard users (it focuses the URL bar in some browsers). — `client/src/components/Navbar.tsx:56-70`
+  - **Fix:** Use `href="/"` and let Wouter intercept, or switch to a `<button>` with the scroll handler.
+
+**Already-listed failures re-confirmed against WCAG (now mapped to specific criteria):**
+
+- 2.5.5 / 1.4.4 — `maximum-scale=1` (already P1).
+- 3.1.1 — `<html lang>` never updates (already P1).
+- 1.1.1 — Brand/member photos use `alt=""` (already P1).
+- 2.4.7 / 2.1.2 — Modal focus management (already P1; note Radix Dialog gives this for free where used; verify ManusDialog and any custom overlays).
+- 1.4.3 — Contrast on hero green em-text (already P1; needs browser-based contrast measurement to confirm).
+- 1.3.1 — Missing semantic landmarks (already P1).
+- 3.1.2 — Legal pages, NotFound, ErrorBoundary are English-only despite bilingual app (already P1).
+
+**Items needing browser/axe-core verification (cannot be confirmed from source alone):**
+
+- 1.4.3 Contrast (Minimum) on every text/background pair — particularly hero `oklch(0.65 0.16 145)` over the gradient, eyebrow labels on the F7F3EC cream, and any frosted-container text.
+- 1.4.11 Non-text Contrast on form borders, focus rings against frosted backgrounds, and the filter pills.
+- 1.4.13 Content on Hover/Focus — verify any tooltip/popover dismisses with `Escape` and remains visible while hovered.
+- 2.4.7 Focus Visible against every background (some backgrounds may hide a white outline).
+- 4.1.3 Status Messages — verify form submission errors and the photo-upload spinner are announced (need `aria-live="polite"`/`aria-busy`).
+
+---
+
 ## Archive — historical project checklist (prior state)
 
 > Preserved verbatim from the previous `todo.md`. Many of these are claimed complete but several items below overlap with the audit findings above and should be re-verified.
