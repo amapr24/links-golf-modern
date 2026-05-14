@@ -238,8 +238,20 @@ export default function PricingSection() {
         }}
       />
 
-      <div className="container relative z-10 py-20 md:py-28">
-        <div className="text-center mb-14">
+      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+        {/* Frosted container wrapper */}
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            background: "rgba(255,255,255,0.04)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.08)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          }}
+        >
+          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
+            <div className="text-center mb-14">
           <p className="section-label mb-4 text-white/40">04 · Join Now</p>
           <h2
             className="text-white fade-up"
@@ -730,6 +742,8 @@ export default function PricingSection() {
                   </p>
                 </div>
               )}
+            </div>
+          </div>
             </div>
           </div>
         </div>

@@ -6,7 +6,7 @@
  * Mobile-optimized: tighter padding, compact stats, single-col cards on xs.
  */
 
-import { DollarSign, Smartphone, MapPin, CalendarCheck } from "lucide-react";
+import { DollarSign, Smartphone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
@@ -41,13 +41,6 @@ export default function BenefitsSection() {
       highlight: t("benefits.network.highlight"),
       title: t("benefits.network.title"),
       body: t("benefits.network.body"),
-    },
-    {
-      id: "price",
-      icon: CalendarCheck,
-      highlight: t("benefits.price.highlight"),
-      title: t("benefits.price.title"),
-      body: t("benefits.price.body"),
     },
   ];
 
@@ -182,38 +175,6 @@ export default function BenefitsSection() {
                   </div>
                 );
               })}
-            </div>
-
-            {/* Stats row */}
-            <div className="grid grid-cols-3 gap-2.5 sm:gap-3 md:gap-4 mb-5 sm:mb-6 md:mb-7">
-              {[
-                { value: "15", label: t("benefits.stats.partnerCoursesLabel") },
-                { value: "25%", label: t("benefits.stats.maxDiscountLabel") },
-                { value: t("benefits.stats.breakEvenRange"), label: t("benefits.stats.breakEvenLabel") },
-              ].map((stat) => (
-                <div key={stat.label} className="flex flex-col gap-0.5">
-                  <span
-                    className="leading-none"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: "clamp(1.5rem, 5vw, 2.8rem)",
-                      fontWeight: 600,
-                      color: "oklch(0.72 0.12 145)",
-                    }}
-                  >
-                    {stat.value}
-                  </span>
-                  <span
-                    className="text-[9px] sm:text-xs uppercase tracking-wider leading-tight"
-                    style={{
-                      fontFamily: "'Outfit', sans-serif",
-                      color: "oklch(0.55 0.06 145)",
-                    }}
-                  >
-                    {stat.label}
-                  </span>
-                </div>
-              ))}
             </div>
 
             {/* CTA */}

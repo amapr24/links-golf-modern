@@ -28,16 +28,25 @@ const tabIds: Record<DirectoryFilter, string> = {
 };
 
 function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => string): string {
-  switch (type) {
-    case "all":
-      return t("courses.homeFilter.all");
-    case "Resort":
-      return t("courses.homeFilter.resort");
-    case "Semi-Private":
-      return t("courses.homeFilter.semiPrivate");
-    case "Public":
-      return t("courses.homeFilter.public");
-  }
+  const counts: Record<DirectoryFilter, number> = {
+    all: 15,
+    Resort: 8,
+    "Semi-Private": 4,
+    Public: 3,
+  };
+  const label = (() => {
+    switch (type) {
+      case "all":
+        return t("courses.homeFilter.all");
+      case "Resort":
+        return t("courses.homeFilter.resort");
+      case "Semi-Private":
+        return t("courses.homeFilter.semiPrivate");
+      case "Public":
+        return t("courses.homeFilter.public");
+    }
+  })();
+  return `${label} (${counts[type]})`;
 }
 
 export default function CoursesSection() {
@@ -177,7 +186,7 @@ export default function CoursesSection() {
                 onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
                 className="btn-fairway text-[11px] py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-full sm:w-auto"
               >
-                {t("courses.cta")}
+                {t("pricing.joinNow")}
               </button>
             </div>
 

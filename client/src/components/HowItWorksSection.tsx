@@ -44,24 +44,24 @@ function getSteps(language: Language) {
       icon: CreditCard,
       title: L ? "Únete en línea" : "Join Online",
       body: L
-        ? "Completa el formulario de membresía, sube una selfie de verificación de frente y luego paga los $199 al año. Emitimos tu pase de billetera con esa foto. Todo en menos de 5 minutos."
-        : "Fill out the membership form, add a front-facing verification selfie, then complete your $199 annual payment. We use that photo for your wallet pass — all in under 5 minutes.",
+        ? "Become a member by completing the sign up below."
+        : "Become a member by completing the sign up below.",
     },
     {
       number: "02",
       icon: UserCheck,
-      title: L ? "Obtén tu pase digital" : "Get Your Digital Pass",
+      title: L ? "Obtén tu pase" : "Get Your Pass",
       body: L
-        ? "Tu ID digital con foto se emite al instante para Apple Wallet o Google Wallet. Sin app, sin tarjeta física."
-        : "Your photo-verified digital ID is issued instantly to Apple Wallet or Google Wallet. No app, no physical card.",
+        ? "Tu ID digital se emite al instante."
+        : "Your digital ID is issued instantly.",
     },
     {
       number: "03",
       icon: Flag,
       title: L ? "Juega y ahorra" : "Play & Save",
       body: L
-        ? "Muestra tu pase en la tienda del campo asociado. Tu tarifa de miembro se aplica al instante — cada ronda, todo el año."
-        : "Show your pass at any partner course pro shop. Your member rate is applied immediately — every round, all year.",
+        ? "Muestra tu pase y ahorra en cada ronda."
+        : "Show your pass and save on every round.",
     },
   ];
 }
@@ -192,7 +192,7 @@ export default function HowItWorksSection() {
                 <DigitalMemberCard
                   compact
                   displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
-                  memberNumber="LGM-000000"
+                  memberNumber="LGM-00000"
                   validUntil="05/27"
                   photoUrl={null}
                 />

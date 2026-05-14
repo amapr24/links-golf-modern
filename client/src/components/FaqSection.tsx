@@ -61,11 +61,23 @@ export default function FaqSection() {
         className="pointer-events-none absolute inset-0"
         style={{
           background:
-            "linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.8) 100%)",
+            "linear-gradient(180deg, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.88) 100%)",
         }}
       />
-      <div className="container relative z-10 py-20 md:py-28">
-        <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
+      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+        {/* Frosted container wrapper */}
+        <div
+          className="rounded-xl overflow-hidden"
+          style={{
+            background: "rgba(255,255,255,0.06)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid rgba(255,255,255,0.12)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+          }}
+        >
+          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
+            <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
           {/* Left: heading */}
           <div className="md:sticky md:top-24">
             <p className="section-label mb-4">05 · {t("faq.label")}</p>
@@ -168,6 +180,8 @@ export default function FaqSection() {
                   info@linksgolfpr.com
                 </a>
               </p>
+            </div>
+          </div>
             </div>
           </div>
         </div>
