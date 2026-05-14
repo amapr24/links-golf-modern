@@ -88,10 +88,10 @@ export default function BenefitsSection() {
           }}
         >
           {/* Inner padding container */}
-          <div className="px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10">
+          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
 
             {/* Section header */}
-            <div className="mb-8 md:mb-12">
+            <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
               <p
                 className="section-label mb-2 text-[10px] sm:text-xs"
                 style={{ color: "oklch(0.65 0.10 145)" }}
@@ -123,7 +123,7 @@ export default function BenefitsSection() {
             </div>
 
             {/* Benefit cards — 1-col on xs, 2-col on sm, 4-col on lg */}
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4 mb-6">
+            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-3 md:gap-4 mb-6 sm:mb-7 md:mb-8">
               {benefits.map((b) => {
                 const Icon = b.icon;
                 return (
@@ -147,7 +147,7 @@ export default function BenefitsSection() {
                     </div>
 
                     {/* Text */}
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 sm:gap-1.5">
                       <p
                         className="text-[9px] font-semibold uppercase tracking-[0.15em]"
                         style={{
@@ -185,7 +185,7 @@ export default function BenefitsSection() {
             </div>
 
             {/* Stats row */}
-            <div className="grid grid-cols-3 gap-3 sm:gap-4 mb-6">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3 md:gap-4 mb-5 sm:mb-6 md:mb-7">
               {[
                 { value: "15", label: t("benefits.stats.partnerCoursesLabel") },
                 { value: "25%", label: t("benefits.stats.maxDiscountLabel") },

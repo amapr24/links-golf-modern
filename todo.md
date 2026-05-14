@@ -151,3 +151,8 @@
 - [x] BenefitsSection (01): wrap header + benefit cards + stats row + CTA in single frosted container
 - [x] CoursesSection (02): wrap header/filters + map + CTA in single frosted container
 - [x] HowItWorksSection (03): wrap header + step cards + wallet preview in single frosted container
+
+## Spacing & Padding Refinements — Unified Frosted Containers
+- [x] BenefitsSection: adjust inner padding (px/py) and gaps between header/cards/stats/CTA for breathing room
+- [x] CoursesSection: adjust inner padding and gaps between header/filters/map/CTA for breathing room
+- [x] HowItWorksSection: adjust inner padding and gaps between header/steps/wallet for breathing room

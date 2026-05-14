@@ -108,10 +108,10 @@ export default function HowItWorksSection() {
           }}
         >
           {/* Inner padding container */}
-          <div className="px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10">
+          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
 
             {/* Section header */}
-            <div className="text-center mb-8 md:mb-12">
+            <div className="text-center mb-6 sm:mb-8 md:mb-10 lg:mb-12">
               <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                 03 · {language === "es" ? "Cómo Funciona" : "How It Works"}
               </p>
@@ -132,7 +132,7 @@ export default function HowItWorksSection() {
             </div>
 
             {/* Steps */}
-            <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6 mb-6 md:mb-8">
+            <div className="grid grid-cols-1 gap-2.5 sm:gap-3 md:grid-cols-3 md:gap-4 lg:gap-6 mb-6 sm:mb-7 md:mb-8 lg:mb-10">
               {steps.map((step, i) => {
                 const Icon = step.icon;
                 return (
@@ -184,7 +184,7 @@ export default function HowItWorksSection() {
             </div>
 
             {/* Wallet pass visual */}
-            <div className="flex flex-col items-center gap-4 sm:gap-6">
+            <div className="flex flex-col items-center gap-4 sm:gap-5 md:gap-6">
               <div
                 className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
                 style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}
@@ -199,16 +199,16 @@ export default function HowItWorksSection() {
               </div>
 
               {/* Wallet badges */}
-              <div className="flex justify-center gap-3 sm:gap-4 flex-wrap">
+              <div className="flex justify-center gap-2.5 sm:gap-3 md:gap-4 flex-wrap">
                 <div
-                  className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
                   style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
                 >
                   <AppleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-white/85" />
                   <span className="text-[11px] sm:text-xs">Apple Wallet</span>
                 </div>
                 <div
-                  className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
+                  className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
                   style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
                 >
                   <GoogleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />

@@ -84,10 +84,10 @@ export default function CoursesSection() {
           }}
         >
           {/* Inner padding container */}
-          <div className="px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8">
+          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
 
             {/* Section header + filters */}
-            <div className="mb-6 md:mb-8 flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   02 · {t("courses.label")}
@@ -150,7 +150,7 @@ export default function CoursesSection() {
             </div>
 
             {/* Map + course list */}
-            <div className="mb-6 md:mb-8 rounded-lg overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 rounded-lg overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
               <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
                 <div className="courses-map-mount">
                   <CoursesMap filter={typeFilter} />
@@ -159,9 +159,9 @@ export default function CoursesSection() {
             </div>
 
             {/* Bottom CTA */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
-              <div className="flex flex-col gap-2 max-w-md">
-                <p className="text-xs sm:text-sm" style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.65 0.05 145)" }}>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 md:gap-4">
+              <div className="flex flex-col gap-1.5 sm:gap-2 max-w-md">
+                <p className="text-xs sm:text-sm leading-relaxed" style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.65 0.05 145)" }}>
                   {t("courses.bottomText")}
                 </p>
                 <a
