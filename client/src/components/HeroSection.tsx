@@ -155,7 +155,6 @@ export default function HeroSection() {
             {[
               { value: "15", label: t("hero.stats.courses") },
               { value: "25%", label: t("hero.stats.savings") },
-              { value: "$199", label: t("hero.stats.price") },
             ].map((stat) => (
               <div key={stat.value} className="flex items-baseline gap-1.5">
                 <span

@@ -13,6 +13,6 @@ export const howItWorksStepBodyClassName = "text-sm sm:text-base leading-[1.65] 
 export const howItWorksStepBodyStyle = {
   fontFamily: "'Outfit', sans-serif",
   fontWeight: 400,
-  color: "oklch(0.35 0.05 145)",
+  color: "oklch(0.72 0.05 145)",
   letterSpacing: "0.015em",
 } as const;

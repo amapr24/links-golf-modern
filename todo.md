@@ -156,3 +156,14 @@
 - [x] BenefitsSection: adjust inner padding (px/py) and gaps between header/cards/stats/CTA for breathing room
 - [x] CoursesSection: adjust inner padding and gaps between header/filters/map/CTA for breathing room
 - [x] HowItWorksSection: adjust inner padding and gaps between header/steps/wallet for breathing room
+
+
+## Critical UI Refinements — User Feedback (Current Sprint)
+
+- [x] Hero: Remove "$199 per year" text (duplicate with button CTA)
+- [x] Dark green text: Revert to lighter color — currently blends too much with background (Benefits, How It Works, FAQ)
+- [x] Course filters: Prevent wrapping to two rows on small screens, ensure single-row display
+- [x] Buttons: Change from full-width to auto width (Courses CTA, Pricing form buttons)
+- [ ] How It Works: Tighten vertical spacing — reduce gaps between steps
+- [ ] FAQ: Fix padding inconsistency between "Common Questions" heading and first question
+- [ ] Scrolling: Fix jumpy scroll behavior (investigate animation/transform issues)

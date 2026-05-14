@@ -144,7 +144,7 @@ export default function CoursesSection() {
                 <div
                   role="tablist"
                   aria-labelledby="courses-filter-label"
-                  className="flex w-full flex-wrap content-end justify-end gap-1.5 sm:gap-2"
+                  className="flex w-full flex-nowrap content-end justify-end gap-1.5 sm:gap-2 overflow-x-auto pb-1"
                 >
                   {DIRECTORY_TYPES.map((type) => (
                     <button
@@ -155,7 +155,7 @@ export default function CoursesSection() {
                       aria-selected={typeFilter === type}
                       aria-controls="courses-network-panel"
                       onClick={() => setTypeFilter(type)}
-                      className="filter-pill flex min-h-[36px] items-center justify-center rounded-sm px-2 py-1.5 text-[10px] font-semibold uppercase leading-tight tracking-wide transition-all duration-200 touch-manipulation whitespace-nowrap sm:min-h-[38px] sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wider md:min-h-[36px] md:px-2 md:py-1"
+                      className="filter-pill flex-shrink-0 flex min-h-[36px] items-center justify-center rounded-sm px-2 py-1.5 text-[10px] font-semibold uppercase leading-tight tracking-wide transition-all duration-200 touch-manipulation whitespace-nowrap sm:min-h-[38px] sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wider md:min-h-[36px] md:px-2 md:py-1"
                       style={{
                         fontFamily: "'Outfit', sans-serif",
                         background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
@@ -182,7 +182,7 @@ export default function CoursesSection() {
               <button
                 type="button"
                 onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-                className="btn-fairway text-xs sm:text-sm py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-full sm:w-auto"
+                className="btn-fairway text-xs sm:text-sm py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-auto"
               >
                 {t("pricing.joinNow")}
               </button>

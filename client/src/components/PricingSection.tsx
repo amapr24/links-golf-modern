@@ -634,7 +634,7 @@ export default function PricingSection() {
                     id="btn-next-1"
                     onClick={handleContinueToPayment}
                     disabled={isSubmitting}
-                    className="btn-fairway w-full text-sm py-3.5 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="btn-fairway w-auto text-sm py-3.5 mt-2 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? t("pricing.savingForm") : t("pricing.continuePayment")}{" "}
                     <ArrowRight size={14} />
@@ -696,7 +696,7 @@ export default function PricingSection() {
                       type="button"
                       onClick={() => handleStartCheckout("subscription")}
                       disabled={isSubmitting}
-                      className="btn-fairway w-full text-xs sm:text-sm py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="btn-fairway w-auto text-xs sm:text-sm py-3.5 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isSubmitting ? <Loader2 size={14} className="animate-spin" /> : <Wallet size={14} />}
                       <span>{t("pricing.subscribeNow")}</span>
@@ -705,7 +705,7 @@ export default function PricingSection() {
                       type="button"
                       onClick={() => handleStartCheckout("one-time")}
                       disabled={isSubmitting}
-                      className="w-full text-xs sm:text-sm py-3.5 rounded-sm border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-auto text-xs sm:text-sm py-3.5 rounded-sm border transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                       style={{
                         borderColor: "oklch(0.42 0.14 145)",
                         color: "oklch(0.42 0.14 145)",
