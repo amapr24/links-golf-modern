@@ -118,3 +118,8 @@
 - [x] Redesign Why Join (Benefits) section — layout, typography, visual style
 - [x] Remove redundant "15 courses" mentions in Courses section header/subtext
 - [x] Make courses pill list scroll indicator background fully transparent
+
+## Section Background Redesign
+- [ ] Section 01 (Why Join): full-bleed aerial photo background with frosted/shadowed content containers
+- [ ] Section 02 (Courses): full-bleed aerial photo background with frosted/shadowed content containers
+- [ ] Section 03 (How It Works): full-bleed aerial photo background with frosted/shadowed content containers

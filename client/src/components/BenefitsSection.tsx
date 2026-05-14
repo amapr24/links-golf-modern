@@ -1,12 +1,16 @@
 /*
- * BenefitsSection — "Why Join" redesign
- * Layout: 2-column grid on desktop (large headline + 3 benefit cards)
- * Dark green background with subtle texture, generous spacing
+ * BenefitsSection — "Why Join" (01)
+ * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
+ *         frosted dark-green content containers for legibility.
+ *         Matches the visual language of Pricing (04) and FAQ (05).
  */
 
 import { DollarSign, Smartphone, MapPin, CalendarCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
+import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+
+const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
@@ -47,33 +51,33 @@ export default function BenefitsSection() {
       id="benefits"
       className="relative overflow-hidden"
       style={{
-        background: "oklch(0.12 0.038 145)",
-        /* Top edge blends from hero's dark image; bottom blends into cream */
+        backgroundImage: `url(${AERIAL_IMAGE})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
       }}
     >
-      {/* Subtle radial glow — top-left accent */}
+      {/* Dark overlay — same depth as Pricing (04) */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          backgroundImage:
-            "radial-gradient(ellipse 70% 50% at 5% 10%, oklch(0.28 0.10 145 / 0.35), transparent 60%), radial-gradient(ellipse 50% 40% at 95% 90%, oklch(0.20 0.07 145 / 0.25), transparent 55%)",
-        }}
-        aria-hidden
-      />
-
-      {/* Bottom fade into cream (#F7F3EC) */}
-      <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32"
-        style={{
-          background: "linear-gradient(to bottom, transparent 0%, #F7F3EC 100%)",
+          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
         }}
         aria-hidden
       />
 
       <div className="container relative z-10 py-20 md:py-28">
-        {/* Section header */}
-        <div className="mb-12 md:mb-16 fade-up">
-          <p className="section-label mb-3 text-[oklch(0.72_0.06_145)]">
+        {/* Section header — frosted container */}
+        <div
+          className="mb-12 md:mb-16 fade-up rounded-xl px-8 py-8 md:py-10 inline-block"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.75)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          }}
+        >
+          <p className="section-label mb-3" style={{ color: "oklch(0.65 0.10 145)" }}>
             01 · {t("benefits.label")}
           </p>
           <h2
@@ -100,7 +104,7 @@ export default function BenefitsSection() {
           </p>
         </div>
 
-        {/* Benefit cards — 2-col on md, 4-col on lg */}
+        {/* Benefit cards — 2-col on md, 4-col on lg — frosted containers */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {benefits.map((b, i) => {
             const Icon = b.icon;
@@ -110,15 +114,16 @@ export default function BenefitsSection() {
                 className="fade-up flex flex-col gap-4 rounded-xl border p-6"
                 style={{
                   transitionDelay: `${i * 60}ms`,
-                  background: "oklch(0.16 0.05 145 / 0.6)",
+                  background: "oklch(0.13 0.05 145 / 0.72)",
                   borderColor: "oklch(0.30 0.08 145 / 0.5)",
-                  backdropFilter: "blur(4px)",
+                  backdropFilter: "blur(10px)",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
                 }}
               >
                 {/* Icon */}
                 <div
                   className="inline-flex h-10 w-10 items-center justify-center rounded-lg"
-                  style={{ background: "oklch(0.42 0.14 145 / 0.20)" }}
+                  style={{ background: "oklch(0.42 0.14 145 / 0.25)" }}
                   aria-hidden
                 >
                   <Icon size={18} style={{ color: "oklch(0.72 0.12 145)" }} />
@@ -162,43 +167,50 @@ export default function BenefitsSection() {
           })}
         </div>
 
-        {/* Stats row */}
+        {/* Stats row — frosted container */}
         <div
-          className="mt-10 grid grid-cols-3 gap-4 border-t pt-8 fade-up"
-          style={{ borderColor: "oklch(0.28 0.07 145 / 0.5)" }}
+          className="mt-8 rounded-xl px-8 py-6 fade-up"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.72)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
+          }}
         >
-          {[
-            { value: "15", label: t("benefits.stats.partnerCoursesLabel") },
-            { value: "25%", label: t("benefits.stats.maxDiscountLabel") },
-            { value: t("benefits.stats.breakEvenRange"), label: t("benefits.stats.breakEvenLabel") },
-          ].map((stat) => (
-            <div key={stat.label} className="flex flex-col gap-1">
-              <span
-                className="leading-none"
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "clamp(2rem, 4vw, 2.8rem)",
-                  fontWeight: 600,
-                  color: "oklch(0.72 0.12 145)",
-                }}
-              >
-                {stat.value}
-              </span>
-              <span
-                className="text-xs uppercase tracking-wider"
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  color: "oklch(0.55 0.06 145)",
-                }}
-              >
-                {stat.label}
-              </span>
-            </div>
-          ))}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { value: "15", label: t("benefits.stats.partnerCoursesLabel") },
+              { value: "25%", label: t("benefits.stats.maxDiscountLabel") },
+              { value: t("benefits.stats.breakEvenRange"), label: t("benefits.stats.breakEvenLabel") },
+            ].map((stat) => (
+              <div key={stat.label} className="flex flex-col gap-1">
+                <span
+                  className="leading-none"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: "clamp(2rem, 4vw, 2.8rem)",
+                    fontWeight: 600,
+                    color: "oklch(0.72 0.12 145)",
+                  }}
+                >
+                  {stat.value}
+                </span>
+                <span
+                  className="text-xs uppercase tracking-wider"
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    color: "oklch(0.55 0.06 145)",
+                  }}
+                >
+                  {stat.label}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
-        <div className="mt-10 fade-up">
+        <div className="mt-8 fade-up">
           <button
             type="button"
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}

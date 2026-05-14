@@ -1,14 +1,16 @@
 /*
- * HowItWorksSection — Links Golf Membership
- * Design: Dark background, 3-step horizontal flow
- * Image: Golf scorecard + phone wallet flat lay
+ * HowItWorksSection — "How It Works" (03)
+ * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
+ *         frosted dark-green content containers for legibility.
+ *         Matches the visual language of Benefits (01), Courses (02), Pricing (04).
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
+import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 
-const HOW_BG = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/how-it-works-bg-WVAFVj6UWeQHDsK6Y9SiNP.webp";
+const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 function AppleWalletGlyph({ className }: { className?: string }) {
   return (
@@ -64,37 +66,41 @@ function getSteps(language: Language) {
 export default function HowItWorksSection() {
   const { language } = useLanguage();
   const steps = getSteps(language);
+
   return (
     <section
       id="how-it-works"
       className="relative overflow-hidden"
-      style={{ background: "oklch(0.13 0.05 145)" }}
+      style={{
+        backgroundImage: `url(${AERIAL_IMAGE})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
     >
-      {/* Background image with overlay */}
+      {/* Dark overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-15"
-        style={{ backgroundImage: `url(${HOW_BG})` }}
-      />
-      <div
-        className="absolute inset-0"
-        style={{ background: "linear-gradient(135deg, oklch(0.13 0.05 145) 0%, oklch(0.18 0.07 145 / 0.8) 100%)" }}
-      />
-      {/* Top fade: dark green blends seamlessly from Courses section */}
-      <div
-        className="pointer-events-none absolute top-0 left-0 right-0 h-20"
-        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
-        aria-hidden
-      />
-      {/* Bottom fade: dark green → into Pricing aerial image */}
-      <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-32"
-        style={{ background: "linear-gradient(to bottom, transparent 0%, rgba(0,0,0,0.55) 100%)" }}
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
+        }}
         aria-hidden
       />
 
       <div className="container relative z-10 py-20 md:py-28">
-        <div className="text-center mb-14">
-          <p className="section-label mb-4 text-white/40">03 · How It Works</p>
+        {/* Section header — frosted container */}
+        <div
+          className="text-center mb-12 rounded-xl px-8 py-8 fade-up"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.75)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          }}
+        >
+          <p className="section-label mb-4" style={{ color: "oklch(0.65 0.10 145)" }}>
+            03 · {language === "es" ? "Cómo Funciona" : "How It Works"}
+          </p>
           <h2
             className="text-white fade-up"
             style={{
@@ -103,39 +109,40 @@ export default function HowItWorksSection() {
               fontWeight: 600,
             }}
           >
-            From sign-up to{" "}
+            {language === "es" ? "Del registro al " : "From sign-up to "}
             <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
-              first tee
+              {language === "es" ? "primer tee" : "first tee"}
             </em>
-            {" "}in minutes.
+            {language === "es" ? " en minutos." : " in minutes."}
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 md:gap-8 relative">
-          {/* Connecting line (desktop) */}
-          <div
-            className="hidden md:block absolute top-10 left-[calc(16.67%+1rem)] right-[calc(16.67%+1rem)] h-px"
-            style={{ background: "linear-gradient(to right, transparent, oklch(0.42 0.14 145 / 0.4), transparent)" }}
-          />
-
+        {/* Steps — frosted containers */}
+        <div className="grid md:grid-cols-3 gap-4 md:gap-6 relative">
           {steps.map((step, i) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.number}
-                className="fade-up text-center md:text-left"
-                style={{ transitionDelay: `${i * 120}ms` }}
+                className="fade-up rounded-xl p-6 md:p-8 text-center md:text-left"
+                style={{
+                  transitionDelay: `${i * 120}ms`,
+                  background: "oklch(0.13 0.05 145 / 0.72)",
+                  backdropFilter: "blur(10px)",
+                  border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
+                }}
               >
                 {/* Step number + icon */}
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-5">
                   <div
-                    className="relative w-20 h-20 rounded-full flex items-center justify-center flex-shrink-0"
+                    className="relative w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
                     style={{
-                      background: "oklch(0.42 0.14 145 / 0.15)",
-                      border: "1px solid oklch(0.42 0.14 145 / 0.3)",
+                      background: "oklch(0.42 0.14 145 / 0.20)",
+                      border: "1px solid oklch(0.42 0.14 145 / 0.35)",
                     }}
                   >
-                    <Icon size={28} style={{ color: "oklch(0.65 0.14 145)" }} />
+                    <Icon size={24} style={{ color: "oklch(0.65 0.14 145)" }} />
                     <span
                       className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
                       style={{ background: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
@@ -151,7 +158,7 @@ export default function HowItWorksSection() {
                   {step.title}
                 </h3>
                 <p
-                  className="text-white/55 text-sm leading-relaxed"
+                  className="text-white/60 text-sm leading-relaxed"
                   style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                 >
                   {step.body}
@@ -161,8 +168,16 @@ export default function HowItWorksSection() {
           })}
         </div>
 
-        {/* Wallet pass visual — same digital card as signup + dashboard */}
-        <div className="mt-16 flex justify-center fade-up">
+        {/* Wallet pass visual — frosted container */}
+        <div
+          className="mt-6 rounded-xl p-8 fade-up flex flex-col items-center gap-6"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.72)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
+          }}
+        >
           <div
             className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
             style={{ width: "min(320px, 90vw)" }}
@@ -175,23 +190,23 @@ export default function HowItWorksSection() {
               photoUrl={null}
             />
           </div>
-        </div>
 
-        {/* Wallet badges */}
-        <div className="flex justify-center gap-4 mt-6 fade-up">
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
-            style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-          >
-            <AppleWalletGlyph className="h-4 w-4 shrink-0 text-white/85" />
-            Apple Wallet
-          </div>
-          <div
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
-            style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-          >
-            <GoogleWalletGlyph className="h-4 w-4 shrink-0" />
-            Google Wallet
+          {/* Wallet badges */}
+          <div className="flex justify-center gap-4">
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+              style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
+            >
+              <AppleWalletGlyph className="h-4 w-4 shrink-0 text-white/85" />
+              Apple Wallet
+            </div>
+            <div
+              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+              style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
+            >
+              <GoogleWalletGlyph className="h-4 w-4 shrink-0" />
+              Google Wallet
+            </div>
           </div>
         </div>
       </div>

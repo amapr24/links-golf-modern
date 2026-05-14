@@ -1,14 +1,17 @@
 /*
- * CoursesSection — Links Golf Membership
- * Design: Cream background; map + scrollable course list (directory type filters)
+ * CoursesSection — "Our Network" (02)
+ * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
+ *         frosted dark-green content containers for legibility.
+ *         Matches the visual language of Benefits (01), Pricing (04), and FAQ (05).
  */
 
 import { useState } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
+import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 
-const AERIAL_IMAGE = "https://d2xsxph8kpxj0f.cloudfront.net/310519663654134519/4FsPe29zkxfgYYXFDn34Fq/course-aerial-Cx8xkxJjzpQ297eVUAemkv.webp";
+const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 const DIRECTORY_TYPES = ["all", "Resort", "Semi-Private", "Public"] as const;
 
@@ -41,58 +44,69 @@ export default function CoursesSection() {
   const activeTabId = tabIds[typeFilter];
 
   return (
-    <section id="courses" className="relative overflow-x-hidden bg-[#F7F3EC]">
-      {/* Bottom fade: cream → dark green (into How It Works) */}
+    <section
+      id="courses"
+      className="relative overflow-x-hidden"
+      style={{
+        backgroundImage: `url(${AERIAL_IMAGE})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* Dark overlay */}
       <div
-        className="pointer-events-none absolute bottom-0 left-0 right-0 h-40 z-10"
-        style={{ background: "linear-gradient(to bottom, transparent 0%, oklch(0.13 0.05 145) 100%)" }}
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: "linear-gradient(180deg, rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.55) 100%)",
+        }}
         aria-hidden
       />
-      <div
-        className="w-full h-56 md:h-72 bg-cover bg-center relative overflow-hidden"
-        style={{ backgroundImage: `url(${AERIAL_IMAGE})` }}
-      >
-        <div
-          className="absolute inset-0"
-          style={{
-            background: "linear-gradient(to bottom, rgba(247,243,236,0) 0%, rgba(247,243,236,0.95) 100%)",
-          }}
-        />
-        <div className="absolute inset-0 flex items-end pb-8 container">
-          <div>
-            <p className="section-label mb-2">02 · {t("courses.label")}</p>
-            <h2
-              className="leading-tight fade-up"
-              style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
-                fontWeight: 600,
-                color: "oklch(0.13 0.05 145)",
-              }}
-            >
-              {t("courses.heading")}
-            </h2>
-          </div>
-        </div>
-      </div>
 
-      <div className="container pb-20 md:pb-28">
-        <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-8 pt-4">
-          <p
-            className="text-sm fade-up md:max-w-xl lg:max-w-2xl"
-            style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
-          >
-            {t("courses.description")}
-          </p>
-          <div className="flex flex-col gap-2.5 w-full md:w-auto md:items-end md:shrink-0">
-            <p
-              className="text-xs font-semibold uppercase tracking-wider fade-up md:text-right"
-              style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
-              id="courses-filter-label"
-            >
-              {t("courses.filterLabel")}
-            </p>
-            <div className="flex flex-col gap-3 w-full md:items-end">
+      <div className="container relative z-10 py-20 md:py-28">
+        {/* Section header + filters — frosted container */}
+        <div
+          className="mb-8 rounded-xl px-6 py-6 md:px-8 md:py-8 fade-up"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.75)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          }}
+        >
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div>
+              <p className="section-label mb-2" style={{ color: "oklch(0.65 0.10 145)" }}>
+                02 · {t("courses.label")}
+              </p>
+              <h2
+                className="leading-tight fade-up"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
+                  fontWeight: 600,
+                  color: "white",
+                }}
+              >
+                {t("courses.heading")}
+              </h2>
+              <p
+                className="text-sm mt-2 fade-up md:max-w-xl lg:max-w-2xl"
+                style={{ color: "oklch(0.65 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
+              >
+                {t("courses.description")}
+              </p>
+            </div>
+
+            {/* Type filters */}
+            <div className="flex flex-col gap-2.5 w-full md:w-auto md:items-end md:shrink-0">
+              <p
+                className="text-xs font-semibold uppercase tracking-wider fade-up md:text-right"
+                style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                id="courses-filter-label"
+              >
+                {t("courses.filterLabel")}
+              </p>
               <div
                 role="tablist"
                 aria-labelledby="courses-filter-label"
@@ -110,10 +124,10 @@ export default function CoursesSection() {
                     className="filter-pill px-4 py-2 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
-                      background: typeFilter === type ? "oklch(0.42 0.14 145)" : "white",
-                      color: typeFilter === type ? "white" : "oklch(0.55 0.06 145)",
-                      border: `1px solid ${typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.88 0.02 85)"}`,
-                      boxShadow: typeFilter === type ? "none" : "0 1px 0 rgba(0,0,0,0.04)",
+                      background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
+                      color: typeFilter === type ? "white" : "oklch(0.72 0.05 145)",
+                      border: `1px solid ${typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.35 0.08 145 / 0.5)"}`,
+                      boxShadow: typeFilter === type ? "none" : "none",
                     }}
                   >
                     {homeDirectoryTypeLabel(type, t)}
@@ -124,22 +138,41 @@ export default function CoursesSection() {
           </div>
         </div>
 
-        <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
-          <div className="courses-map-mount">
-            <CoursesMap filter={typeFilter} />
+        {/* Map + course list — frosted container */}
+        <div
+          className="rounded-xl overflow-hidden fade-up"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.72)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+          }}
+        >
+          <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
+            <div className="courses-map-mount">
+              <CoursesMap filter={typeFilter} />
+            </div>
           </div>
         </div>
 
-        {/* Bottom CTA — primary membership vs secondary directory link */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 mt-10 pt-8 fade-up" style={{ borderTop: "1px solid oklch(0.88 0.02 85)" }}>
+        {/* Bottom CTA — frosted container */}
+        <div
+          className="mt-6 rounded-xl px-6 py-5 md:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-up"
+          style={{
+            background: "oklch(0.13 0.05 145 / 0.72)",
+            backdropFilter: "blur(10px)",
+            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
+          }}
+        >
           <div className="flex flex-col gap-2 max-w-md">
-            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.45 0.06 145)" }}>
+            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.65 0.05 145)" }}>
               {t("courses.bottomText")}
             </p>
             <a
               href="/courses"
               className="courses-directory-link fairway-text-control lg:hidden inline-flex text-sm font-medium w-fit min-h-[44px] items-center rounded-sm underline-offset-4 decoration-1 hover:underline touch-manipulation"
-              style={{ color: "oklch(0.45 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+              style={{ color: "oklch(0.65 0.10 145)", fontFamily: "'Outfit', sans-serif" }}
             >
               {t("courses.viewAll")}
             </a>
