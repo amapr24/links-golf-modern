@@ -186,8 +186,8 @@ export default function HowItWorksSection() {
               </h2>
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6 xl:gap-7">
-              <div className="flex flex-col gap-0 flex-1 min-w-0">
+            <div className="grid lg:grid-cols-2 gap-6 lg:gap-8 xl:gap-10 items-start">
+              <div className="flex flex-col gap-0 min-w-0">
                 {steps.map((step, i) => {
                   const Icon = step.icon;
                   return (
@@ -227,11 +227,11 @@ export default function HowItWorksSection() {
                 })}
               </div>
 
-              <div className="mt-6 flex w-full shrink-0 flex-col items-center self-center lg:sticky lg:top-24 lg:mt-0 lg:max-w-[min(940px,68%)] xl:max-w-[min(1000px,66%)]">
-                <div className="relative flex w-full max-w-[min(280px,85vw)] justify-center lg:max-w-none">
+              <div className="mt-6 flex w-full shrink-0 flex-col items-center lg:mt-0">
+                <div className="relative flex w-full max-w-[min(280px,85vw)] justify-center lg:justify-center lg:max-w-none">
                   <DigitalMemberCard
-                    compact={!isDesktopLayout}
-                    showcase={isDesktopLayout}
+                    compact={false}
+                    showcase={true}
                     displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
                     memberNumber="LGM-00000"
                     validUntil="05/27"
