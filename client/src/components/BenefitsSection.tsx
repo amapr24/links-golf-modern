@@ -122,8 +122,8 @@ export default function BenefitsSection() {
                   className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-relaxed"
                   style={{
                     fontFamily: "'Outfit', sans-serif",
-                    color: "oklch(0.72 0.05 145)",
-                    fontWeight: 300,
+                    color: "oklch(0.35 0.05 145)",
+                    fontWeight: 400,
                   }}
                 >
                   {t("benefits.description")}

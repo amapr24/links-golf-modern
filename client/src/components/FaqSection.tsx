@@ -136,7 +136,7 @@ export default function FaqSection() {
                         className="font-medium text-sm sm:text-base"
                         style={{
                           fontFamily: "'Outfit', sans-serif",
-                          color: open === i ? "oklch(0.13 0.05 145)" : "oklch(0.3 0.06 145)",
+                          color: open === i ? "oklch(0.13 0.05 145)" : "oklch(0.20 0.04 145)",
                         }}
                       >
                         {faq.q}
@@ -162,11 +162,10 @@ export default function FaqSection() {
                       }}
                     >
                       <div
-                        className="px-5 pb-5 text-sm sm:text-base leading-relaxed"
+                        className="text-[13px] sm:text-sm leading-relaxed px-5 py-4"
                         style={{
                           fontFamily: "'Outfit', sans-serif",
-                          fontWeight: 300,
-                          color: "oklch(0.45 0.06 145)",
+                          color: "oklch(0.30 0.05 145)",
                         }}
                       >
                         {faq.a}

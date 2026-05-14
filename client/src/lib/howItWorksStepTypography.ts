@@ -12,6 +12,6 @@ export const howItWorksStepBodyClassName = "text-sm sm:text-base leading-relaxed
 
 export const howItWorksStepBodyStyle = {
   fontFamily: "'Outfit', sans-serif",
-  fontWeight: 300,
-  color: "oklch(0.78 0.04 145)",
+  fontWeight: 400,
+  color: "oklch(0.35 0.05 145)",
 } as const;
