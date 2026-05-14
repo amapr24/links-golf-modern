@@ -111,7 +111,7 @@ export default function CoursesSection() {
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
             <div className="mb-6 sm:mb-7 md:mb-5 lg:mb-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-stretch md:gap-x-8 lg:gap-x-10 md:gap-y-0">
               <div className="max-w-3xl min-w-0">
-                <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   02 · {t("courses.label")}
                 </p>
                 <h2
@@ -126,7 +126,7 @@ export default function CoursesSection() {
                   {t("courses.heading")}
                 </h2>
                 <p
-                  className="text-sm sm:text-base mt-2 md:max-w-2xl leading-relaxed"
+                  className="text-sm sm:text-base mt-2 sm:mt-2.5 md:max-w-2xl leading-relaxed"
                   style={{ color: "oklch(0.72 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                 >
                   {t("courses.description")}

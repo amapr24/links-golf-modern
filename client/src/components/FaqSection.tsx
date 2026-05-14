@@ -101,7 +101,7 @@ export default function FaqSection() {
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
             <div className="grid md:grid-cols-[1fr_2fr] gap-10 md:gap-12 lg:gap-16 items-start">
               <div className="md:sticky md:top-24">
-                <p className="section-label mb-4 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   05 · {t("faq.label")}
                 </p>
                 <h2

@@ -99,7 +99,7 @@ export default function BenefitsSection() {
             <div className="flex flex-col gap-3 sm:gap-3.5 lg:flex-row lg:items-start lg:gap-6 xl:gap-8">
               <div className="text-center lg:text-left lg:shrink-0 lg:max-w-[min(16rem,26vw)] xl:max-w-[min(18rem,22vw)]">
                 <p
-                  className="section-label mb-1.5 sm:mb-2 text-[10px] sm:text-xs"
+                  className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs"
                   style={{ color: "oklch(0.65 0.10 145)" }}
                 >
                   01 · {t("benefits.label")}
@@ -131,7 +131,7 @@ export default function BenefitsSection() {
                 </p>
               </div>
 
-              <div className="grid flex-1 min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:gap-3.5 justify-items-stretch">
+              <div className="grid flex-1 min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:gap-3.5 justify-items-stretch mb-6 sm:mb-7 md:mb-6 lg:mb-7">
                 {benefits.map((b) => {
                   const Icon = b.icon;
                   return (

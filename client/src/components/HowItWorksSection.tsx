@@ -133,8 +133,8 @@ export default function HowItWorksSection() {
           }}
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="text-center mb-8 sm:mb-10 md:mb-5 lg:mb-6">
-              <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+            <div className="text-center mb-6 sm:mb-7 md:mb-6 lg:mb-7">
+              <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                 03 · {t("nav.howItWorks")}
               </p>
               <h2
