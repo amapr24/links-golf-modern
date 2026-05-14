@@ -285,6 +285,114 @@
 
 ## Standards-based audits (follow-up passes)
 
+### SEO standards (Schema.org / OG / hreflang / robots / sitemap)
+
+> Most foundational SEO findings are already captured in the P1 SEO section above (`robots.txt`, `sitemap.xml`, per-route titles, structured data, canonical hardening). This pass adds standards-specific items and concrete copy-pasteable snippets.
+
+**New items to add to the backlog:**
+
+- [ ] **`hreflang` not declared anywhere.** `og:locale:alternate` is set but the matching `<link rel="alternate" hreflang="...">` is missing. The app serves both languages from the same URL, which Google handles best when you also declare `hreflang="x-default"`. — `client/index.html:3-16`
+  - **Fix:** Until separate `/` and `/es/` routes exist, add (in `index.html` and via the SEO plugin):
+    ```html
+    <link rel="alternate" hreflang="en-US" href="https://linksgolfpr.com/" />
+    <link rel="alternate" hreflang="es-PR" href="https://linksgolfpr.com/" />
+    <link rel="alternate" hreflang="x-default" href="https://linksgolfpr.com/" />
+    ```
+- [ ] **`og:locale` does not update at runtime.** Switching to Spanish leaves `og:locale="en_US"`. Less impactful than hreflang because OG tags are read at share-time from the rendered DOM by Slack/Facebook/etc., but still wrong. — `client/index.html:15`
+  - **Fix:** When `LanguageContext` switches, also update the `og:locale` meta via DOM (or, better, ship a separate `/es/` index route the SEO plugin builds for the Spanish copy).
+- [ ] **`og:image` lacks declared dimensions.** Facebook and LinkedIn fall back to re-fetching the image to discover its size if `og:image:width`/`og:image:height` are absent.
+  - **Fix:** Add `<meta property="og:image:width" content="1200" /><meta property="og:image:height" content="630" /><meta property="og:image:type" content="image/png" />` adjacent to the existing `og:image` tag.
+- [ ] **No `application/ld+json` structured data.** A high-leverage SEO win for a small business with one product. — `client/index.html`, `vite-plugin-site-seo-html.ts`
+  - **Fix:** Inject the following at build time (replace placeholders before launch):
+
+```html
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://linksgolfpr.com/#org",
+      "name": "Links Golf PR",
+      "url": "https://linksgolfpr.com",
+      "logo": "https://linksgolfpr.com/links-golf-membership-brand.png",
+      "sameAs": [],
+      "contactPoint": [{
+        "@type": "ContactPoint",
+        "contactType": "customer support",
+        "email": "info@linksgolfpr.com",
+        "areaServed": "PR",
+        "availableLanguage": ["en", "es"]
+      }],
+      "address": {
+        "@type": "PostalAddress",
+        "addressCountry": "PR",
+        "addressRegion": "Puerto Rico"
+      }
+    },
+    {
+      "@type": "Product",
+      "@id": "https://linksgolfpr.com/#membership",
+      "name": "Links Golf Annual Membership",
+      "description": "One membership. 15 partner courses across Puerto Rico. Up to 25% off every round. Digital wallet pass.",
+      "brand": { "@id": "https://linksgolfpr.com/#org" },
+      "offers": {
+        "@type": "Offer",
+        "url": "https://linksgolfpr.com/#pricing",
+        "priceCurrency": "USD",
+        "price": "199.00",
+        "availability": "https://schema.org/InStock",
+        "eligibleRegion": { "@type": "Country", "name": "Puerto Rico" }
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        { "@type": "Question", "name": "<FAQ 1 title>", "acceptedAnswer": { "@type": "Answer", "text": "<FAQ 1 body>" } }
+      ]
+    }
+  ]
+}
+</script>
+```
+
+  Pull the FAQ entries from `LanguageContext.tsx` at build so the schema mirrors the rendered FAQ. Validate with Google's Rich Results Test before launch.
+
+- [ ] **`SportsActivityLocation` schema for partner courses.** Each of the 15 courses could carry a per-course schema entry that links to a Google Business Profile and surfaces the course in Google Maps SEO. — `client/src/data/partnerCourses.ts`, `client/src/data/courseCoordinates.ts`
+  - **Fix:** Either emit a per-course `<script type="application/ld+json">` block on `/courses`, or expose `/courses/{slug}` routes (each with its own schema). The data files already have coordinates, so wiring this up is mostly mechanical.
+- [ ] **NotFound page returns HTTP 200 with no `noindex`.** Soft-404. Google may index it as a real page. — `client/src/pages/NotFound.tsx`
+  - **Fix:** In the NotFound page component, set `document.title = '404 …'` and inject `<meta name="robots" content="noindex" />` (via the per-route head manager when added). At minimum, render `<meta name="robots" content="noindex">` unconditionally on the 404 page.
+- [ ] **No `<link rel="preload" as="image">` for the hero LCP image.** The hero image is loaded via `HeroSection.tsx` style attribute, which the preload scanner can't see, so it competes with the JS bundle and CSS for bandwidth on first paint. — `client/src/components/HeroSection.tsx`
+  - **Fix:** Inject `<link rel="preload" as="image" href="<hero-image-url>" fetchpriority="high" />` for the chosen hero into `index.html`. If the hero rotates, preload only the first variant.
+- [ ] **Three Google Fonts families is excessive** (Cormorant Garamond, DM Mono, Outfit). Each one adds a render-blocking request unless self-hosted. — `client/index.html:21-23`
+  - **Fix:** Drop one family if possible; for the rest, self-host the specific weights actually used; emit `<link rel="preload" as="font" type="font/woff2" crossorigin>` for the LCP-critical face only. Keep `&display=swap` if you stay on Google Fonts.
+- [ ] **No geo meta tags.** Optional for SEO, but cheap. — `client/index.html`
+  - **Fix:** `<meta name="geo.region" content="PR" /><meta name="geo.placename" content="Puerto Rico" />`.
+- [ ] **No `theme-color` / iOS PWA hints.**
+  - **Fix:** Add `<meta name="theme-color" content="#…">`, `<link rel="apple-touch-icon" href="...">`, `<link rel="manifest" href="/site.webmanifest">`.
+- [ ] **No favicon set explicitly.** Browsers fall back to `/favicon.ico` 404.
+  - **Fix:** Generate a favicon set; reference from `index.html`.
+- [ ] **`vite-plugin-site-seo-html.ts` is the right place to grow.** It already handles canonical and `og:image` URL absolutisation; extend it to also (a) emit `robots.txt`, (b) emit `sitemap.xml`, (c) inject the JSON-LD block, (d) inject hreflang tags, (e) inject preload links.
+- [ ] **NAP (Name, Address, Phone) not present in footer.** Legal pages explicitly say "Registered legal name and principal mailing address will appear here after corporate formation." Until that's done, structured data should not lie — leave `address`/`telephone` out of the schema rather than ship placeholders.
+  - **Fix:** Track a launch blocker — get a real PR business address and phone, populate both in the footer and in the Organization schema, then claim a matching Google Business Profile.
+
+**Copy-pasteable `robots.txt` to ship today:**
+
+```
+User-agent: *
+Allow: /
+Disallow: /dashboard
+Disallow: /success
+
+Sitemap: https://linksgolfpr.com/sitemap.xml
+```
+
+(Disallow the member-only pages so they don't get indexed even on accidental external link.)
+
+**Sitemap plan:** generate at build via the existing SEO plugin; include `/`, `/courses`, `/privacy`, `/terms`, `/refunds`, `/login`. Each entry needs `<lastmod>` (read from git via `child_process.execSync('git log -1 --format=%cI -- <file>')`), a `<priority>`, and the same `hreflang` block as in `index.html`.
+
+---
+
 ### PCI DSS SAQ-A boundary review
 
 > Verdict: **Eligible for SAQ-A** today (Stripe Checkout full redirect; no client-side Stripe SDK; no card data in merchant systems; webhook signature verified). But PCI DSS v4.0 (effective March 2025) tightened SAQ-A requirements 6.4.3 and 11.6.1 — the merchant now has to manage scripts and HTTP headers on the payment-adjacent pages. Two new operational items below cover that gap; the rest is record-keeping.
