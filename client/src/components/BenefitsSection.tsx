@@ -11,6 +11,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useParallax } from "@/hooks/useParallax";
 import type { RefObject } from "react";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
@@ -19,6 +20,7 @@ export default function BenefitsSection() {
   const { t } = useLanguage();
   // Scope the observer to this section
   const sectionRef = useScrollReveal({ threshold: 0.10 });
+  const parallaxRef = useParallax({ intensity: 0.35 });
 
   const benefits = [
     {
@@ -54,13 +56,19 @@ export default function BenefitsSection() {
   return (
     <section
       id="benefits"
-      ref={sectionRef as RefObject<HTMLElement>}
-      className="relative overflow-hidden"
+      ref={(el) => {
+        if (el) {
+          (sectionRef as any).current = el;
+          (parallaxRef as any).current = el;
+        }
+      }}
+      className="relative overflow-hidden will-change-[background-position]"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
+        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Dark overlay */}
