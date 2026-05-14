@@ -172,6 +172,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.checkoutHelpLead": "Questions before checkout? Email ",
     "pricing.paymentRefundReminder": "You are about to pay the annual fee. Review",
     "pricing.joinNow": "GET YOUR MEMBERSHIP",
+    "pricing.sectionEyebrow": "Join Now",
 
     "trustStrip.headline": "Built for year-round play in Puerto Rico",
     "trustStrip.col1Value": "{{count}}",
@@ -503,6 +504,7 @@ const translations: Record<Language, Record<string, string>> = {
     "pricing.checkoutHelpLead": "¿Dudas antes de pagar? Escríbenos a ",
     "pricing.paymentRefundReminder": "Estás a punto de pagar la cuota anual. Revisa",
     "pricing.joinNow": "OBTÉN TU MEMBRESÍA",
+    "pricing.sectionEyebrow": "Unirse",
 
     "trustStrip.headline": "Pensado para jugar todo el año en Puerto Rico",
     "trustStrip.col1Value": "{{count}}",

@@ -146,6 +146,12 @@ export default function Courses() {
       <main className="container py-12">
         {/* Heading */}
         <div className="mb-12">
+          <p
+            className="text-xs font-semibold uppercase tracking-widest mb-3"
+            style={{ color: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+          >
+            02 · {t("courses.label")}
+          </p>
           <h2
             className="text-4xl md:text-5xl font-semibold mb-4"
             style={{

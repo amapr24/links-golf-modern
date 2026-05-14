@@ -68,7 +68,7 @@ function getSteps(language: Language) {
 }
 
 export default function HowItWorksSection() {
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const steps = getSteps(language);
   const sectionRef = useScrollReveal({ threshold: 0.1 });
 
@@ -107,6 +107,9 @@ export default function HowItWorksSection() {
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
             <div className="text-center mb-8 sm:mb-10 md:mb-12">
+              <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                03 · {t("nav.howItWorks")}
+              </p>
               <h2
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",

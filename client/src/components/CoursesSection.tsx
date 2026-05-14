@@ -98,6 +98,9 @@ export default function CoursesSection() {
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
             <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 flex flex-col gap-4">
               <div className="max-w-3xl">
+                <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                  02 · {t("courses.label")}
+                </p>
                 <h2
                   className="leading-tight"
                   style={{

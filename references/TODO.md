@@ -9,7 +9,7 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 Tracked from design pass; **implemented in repo** (verify in browser before checking off).
 
-- [x] Remove numbered section eyebrows (`01 · …` through `05 · …`) on home marketing sections.
+- [x] **Section eyebrows:** Numbered `01–05 ·` labels restored on home (`BenefitsSection`, `CoursesSection`, `HowItWorksSection`, `PricingSection`, `FaqSection`) and on `/courses` (`Courses.tsx`). Join Now eyebrow uses `pricing.sectionEyebrow` (EN/ES).
 - [x] **Why Join:** center-aligned block; remove long description line under H2; benefit cards = title + subtitle (highlight) only; larger benefit titles; 3-up grid on large screens.
 - [x] **Why Join → Our Network:** top forest-to-transparent gradient on `CoursesSection` (same pattern as `PricingSection` after How It Works).
 - [x] **Our Network:** remove map footer “N courses shown”; remove “Explore all…” + directory link row; move type filters under intro copy; fix CTA showing raw `pricing.joinNow` (added i18n keys).

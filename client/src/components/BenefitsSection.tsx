@@ -3,7 +3,7 @@
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         entire section wrapped in a single frosted container for cohesion.
  * Animation: useScrollReveal drives fade-in + slide-up on the container.
- * Benefit card type matches How It Works step title + body (`HowItWorksSection`).
+ * Benefit cards: icon + (eyebrow + headline), reference-style; no body copy under cards.
  * Mobile: stacked; lg+: horizontal strip (heading | cards). No section CTA — nav + hero carry membership.
  */
 
@@ -78,8 +78,14 @@ export default function BenefitsSection() {
         >
           {/* Strip: title + cards only; primary CTAs live in nav + hero */}
           <div className="px-3 py-2.5 sm:px-4 sm:py-3 md:px-4 md:py-3 lg:py-2.5 lg:px-5">
-            <div className="flex flex-col gap-3 sm:gap-3.5 lg:flex-row lg:items-center lg:gap-6 xl:gap-8">
+            <div className="flex flex-col gap-3 sm:gap-3.5 lg:flex-row lg:items-start lg:gap-6 xl:gap-8">
               <div className="text-center lg:text-left lg:shrink-0 lg:max-w-[min(16rem,26vw)] xl:max-w-[min(18rem,22vw)]">
+                <p
+                  className="section-label mb-1.5 sm:mb-2 text-[10px] sm:text-xs"
+                  style={{ color: "oklch(0.65 0.10 145)" }}
+                >
+                  01 · {t("benefits.label")}
+                </p>
                 <h2
                   className="leading-[1.12] lg:leading-tight"
                   style={{
@@ -94,6 +100,16 @@ export default function BenefitsSection() {
                   <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>Links</em>
                   {t("benefits.headingAfter")}
                 </h2>
+                <p
+                  className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-relaxed"
+                  style={{
+                    fontFamily: "'Outfit', sans-serif",
+                    color: "oklch(0.72 0.05 145)",
+                    fontWeight: 300,
+                  }}
+                >
+                  {t("benefits.description")}
+                </p>
               </div>
 
               <div className="grid flex-1 min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:gap-3.5 justify-items-stretch">
@@ -102,7 +118,7 @@ export default function BenefitsSection() {
                   return (
                     <div
                       key={b.id}
-                      className="flex flex-col items-center text-center gap-1.5 rounded-md border px-2 py-2 sm:px-2.5 sm:py-2.5 lg:py-2"
+                      className="flex flex-row items-start gap-3 rounded-md border px-2 py-2.5 sm:px-2.5 sm:py-2.5 lg:py-2.5 text-left"
                       style={{
                         background: "rgba(255,255,255,0.06)",
                         borderColor: "rgba(255,255,255,0.12)",
@@ -110,34 +126,32 @@ export default function BenefitsSection() {
                         WebkitBackdropFilter: "blur(8px)",
                       }}
                     >
-                      <p
-                        className="w-full min-w-0 text-center font-semibold normal-case leading-snug"
-                        style={{
-                          ...howItWorksStepTitleStyle,
-                          color: "white",
-                        }}
+                      <div
+                        className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md"
+                        style={{ background: "oklch(0.42 0.14 145 / 0.35)" }}
+                        aria-hidden
                       >
-                        {b.highlight}
-                      </p>
-                      <div className="mt-2 flex w-full justify-center">
-                        <div className="inline-flex max-w-full items-start gap-2">
-                          <div
-                            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
-                            style={{ background: "oklch(0.42 0.14 145 / 0.25)" }}
-                            aria-hidden
-                          >
-                            <Icon size={15} style={{ color: "oklch(0.72 0.14 145)" }} />
-                          </div>
-                          <h3
-                            className="min-w-0 max-w-[min(100%,16rem)] text-left leading-snug font-semibold sm:max-w-[min(100%,18rem)]"
-                            style={{
-                              ...howItWorksStepTitleStyle,
-                              color: "oklch(0.72 0.12 145)",
-                            }}
-                          >
-                            {b.title}
-                          </h3>
-                        </div>
+                        <Icon size={17} strokeWidth={2.25} color="white" />
+                      </div>
+                      <div className="min-w-0 flex-1 flex flex-col gap-1">
+                        <p
+                          className="text-[10px] sm:text-xs font-semibold uppercase tracking-[0.12em] leading-snug"
+                          style={{
+                            fontFamily: "'Outfit', sans-serif",
+                            color: "oklch(0.72 0.10 145)",
+                          }}
+                        >
+                          {b.highlight}
+                        </p>
+                        <h3
+                          className="text-left leading-snug font-semibold"
+                          style={{
+                            ...howItWorksStepTitleStyle,
+                            color: "white",
+                          }}
+                        >
+                          {b.title}
+                        </h3>
                       </div>
                     </div>
                   );
