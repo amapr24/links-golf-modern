@@ -5,7 +5,7 @@
  *         entire section wrapped in a single frosted container for cohesion.
  * Animation: useScrollReveal drives fade-in + slide-up on the container.
  * Benefit cards: icon + (eyebrow + headline), reference-style; no body copy under cards.
- * Mobile: stacked; lg+: horizontal strip (heading | cards). No section CTA — nav + hero carry membership.
+ * Mobile: stacked (eyebrow → H2 → description → cards). lg+: 2×3 grid — full-width eyebrow, H2 | cards, full-width description.
  */
 
 import { DollarSign, Smartphone, MapPin } from "lucide-react";
@@ -98,42 +98,41 @@ export default function BenefitsSection() {
         >
           {/* Strip: title + cards only; primary CTAs live in nav + hero */}
           <div className="px-3 py-2.5 sm:px-4 sm:py-3 md:px-4 md:py-3 lg:py-2.5 lg:px-5">
-            <div className="flex flex-col gap-3 sm:gap-3.5 lg:flex-row lg:items-start lg:gap-6 xl:gap-8">
-              <div className="text-center lg:text-left lg:shrink-0 lg:max-w-[min(16rem,26vw)] xl:max-w-[min(18rem,22vw)]">
-                <p
-                  className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs"
-                  style={{ color: "oklch(0.65 0.10 145)" }}
-                >
-                  01 · {t("benefits.label")}
-                </p>
-                <h2
-                  className="leading-[1.12] lg:leading-tight"
-                  style={{
-                    fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(1.8rem, 4.5vw, 2.8rem)",
-                    fontWeight: 600,
-                    color: "white",
-                    letterSpacing: "-0.01em",
-                  }}
-                >
-                  {t("benefits.headingBefore")}
-                  <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>Links</em>
-                  {t("benefits.headingAfter")}
-                </h2>
-                <p
-                  className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-[1.65] sm:leading-[1.7]"
-                  style={{
-                    fontFamily: "'Outfit', sans-serif",
-                    color: "oklch(0.72 0.05 145)",
-                    fontWeight: 400,
-                    letterSpacing: "0.015em",
-                  }}
-                >
-                  {t("benefits.description")}
-                </p>
-              </div>
-
-              <div className="grid flex-1 min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:gap-3.5 justify-items-stretch mb-6 sm:mb-7 md:mb-6.5 lg:mb-7">
+            <div
+              className="grid grid-cols-1 gap-3 sm:gap-3.5 lg:grid-cols-[min(16rem,26vw)_1fr] xl:grid-cols-[min(18rem,22vw)_1fr] lg:items-start lg:gap-x-6 xl:gap-8 lg:gap-y-2 xl:gap-y-2.5"
+            >
+              <p
+                className="section-label mb-2.5 sm:mb-3 lg:mb-0 text-center text-[10px] sm:text-xs lg:col-span-2 lg:row-start-1 lg:leading-none"
+                style={{ color: "oklch(0.65 0.10 145)" }}
+              >
+                01 · {t("benefits.label")}
+              </p>
+              <h2
+                className="text-center lg:text-left leading-[1.12] lg:leading-tight lg:row-start-2 lg:col-start-1 lg:min-w-0"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(1.8rem, 4.5vw, 2.8rem)",
+                  fontWeight: 600,
+                  color: "white",
+                  letterSpacing: "-0.01em",
+                }}
+              >
+                {t("benefits.headingBefore")}
+                <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>Links</em>
+                {t("benefits.headingAfter")}
+              </h2>
+              <p
+                className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:max-w-none lg:mx-0 lg:mt-0 text-sm sm:text-base leading-[1.65] sm:leading-[1.7] text-center lg:text-left lg:col-span-2 lg:row-start-3"
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  color: "oklch(0.72 0.05 145)",
+                  fontWeight: 400,
+                  letterSpacing: "0.015em",
+                }}
+              >
+                {t("benefits.description")}
+              </p>
+              <div className="grid min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:row-start-2 lg:col-start-2 lg:gap-3 xl:gap-3.5 justify-items-stretch mb-6 sm:mb-7 md:mb-6.5 lg:mb-0">
                 {benefits.map((b) => {
                   const Icon = b.icon;
                   return (
