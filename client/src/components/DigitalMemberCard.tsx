@@ -23,6 +23,8 @@ export type DigitalMemberCardProps = {
   className?: string;
   /** Narrower padding and type scale (e.g. How it works mock). */
   compact?: boolean;
+  /** Larger card + type on wide viewports (e.g. How it works desktop hero). */
+  showcase?: boolean;
   /** Renders below the card (badge text, etc.). */
   footer?: ReactNode;
 };
@@ -40,6 +42,7 @@ export function DigitalMemberCard({
   photoUrl,
   className,
   compact,
+  showcase,
   footer,
 }: DigitalMemberCardProps) {
   const { t } = useLanguage();
@@ -58,10 +61,21 @@ export function DigitalMemberCard({
     Boolean(photoUrl) &&
     (photoUrl!.startsWith("http") || photoUrl!.startsWith("blob:"));
 
+  /** Inline height so showcase logo always wins over any CSS order / layers. */
+  const showcaseBrandImgStyle =
+    showcase && !compact
+      ? ({
+          height: "clamp(66px, 4.9vw, 76px)",
+          width: "auto",
+          objectFit: "contain" as const,
+        } as const)
+      : undefined;
+
   return (
     <div
       className={cn("digital-member-card", className)}
       data-compact={compact ? "true" : undefined}
+      data-showcase={showcase ? "true" : undefined}
     >
       <div className="dmc-stage">
         <article className="dmc-article">
@@ -83,6 +97,7 @@ export function DigitalMemberCard({
                   className="dmc-brand-img"
                   src="/links-golf-membership-brand.png"
                   alt=""
+                  style={showcaseBrandImgStyle}
                 />
               </div>
               <div className="dmc-photo">

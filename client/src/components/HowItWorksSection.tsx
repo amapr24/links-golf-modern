@@ -8,7 +8,7 @@
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
-import type { RefObject } from "react";
+import { useLayoutEffect, useState, type RefObject } from "react";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
@@ -69,11 +69,43 @@ function getSteps(language: Language) {
   ];
 }
 
+function useMinWidthLg() {
+  const [matches, setMatches] = useState(() =>
+    typeof window !== "undefined" ? window.matchMedia("(min-width: 1024px)").matches : false,
+  );
+  useLayoutEffect(() => {
+    const mq = window.matchMedia("(min-width: 1024px)");
+    const sync = () => setMatches(mq.matches);
+    sync();
+    mq.addEventListener("change", sync);
+    return () => mq.removeEventListener("change", sync);
+  }, []);
+  return matches;
+}
+
 export default function HowItWorksSection() {
   const { language, t } = useLanguage();
   const coarsePointer = useCoarsePointer();
+  const isDesktopLayout = useMinWidthLg();
   const steps = getSteps(language);
   const sectionRef = useScrollReveal({ threshold: 0.1 });
+
+  const memberCardWalletFooter = (
+    <div className="dmc-wallet-footer-split">
+      <div className="dmc-wallet-footer-split__cell">
+        <div className="dmc-wallet-pill">
+          <AppleWalletGlyph className="h-3.5 w-3.5 shrink-0 text-white/90 sm:h-4 sm:w-4" />
+          <span>Apple Wallet</span>
+        </div>
+      </div>
+      <div className="dmc-wallet-footer-split__cell">
+        <div className="dmc-wallet-pill">
+          <GoogleWalletGlyph className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+          <span>Google Wallet</span>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <section
@@ -121,7 +153,7 @@ export default function HowItWorksSection() {
       />
 
       {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
-      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 lg:pt-6 lg:pb-6 px-4 sm:px-6 md:px-8">
         <div
           data-reveal
           data-frosted
@@ -134,9 +166,12 @@ export default function HowItWorksSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="text-center mb-4 sm:mb-5 md:mb-5 lg:mb-5">
-              <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[2.1%]">
+            <div className="text-center mb-4 sm:mb-5 md:mb-5 lg:mb-2">
+              <p
+                className="section-label mb-1 sm:mb-1.5 lg:mb-0.5 text-[10px] sm:text-xs"
+                style={{ color: "oklch(0.65 0.10 145)" }}
+              >
                 03 · {t("nav.howItWorks")}
               </p>
               <h2
@@ -155,18 +190,19 @@ export default function HowItWorksSection() {
               </h2>
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
-              <div className="flex flex-col gap-5 sm:gap-6 flex-1 min-w-0">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:gap-6 xl:gap-7">
+              <div className="flex flex-col gap-0 flex-1 min-w-0">
                 {steps.map((step, i) => {
                   const Icon = step.icon;
                   return (
                     <div
                       key={step.number}
-                      className="border-b border-white/[0.12] pb-5 sm:pb-6 last:border-b-0 last:pb-0"
+                      className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-x-3 sm:gap-x-4 border-b border-white/[0.12] py-2 sm:py-2.5 lg:py-1.5 last:border-b-0"
                     >
-                      <div className="flex items-center gap-4 flex-wrap">
+                      {/* Left column: icon vertically centered in the row */}
+                      <div className="flex items-center justify-center self-stretch pr-0.5 sm:pr-1">
                         <div
-                          className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center shrink-0"
+                          className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-full sm:h-14 sm:w-14"
                           style={{
                             background: "oklch(0.42 0.14 145 / 0.20)",
                             border: "1px solid oklch(0.42 0.14 145 / 0.35)",
@@ -174,59 +210,38 @@ export default function HowItWorksSection() {
                         >
                           <Icon size={22} style={{ color: "oklch(0.72 0.14 145)" }} />
                           <span
-                            className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
+                            className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-bold text-white sm:h-6 sm:w-6 sm:text-xs"
                             style={{ background: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                           >
                             {i + 1}
                           </span>
                         </div>
-                        <h3
-                          className="text-white font-semibold min-w-0 flex-1"
-                          style={howItWorksStepTitleStyle}
-                        >
+                      </div>
+                      {/* Right column: title + body stacked, centered as a block */}
+                      <div className="flex min-h-0 min-w-0 flex-col justify-center gap-0.5 sm:gap-1">
+                        <h3 className="text-white font-semibold leading-snug min-w-0" style={howItWorksStepTitleStyle}>
                           {step.title}
                         </h3>
+                        <p className={howItWorksStepBodyClassName} style={howItWorksStepBodyStyle}>
+                          {step.body}
+                        </p>
                       </div>
-                      <p
-                        className={`mt-3 ${howItWorksStepBodyClassName} sm:pl-[4.25rem]`}
-                        style={howItWorksStepBodyStyle}
-                      >
-                        {step.body}
-                      </p>
                     </div>
                   );
                 })}
               </div>
 
-              <div className="flex flex-col items-center gap-3 sm:gap-4 mt-6 lg:mt-0 shrink-0 lg:sticky lg:top-28 self-center lg:self-start">
-                <div
-                  className="relative rounded-xl overflow-hidden shadow-2xl"
-                  style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}
-                >
+              <div className="mt-6 flex w-full shrink-0 flex-col items-center self-center lg:sticky lg:top-24 lg:mt-0 lg:max-w-[min(806px,62%)] xl:max-w-[min(858px,60%)]">
+                <div className="relative flex w-full max-w-[min(280px,85vw)] justify-center lg:max-w-none">
                   <DigitalMemberCard
-                    compact
+                    compact={!isDesktopLayout}
+                    showcase={isDesktopLayout}
                     displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
                     memberNumber="LGM-00000"
                     validUntil="05/27"
                     photoUrl={null}
+                    footer={memberCardWalletFooter}
                   />
-                </div>
-
-                <div className="flex justify-center gap-2.5 sm:gap-3 md:gap-4 flex-wrap">
-                  <div
-                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-sm font-medium text-white/80"
-                    style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    <AppleWalletGlyph className="h-4 w-4 shrink-0 text-white/90" />
-                    <span>Apple Wallet</span>
-                  </div>
-                  <div
-                    className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-sm font-medium text-white/80"
-                    style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-                  >
-                    <GoogleWalletGlyph className="h-4 w-4 shrink-0" />
-                    <span>Google Wallet</span>
-                  </div>
                 </div>
               </div>
             </div>

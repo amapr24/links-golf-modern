@@ -305,6 +305,73 @@
   border-top: 1px solid oklch(0.42 0.14 145 / 0.2);
 }
 
+/* Wallet footer split (How it works): two cells — side-by-side wide, stacked narrow. */
+.dmc-footer:has(> .dmc-wallet-footer-split) {
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 0.42);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  font-size: unset;
+  font-weight: unset;
+  letter-spacing: normal;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.88);
+}
+
+.dmc-wallet-footer-split {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr;
+}
+
+.dmc-wallet-footer-split__cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0.45rem;
+  min-height: 2.75rem;
+  background: rgba(0, 0, 0, 0.12);
+}
+
+.dmc-wallet-footer-split__cell + .dmc-wallet-footer-split__cell {
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+@media (min-width: 420px) {
+  .dmc-wallet-footer-split {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .dmc-wallet-footer-split__cell + .dmc-wallet-footer-split__cell {
+    border-top: none;
+    border-left: 1px solid rgba(255, 255, 255, 0.12);
+  }
+}
+
+.dmc-wallet-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.26rem 0.48rem;
+  border-radius: 9999px;
+  font-family: "Outfit", system-ui, sans-serif;
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.86);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+@media (min-width: 640px) {
+  .dmc-wallet-pill {
+    font-size: 0.6875rem;
+    padding: 0.3rem 0.55rem;
+  }
+}
+
 /* Footer strip: one combined rounded block with the card (How it works). */
 .digital-member-card:has(> .dmc-footer) {
   border-radius: 20px;
@@ -329,4 +396,93 @@
 
 .digital-member-card[data-compact="true"]:has(> .dmc-footer) .dmc-footer {
   border-radius: 0 0 14px 14px;
+}
+
+/* -------------------------------------------------------------------------
+ * Showcase scale — marketing “hero” card (How it works lg+). Larger pass
+ * treatment aligned with post-checkout / dashboard prominence; does not
+ * affect compact mobile mocks or default cards without data-showcase.
+ * ------------------------------------------------------------------------- */
+@media (min-width: 1024px) {
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-article {
+    max-width: min(780px, 100%);
+    /* Wider than ID-1 (1.586) — less “square,” more panoramic pass. */
+    aspect-ratio: 1.75 / 1;
+    border-radius: 20px;
+    box-shadow:
+      0 1px 0 rgba(255, 255, 255, 0.07) inset,
+      0 0 0 1px rgba(140, 190, 130, 0.2),
+      0 38px 86px -20px rgba(17, 26, 19, 0.52),
+      0 18px 42px -9px rgba(88, 140, 98, 0.18);
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-inner {
+    padding: 23px 36px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-top {
+    gap: 20px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-photo {
+    width: 72px;
+    height: 88px;
+    border-radius: 6px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-photo svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-name {
+    font-size: clamp(24px, 1.95vw, 36px);
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-meta {
+    gap: 12px 22px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-num {
+    font-size: 17px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-num small {
+    font-size: 10px;
+    letter-spacing: 0.26em;
+  }
+}
+
+@media (min-width: 1280px) {
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-article {
+    max-width: min(832px, 100%);
+    aspect-ratio: 1.82 / 1;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-inner {
+    padding: 24px 38px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-photo {
+    width: 74px;
+    height: 90px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-photo svg {
+    width: 38px;
+    height: 38px;
+  }
+
+  .digital-member-card[data-showcase="true"]:not([data-compact="true"]) .dmc-name {
+    font-size: clamp(26px, 1.9vw, 38px);
+  }
+}
+
+/* Showcase + footer: keep article bottom square so pills attach flush. */
+.digital-member-card[data-showcase="true"]:not([data-compact="true"]):has(> .dmc-footer) .dmc-article {
+  border-radius: 20px 20px 0 0;
+}
+
+.digital-member-card[data-showcase="true"]:not([data-compact="true"]):has(> .dmc-footer) .dmc-footer {
+  border-radius: 0 0 20px 20px;
 }
