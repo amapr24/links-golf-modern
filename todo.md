@@ -285,6 +285,65 @@
 
 ## Standards-based audits (follow-up passes)
 
+### Email compliance (CAN-SPAM + Gmail/Yahoo bulk-sender + Resend hygiene)
+
+> Email volume is currently low, so most of this is launch-blocker preparatory work — but the welcome email already contains marketing content ("up to 25% off"), so CAN-SPAM applies in full to it. Items below are net-new (no overlap with the existing P0/P1 items).
+
+**Inventory:** Today the codebase sends two templates via Resend — OTP (transactional, `server/email.ts:4-63`) and Welcome (mixed-purpose, `server/email.ts:65-129`). No commercial / newsletter mail yet.
+
+**New items to add to the backlog:**
+
+- [ ] **Welcome email is a mixed-purpose message.** Body promotes "up to 25% off green fees" and similar member benefits — that's commercial content under CAN-SPAM's "primary purpose" test. Treat it as commercial. — `server/email.ts:65-129`
+  - **Fix:** Either (a) strip marketing claims from the welcome and keep only account confirmation (then it's a relationship message), or (b) add the full commercial-email footer (physical postal address, opt-out link, ad disclosure). Pick (a) for simplicity; route any "Welcome — here's what your membership unlocks" content to a separate, opt-in onboarding sequence.
+- [ ] **No physical postal address in any email footer.** CAN-SPAM requires a valid mailing address on every commercial message. The current footers are copyright-only. — `server/email.ts:41-44,109-113`
+  - **Fix:** Once the PR business address exists, add it to a shared `EMAIL_FOOTER` constant; require the env var `MERCHANT_POSTAL_ADDRESS` and fail the welcome send if missing. Until then, do not send commercial mail.
+- [ ] **No `List-Unsubscribe` / `List-Unsubscribe-Post` headers.** Gmail/Yahoo bulk-sender rules (Feb 2024) require RFC 8058 one-click unsubscribe on commercial mail. Resend supports both via the `headers` field. — `server/email.ts`
+  - **Fix:** Add `headers: { 'List-Unsubscribe': '<mailto:unsubscribe@linksgolf.com?subject=unsubscribe>, <https://linksgolfpr.com/api/email/unsubscribe?token=…>', 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' }`. Implement the unsubscribe endpoint (POST, accepts a signed token, marks the address suppressed). Apply to the welcome email and any future marketing.
+- [ ] **No suppression list / unsubscribe persistence.** Even if you add the headers, you need to honour them within 10 business days.
+  - **Fix:** Add a `email_suppressions` table (columns: `email`, `reason` in {`unsubscribe`, `hard_bounce`, `complaint`}, `added_at`). Check it before every send.
+- [ ] **No Resend webhook for bounces / complaints.** Without it, hard bounces and complaints can't feed the suppression list; domain reputation will erode quickly once volume grows. — `server/email.ts`, `server/_core/index.ts`
+  - **Fix:** Add `/api/resend/webhook` with `Resend-Signature` verification (Resend's `svix-id`/`svix-signature` HMAC). Handle `email.bounced`, `email.complained`, `email.delivery_delayed` events; upsert into `email_suppressions`. Cover with tests.
+- [ ] **No `Reply-To` header.** Both templates send from `noreply@…` with no monitored reply destination. Replies bounce. — `server/email.ts:18,83`
+  - **Fix:** Set `reply_to: 'support@linksgolfpr.com'` (must be a real monitored inbox). For OTP, optionally keep `Reply-To` blank since replies are not expected — but Gmail's "Show original" doesn't downgrade the reputation; setting it helps.
+- [ ] **No plain-text alternative.** Both templates are HTML-only. Plain-text alt improves deliverability and accessibility, and is required by some clients.
+  - **Fix:** Add `text:` to the Resend payload with a stripped-down version (OTP code in monospace, support contact, postal address).
+- [ ] **No Spanish templates.** The site is bilingual but emails are English-only. — `server/email.ts`
+  - **Fix:** Store `preferred_language` on the member row (default to the value of `LanguageContext` at signup time); select template at send. Translate both bodies; have a native PR speaker review.
+- [ ] **No SPF / DKIM / DMARC documented for the sending domain.** Resend supplies DKIM automatically for verified domains, but SPF and DMARC are the merchant's responsibility and aren't covered in `.env.example` or `references/deploy-smoke.md`.
+  - **Fix:** Add a DNS section to the env/deploy docs: SPF (`v=spf1 include:_spf.resend.com -all` or whatever Resend documents currently), DKIM CNAMEs from the Resend dashboard, DMARC starting at `p=none` with aggregate reports to `dmarc@linksgolfpr.com`, escalating to `p=quarantine` once aligned. Verify with mail-tester.com before launch.
+- [ ] **Email address logged in plaintext on success paths.** `email.ts` `console.log`s the recipient on success; `routers.ts` logs the OTP in dev.
+  - **Fix:** Log `sha256(email).slice(0,8)` as the correlation id; never log the OTP, not even in dev (or gate it behind `DEBUG_OTP=1` plus an explicit warning).
+- [ ] **No idempotency lock around welcome-email send.** The current "send once" logic is best-effort: a Redis check + a DB column. Two concurrent OTP verifications can both observe "not sent yet" and both send. — `server/welcomeEmailOnce.ts`, `server/routers.ts:169-187`
+  - **Fix:** Make the DB column the source of truth with an atomic `UPDATE … WHERE welcome_email_sent_at IS NULL` — only the row that flips it actually sends. Or use a Redis `SETNX` with TTL longer than the longest plausible send latency.
+- [ ] **Dashboard / unsubscribe URLs are not absolute.** The welcome email links to "dashboard" which can break depending on Resend's link-tracking rewrites.
+  - **Fix:** Build URLs from `VITE_PUBLIC_SITE_ORIGIN` (the same env var the SEO plugin uses) and assert it's set before sending welcome mail.
+- [ ] **No engagement / deliverability dashboard.** Resend provides delivery metrics in their UI, but failures aren't surfaced inside the app.
+  - **Fix:** When the suppression table exists, build a simple admin page showing rolling 7-day delivered / bounced / complained counts. Watch for complaint rate >0.1 % (Gmail's threshold).
+- [ ] **Document the OTP email as transactional**, not relationship — current footer doesn't include an unsubscribe link, which is correct only if the message is transactional. Confirm by leaving marketing copy out of OTP entirely (already true) and labelling it in the policy/operations doc.
+- [ ] **Future newsletter / promo sends.** When you start running them, double-opt-in is the right default (especially given the GDPR/PR overlap above), separate sending stream (own Resend domain), and a published cadence.
+  - **Fix:** Build a dedicated newsletter subscribe flow rather than re-using the membership form. Capture the consent timestamp + IP + form version.
+
+**Drop-in fix for the OTP send (illustrative, not literal code):**
+
+```ts
+await resend.emails.send({
+  from: 'Links Golf <noreply@linksgolfpr.com>',
+  to,
+  reply_to: 'support@linksgolfpr.com',
+  subject: '…',
+  html: html,
+  text: textBody,
+  headers: {
+    // Transactional — no List-Unsubscribe required, but include if it ever
+    // ships marketing content again.
+  }
+});
+```
+
+For the welcome email, additionally include the `List-Unsubscribe` headers and a postal-address footer block, gated on `MERCHANT_POSTAL_ADDRESS` being set.
+
+---
+
 ### Privacy / data-protection law review
 
 > **Applicability:** Puerto Rico Act 39-2012 + Act 111-2005 — **High confidence applies** (merchant is PR-targeted, sells only to PR residents). GDPR/UK GDPR — **Medium risk** because there is no geo-block; if even one EU resident signs up, GDPR applies. CCPA/CPRA — **Low** if residency gate holds. COPPA/BIPA — N/A.
