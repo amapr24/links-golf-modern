@@ -2,18 +2,24 @@
  * BenefitsSection — "Why Join" (01)
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         frosted dark-green content containers for legibility.
- *         Mobile-optimized: tighter padding, compact stats, single-col cards on xs.
+ * Animation: useScrollReveal drives fade-in + slide-up on [data-reveal] containers.
+ *            Benefit cards stagger with [data-stagger] for a cascading entrance.
+ * Mobile-optimized: tighter padding, compact stats, single-col cards on xs.
  */
 
 import { DollarSign, Smartphone, MapPin, CalendarCheck } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import type { RefObject } from "react";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
+  // Scope the observer to this section so it doesn't re-observe the whole page
+  const sectionRef = useScrollReveal({ staggerMs: 80, threshold: 0.10 });
 
   const benefits = [
     {
@@ -49,12 +55,12 @@ export default function BenefitsSection() {
   return (
     <section
       id="benefits"
+      ref={sectionRef as RefObject<HTMLElement>}
       className="relative overflow-hidden"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        /* Fixed attachment creates parallax on desktop; scroll on mobile avoids iOS jank */
         backgroundAttachment: "fixed",
       }}
     >
@@ -67,13 +73,13 @@ export default function BenefitsSection() {
         aria-hidden
       />
 
-      {/* Mobile: py-12 px-4 | Desktop: py-28 */}
       <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
 
-        {/* Section header — frosted container */}
+        {/* Section header — frosted container, reveals first */}
         <div
+          data-reveal
           data-frosted
-          className="mb-8 md:mb-12 fade-up rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10 inline-block w-full"
+          className="mb-8 md:mb-12 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10 inline-block w-full"
           style={{
             background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
@@ -89,10 +95,9 @@ export default function BenefitsSection() {
             01 · {t("benefits.label")}
           </p>
           <h2
-            className="leading-tight max-w-xl fade-up"
+            className="leading-tight max-w-xl"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              /* Smaller floor on mobile: 1.9rem → 3.6rem on wide */
               fontSize: "clamp(1.9rem, 6vw, 3.6rem)",
               fontWeight: 600,
               color: "white",
@@ -113,17 +118,18 @@ export default function BenefitsSection() {
           </p>
         </div>
 
-        {/* Benefit cards — 1-col on xs, 2-col on sm, 4-col on lg */}
+        {/* Benefit cards — staggered reveal, 1-col on xs, 2-col on sm, 4-col on lg */}
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4">
-          {benefits.map((b, i) => {
+          {benefits.map((b) => {
             const Icon = b.icon;
             return (
               <div
                 key={b.id}
+                data-reveal
+                data-stagger
                 data-frosted
-                className="fade-up flex flex-row sm:flex-col gap-4 rounded-xl border p-4 sm:p-5 md:p-6"
+                className="flex flex-row sm:flex-col gap-4 rounded-xl border p-4 sm:p-5 md:p-6"
                 style={{
-                  transitionDelay: `${i * 60}ms`,
                   background: "oklch(0.13 0.05 145 / 0.75)",
                   borderColor: "oklch(0.30 0.08 145 / 0.5)",
                   backdropFilter: "blur(10px)",
@@ -178,10 +184,11 @@ export default function BenefitsSection() {
           })}
         </div>
 
-        {/* Stats row — frosted container, compact on mobile */}
+        {/* Stats row — frosted container, reveals after cards */}
         <div
+          data-reveal
           data-frosted
-          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 fade-up"
+          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6"
           style={{
             background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",
@@ -201,7 +208,6 @@ export default function BenefitsSection() {
                   className="leading-none"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    /* Smaller floor on mobile */
                     fontSize: "clamp(1.5rem, 5vw, 2.8rem)",
                     fontWeight: 600,
                     color: "oklch(0.72 0.12 145)",
@@ -224,7 +230,10 @@ export default function BenefitsSection() {
         </div>
 
         {/* CTA */}
-        <div className="mt-5 sm:mt-8 fade-up">
+        <div
+          data-reveal
+          className="mt-5 sm:mt-8"
+        >
           <button
             type="button"
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}

@@ -6,10 +6,12 @@
  */
 
 import { useState } from "react";
+import type { RefObject } from "react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -40,12 +42,14 @@ function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => strin
 export default function CoursesSection() {
   const { t } = useLanguage();
   const [typeFilter, setTypeFilter] = useState<DirectoryFilter>("all");
+  const sectionRef = useScrollReveal({ staggerMs: 90, threshold: 0.08 });
 
   const activeTabId = tabIds[typeFilter];
 
   return (
     <section
       id="courses"
+      ref={sectionRef as RefObject<HTMLElement>}
       className="relative overflow-x-hidden"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
@@ -66,8 +70,10 @@ export default function CoursesSection() {
       <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
         {/* Section header + filters — frosted container */}
         <div
+          data-reveal
+          data-stagger
           data-frosted
-          className="mb-4 sm:mb-6 rounded-xl px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 fade-up"
+          className="mb-4 sm:mb-6 rounded-xl px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8"
           style={{
             background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
@@ -142,8 +148,10 @@ export default function CoursesSection() {
 
         {/* Map + course list — frosted container */}
         <div
+          data-reveal
+          data-stagger
           data-frosted
-          className="rounded-xl overflow-hidden fade-up"
+          className="rounded-xl overflow-hidden"
           style={{
             background: "oklch(0.13 0.05 145 / 0.72)",
             backdropFilter: "blur(10px)",
@@ -161,8 +169,10 @@ export default function CoursesSection() {
 
         {/* Bottom CTA — frosted container */}
         <div
+          data-reveal
+          data-stagger
           data-frosted
-          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 fade-up"
+          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4"
           style={{
             background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",

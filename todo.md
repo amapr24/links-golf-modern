@@ -130,3 +130,13 @@
 - [x] HowItWorksSection (03): tighten mobile padding, reduce heading size, compact step cards, smaller wallet card preview
 - [x] Global: reduce section py on mobile (py-20 → py-14), reduce frosted container px on mobile (px-8 → px-4/px-5)
 - [x] Global: ensure backdrop-filter blur degrades gracefully on older mobile browsers (add @supports fallback)
+
+## Scroll Animations — Frosted Containers (Current Sprint)
+- [x] Audit existing .fade-up / IntersectionObserver system in Home.tsx and index.css
+- [x] Add .fade-up-container CSS class: starts opacity-0 translateY(32px), transitions to visible
+- [x] Add stagger CSS custom property --stagger-delay for child containers
+- [x] Create useScrollReveal hook that observes [data-reveal] elements with IntersectionObserver
+- [x] Apply data-reveal and stagger delays to frosted containers in BenefitsSection (01)
+- [x] Apply data-reveal and stagger delays to frosted containers in CoursesSection (02)
+- [x] Apply data-reveal and stagger delays to frosted containers in HowItWorksSection (03)
+- [x] Ensure prefers-reduced-motion disables all animations

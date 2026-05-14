@@ -6,9 +6,11 @@
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
+import type { RefObject } from "react";
 import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -66,10 +68,12 @@ function getSteps(language: Language) {
 export default function HowItWorksSection() {
   const { language } = useLanguage();
   const steps = getSteps(language);
+  const sectionRef = useScrollReveal({ staggerMs: 100, threshold: 0.08 });
 
   return (
     <section
       id="how-it-works"
+      ref={sectionRef as RefObject<HTMLElement>}
       className="relative overflow-hidden"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
@@ -90,8 +94,9 @@ export default function HowItWorksSection() {
       <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
         {/* Section header — frosted container */}
         <div
+          data-reveal
           data-frosted
-          className="text-center mb-6 sm:mb-10 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8 fade-up"
+          className="text-center mb-6 sm:mb-10 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8"
           style={{
             background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
@@ -126,10 +131,11 @@ export default function HowItWorksSection() {
             return (
               <div
                 key={step.number}
+                data-reveal
+                data-stagger
                 data-frosted
-                className="fade-up rounded-xl p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
+                className="rounded-xl p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
                 style={{
-                  transitionDelay: `${i * 120}ms`,
                   background: "oklch(0.13 0.05 145 / 0.75)",
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
@@ -176,8 +182,9 @@ export default function HowItWorksSection() {
 
         {/* Wallet pass visual — frosted container */}
         <div
+          data-reveal
           data-frosted
-          className="mt-4 sm:mt-6 rounded-xl p-5 sm:p-6 md:p-8 fade-up flex flex-col items-center gap-4 sm:gap-6"
+          className="mt-4 sm:mt-6 rounded-xl p-5 sm:p-6 md:p-8 flex flex-col items-center gap-4 sm:gap-6"
           style={{
             background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",
