@@ -285,6 +285,77 @@
 
 ## Standards-based audits (follow-up passes)
 
+### Stripe Integration Checklist — source-based audit
+
+> Walked against Stripe's official integration checklist for Checkout + subscriptions + webhooks. New findings below; existing P0 Payments items remain authoritative for those topics.
+
+**New findings to add to the backlog:**
+
+- [ ] **Open-redirect risk in Checkout `success_url`.** `client/src/components/PricingSection.tsx` builds `successUrl` from `window.location.origin` + user-controlled email/memberId. If the page is ever rendered via an iframe/redirect on a malicious host, the user-controlled portion can be abused to bounce off `linksgolfpr.com@evil.tld`. — `client/src/components/PricingSection.tsx:149-154`
+  - **Fix:** Build the origin server-side from `VITE_PUBLIC_SITE_ORIGIN` (already used by the SEO plugin); validate the final URL with `new URL(...).origin === EXPECTED_ORIGIN` before passing to Stripe. Strip `email` from the URL entirely — it's already in the Stripe Session.
+- [ ] **No idempotency key on `stripe.checkout.sessions.create()`.** A retried request could create a second session and a second charge attempt for the same user. — `server/stripe/checkout.ts:47`
+  - **Fix:** Pass `{ idempotencyKey: crypto.randomUUID() }` as the second argument; cache the key for ~24h keyed by `(memberId, paymentType)` so genuine retries reuse it.
+- [ ] **PII in Checkout Session `metadata`.** `customer_email` and `customer_name` are duplicated into metadata. Stripe metadata is visible to anyone with a read API key. — `server/stripe/checkout.ts:52-57`
+  - **Fix:** Remove email/name from metadata; rely on the native `customer_email` parameter. Keep only opaque ids (member id, internal request id).
+- [ ] **No Puerto Rico IVU handling.** The annual membership is a digital service taxable in PR (IVU 10.5% state + 1% municipal in San Juan; verify with counsel). Currently sold tax-inclusive without disclosure.
+  - **Fix:** Decide on the tax position with an accountant. Most likely: enable `automatic_tax: { enabled: true }` on the Checkout Session and add a Tax registration for PR in the Stripe dashboard. Update pricing copy to show "+ IVU" or "tax included".
+- [ ] **Missing critical webhook events.** Currently handled: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`. Missing:
+  - `invoice.payment_failed` — needed to mark `past_due` and to email the member.
+  - `checkout.session.expired` — needed to clean up server-side state on abandoned checkouts.
+  - `checkout.session.async_payment_failed` — relevant for bank-debit / ACH retries.
+  - `charge.refunded` — must revoke membership when a refund is issued (or you'll keep serving customers who got their money back).
+  - `charge.dispute.created` / `closed` — chargeback handling; needs ops alert + evidence capture.
+  - `customer.subscription.trial_will_end` — N/A while no trial exists.
+  - — `server/stripe/webhook.ts:17-44`
+  - **Fix:** Add handlers; map each to the `membership_status` enum (see ASVS data-model item).
+- [ ] **Webhook returns 2xx even when the DB write fails.** The handler catches errors and still responds `200`, so Stripe never retries. — `server/stripe/webhook.ts:40-46`
+  - **Fix:** Return `res.status(500).json(...)` on any unhandled exception. Only respond 2xx after the side-effects are durably committed.
+- [ ] **No webhook-event timestamp tolerance.** `event.created` is not compared to current time, so a stolen-but-not-replayed-yet event can be replayed indefinitely. — `server/stripe/routes.ts`
+  - **Fix:** Reject events where `Math.abs(Date.now()/1000 - event.created) > 300`. (Stripe's own SDK does this via the `tolerance` argument to `constructEvent` if you set it — pass `{ tolerance: 300 }`.)
+- [ ] **No `livemode` cross-check.** Test events to a production server (or vice versa) silently process. — `server/stripe/webhook.ts`, `server/stripe/client.ts`
+  - **Fix:** Refuse to process events whose `event.livemode` does not match `NODE_ENV === 'production'`.
+- [ ] **No pinned `apiVersion` on the Stripe client.** Stripe will auto-upgrade SDK behaviour on new dashboard versions, which can change webhook payloads mid-flight. — `server/stripe/client.ts`
+  - **Fix:** `new Stripe(secret, { apiVersion: '2024-11-20.acacia' })` (use the version your code was tested against; bump deliberately with a regression pass).
+- [ ] **No Stripe Billing Portal session.** Members cannot self-serve cancellation, payment-method changes, invoice downloads. The dashboard rolls its own custom cancellation UI instead. — `server/member.payments.ts`, `client/src/components/PaymentHistory.tsx`
+  - **Fix:** Add a tRPC mutation `member.createBillingPortalSession` that calls `stripe.billingPortal.sessions.create({ customer, return_url })` and link to it from the dashboard. Keep the in-app cancel button as a shortcut.
+- [ ] **No reactivation flow.** Once a member toggles "cancel at period end", the only recourse is to wait until expiry and re-checkout.
+  - **Fix:** Allow `stripe.subscriptions.update(id, { cancel_at_period_end: false })` while still inside the active period; expose in the dashboard.
+- [ ] **Dashboard does not surface "pending cancellation" or "past due" prominently.** — `client/src/components/PaymentHistory.tsx`, `client/src/pages/Dashboard.tsx`
+  - **Fix:** Banner styles for `cancelAtPeriodEnd === true` ("Your membership ends on …") and for `status === 'past_due'` ("Payment failed — update your card").
+- [ ] **No `statement_descriptor`.** Members will see a generic Stripe-default string on their card statement and may dispute the charge ("I don't recognise this").
+  - **Fix:** `payment_intent_data: { statement_descriptor_suffix: 'LINKS GOLF PR' }` for one-time mode, or set the descriptor on the Stripe Product for subscriptions. Max 22 chars; uppercase A-Z plus space/dash.
+- [ ] **Apple Pay / Google Pay not advertised.** Stripe Checkout supports them via `payment_method_types`, but currently restricted to `card`. — `server/stripe/checkout.ts:48`
+  - **Fix:** Use `payment_method_types: ['card']` only if intentional; otherwise remove the field so Checkout enables wallets automatically.
+- [ ] **No test-mode vs live-mode guardrail.** Nothing prevents booting prod with a `sk_test_…` key (or vice versa). — `server/stripe/client.ts`
+  - **Fix:** At boot, assert `NODE_ENV === 'production'` ⇒ secret key starts with `sk_live_` (and webhook secret with `whsec_` issued by the live endpoint).
+- [ ] **`drizzle` schema lacks a `membership_status` enum.** Only `isActive` / `isCanceled` booleans, which can't represent `past_due`, `incomplete`, `unpaid`, `trialing`. — `drizzle/schema.ts`
+  - **Fix:** Add `mysqlEnum('membership_status', ['active','past_due','canceled','unpaid','incomplete','incomplete_expired','trialing'])` with default `'active'`; backfill from existing booleans.
+- [ ] **Webhook tests cover only happy paths.** No tests for: replayed event, out-of-order events, signature failure, `invoice.payment_failed`, refund, dispute, livemode mismatch. — `server/stripe.webhook.test.ts`
+  - **Fix:** Add a test per case.
+- [ ] **Webhook-secret rotation not documented.** No process for zero-downtime rotation (Stripe supports multiple active endpoint secrets — your code must accept either).
+  - **Fix:** Allow `STRIPE_WEBHOOK_SECRET` to be a comma-separated list; try each in turn; document the rotation procedure in `docs/stripe-operations.md`.
+- [ ] **Refund policy page must match webhook behaviour.** If `charge.refunded` revokes membership, the policy needs to say so explicitly. — `client/src/pages/RefundPolicy.tsx`
+  - **Fix:** Reconcile the legal copy with the implemented behaviour before launch; add a "last updated" date.
+- [ ] **No reconciliation tooling.** No way to fix the inevitable Stripe ↔ DB drift (e.g. webhook delivery failures during incidents).
+  - **Fix:** Add an admin script `pnpm tsx server/scripts/reconcile-stripe.ts` that pages through `stripe.subscriptions.list({status:'all'})` and rebuilds member rows from Stripe truth.
+- [ ] **Stripe CLI not in scripts.** Local webhook testing is not one command away.
+  - **Fix:** Add `"stripe:listen": "stripe listen --forward-to localhost:3000/api/stripe/webhook"` and `"stripe:trigger": "stripe trigger checkout.session.completed"` to `package.json`.
+
+**Risk-ranked top 10 (combining new + existing P0 Stripe items):**
+
+1. Webhook not idempotent (existing P0).
+2. Open-redirect risk in `success_url` (new).
+3. Webhook returns 2xx on DB error → Stripe never retries (new).
+4. No `invoice.payment_failed` handler → failed renewals don't revoke access (new).
+5. Subscription `status` transitions ignored (existing P0).
+6. No `charge.refunded` handler → refunded members stay active (new).
+7. IDOR in `member.createCheckout` (existing P0).
+8. No `membership_status` enum / no FK / no Stripe-id indexes (existing P1 DB items).
+9. PII in Checkout Session metadata (new).
+10. No Stripe Billing Portal — manual cancel/refund/payment-method flows hit support (new).
+
+---
+
 ### OWASP ASVS 4.0.3 (Level 1 + key Level 2) — source-based audit
 
 > Estimated conformance: **~28 of 45 audited L1+L2 reqs PASS (≈ 62 %)**. Categories with the worst pass rate: V9 Communication (headers), V7 Logging, V11 Business logic, V12 SSRF, V14 Config.
