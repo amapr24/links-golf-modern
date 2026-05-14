@@ -1,15 +1,18 @@
 /*
- * BenefitsSection — "Why Join" (01)
+ * BenefitsSection — "Why Join"
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         entire section wrapped in a single frosted container for cohesion.
  * Animation: useScrollReveal drives fade-in + slide-up on the container.
- * Mobile-optimized: tighter padding, compact stats, single-col cards on xs.
+ * Benefit card type matches How It Works step title + body (`HowItWorksSection`).
+ * Mobile: stacked; lg+: horizontal strip (heading | cards). No section CTA — nav + hero carry membership.
  */
 
 import { DollarSign, Smartphone, MapPin } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import {
+  howItWorksStepTitleStyle,
+} from "@/lib/howItWorksStepTypography";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
 import type { RefObject } from "react";
 
@@ -17,8 +20,7 @@ const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
-  // Scope the observer to this section
-  const sectionRef = useScrollReveal({ threshold: 0.10 });
+  const sectionRef = useScrollReveal({ threshold: 0.1 });
 
   const benefits = [
     {
@@ -26,21 +28,18 @@ export default function BenefitsSection() {
       icon: DollarSign,
       highlight: t("benefits.savings.highlight"),
       title: t("benefits.savings.title"),
-      body: t("benefits.savings.body"),
     },
     {
       id: "card",
       icon: Smartphone,
       highlight: t("benefits.card.highlight"),
       title: t("benefits.card.title"),
-      body: t("benefits.card.body"),
     },
     {
       id: "network",
       icon: MapPin,
       highlight: t("benefits.network.highlight"),
       title: t("benefits.network.title"),
-      body: t("benefits.network.body"),
     },
   ];
 
@@ -56,7 +55,6 @@ export default function BenefitsSection() {
         backgroundAttachment: "fixed",
       }}
     >
-      {/* Dark overlay */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -65,13 +63,11 @@ export default function BenefitsSection() {
         aria-hidden
       />
 
-      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
-
-        {/* Single frosted container wrapping all content */}
+      <div className="container relative z-10 py-3 sm:py-4 md:py-5 px-3 sm:px-5 md:px-6">
         <div
           data-reveal
           data-frosted
-          className="rounded-xl overflow-hidden"
+          className="rounded-lg overflow-hidden"
           style={{
             background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(12px)",
@@ -80,115 +76,76 @@ export default function BenefitsSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          {/* Inner padding container */}
-          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
+          {/* Strip: title + cards only; primary CTAs live in nav + hero */}
+          <div className="px-3 py-2.5 sm:px-4 sm:py-3 md:px-4 md:py-3 lg:py-2.5 lg:px-5">
+            <div className="flex flex-col gap-3 sm:gap-3.5 lg:flex-row lg:items-center lg:gap-6 xl:gap-8">
+              <div className="text-center lg:text-left lg:shrink-0 lg:max-w-[min(16rem,26vw)] xl:max-w-[min(18rem,22vw)]">
+                <h2
+                  className="leading-[1.12] lg:leading-tight"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    fontSize: "clamp(1.35rem, 3.8vw, 2.1rem)",
+                    fontWeight: 600,
+                    color: "white",
+                    letterSpacing: "-0.01em",
+                  }}
+                >
+                  {t("benefits.headingBefore")}
+                  <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>Links</em>
+                  {t("benefits.headingAfter")}
+                </h2>
+              </div>
 
-            {/* Section header */}
-            <div className="mb-6 sm:mb-8 md:mb-10 lg:mb-12">
-              <p
-                className="section-label mb-2 text-[10px] sm:text-xs"
-                style={{ color: "oklch(0.65 0.10 145)" }}
-              >
-                01 · {t("benefits.label")}
-              </p>
-              <h2
-                className="leading-tight max-w-xl"
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "clamp(1.9rem, 6vw, 3.6rem)",
-                  fontWeight: 600,
-                  color: "white",
-                  letterSpacing: "-0.01em",
-                }}
-              >
-                {t("benefits.heading")}
-              </h2>
-              <p
-                className="mt-3 max-w-md text-sm sm:text-base leading-relaxed"
-                style={{
-                  fontFamily: "'Outfit', sans-serif",
-                  color: "oklch(0.72 0.05 145)",
-                  fontWeight: 300,
-                }}
-              >
-                {t("benefits.description")}
-              </p>
-            </div>
-
-            {/* Benefit cards — 1-col on xs, 2-col on sm, 4-col on lg */}
-            <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-4 sm:gap-3 md:gap-4 mb-6 sm:mb-7 md:mb-8">
-              {benefits.map((b) => {
-                const Icon = b.icon;
-                return (
-                  <div
-                    key={b.id}
-                    className="flex flex-row sm:flex-col gap-4 rounded-lg border p-4 sm:p-5 md:p-6"
-                    style={{
-                      background: "rgba(255,255,255,0.06)",
-                      borderColor: "rgba(255,255,255,0.12)",
-                      backdropFilter: "blur(8px)",
-                      WebkitBackdropFilter: "blur(8px)",
-                    }}
-                  >
-                    {/* Icon — left-aligned on mobile, top on sm+ */}
+              <div className="grid flex-1 min-w-0 grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 lg:gap-3 xl:gap-3.5 justify-items-stretch">
+                {benefits.map((b) => {
+                  const Icon = b.icon;
+                  return (
                     <div
-                      className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg flex-shrink-0 self-start"
-                      style={{ background: "oklch(0.42 0.14 145 / 0.25)" }}
-                      aria-hidden
+                      key={b.id}
+                      className="flex flex-col items-center text-center gap-1.5 rounded-md border px-2 py-2 sm:px-2.5 sm:py-2.5 lg:py-2"
+                      style={{
+                        background: "rgba(255,255,255,0.06)",
+                        borderColor: "rgba(255,255,255,0.12)",
+                        backdropFilter: "blur(8px)",
+                        WebkitBackdropFilter: "blur(8px)",
+                      }}
                     >
-                      <Icon size={16} style={{ color: "oklch(0.72 0.12 145)" }} />
-                    </div>
-
-                    {/* Text */}
-                    <div className="flex flex-col gap-1 sm:gap-1.5">
                       <p
-                        className="text-[9px] font-semibold uppercase tracking-[0.15em]"
+                        className="w-full min-w-0 text-center font-semibold normal-case leading-snug"
                         style={{
-                          fontFamily: "'Outfit', sans-serif",
-                          color: "oklch(0.65 0.10 145)",
+                          ...howItWorksStepTitleStyle,
+                          color: "white",
                         }}
                       >
                         {b.highlight}
                       </p>
-                      <h3
-                        className="leading-snug"
-                        style={{
-                          fontFamily: "'Cormorant Garamond', serif",
-                          fontSize: "clamp(1.05rem, 3vw, 1.2rem)",
-                          fontWeight: 600,
-                          color: "white",
-                        }}
-                      >
-                        {b.title}
-                      </h3>
-                      <p
-                        className="text-xs sm:text-sm leading-relaxed"
-                        style={{
-                          fontFamily: "'Outfit', sans-serif",
-                          color: "oklch(0.65 0.05 145)",
-                          fontWeight: 300,
-                        }}
-                      >
-                        {b.body}
-                      </p>
+                      <div className="mt-2 flex w-full justify-center">
+                        <div className="inline-flex max-w-full items-start gap-2">
+                          <div
+                            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md"
+                            style={{ background: "oklch(0.42 0.14 145 / 0.25)" }}
+                            aria-hidden
+                          >
+                            <Icon size={15} style={{ color: "oklch(0.72 0.14 145)" }} />
+                          </div>
+                          <h3
+                            className="min-w-0 max-w-[min(100%,16rem)] text-left leading-snug font-semibold sm:max-w-[min(100%,18rem)]"
+                            style={{
+                              ...howItWorksStepTitleStyle,
+                              color: "oklch(0.72 0.12 145)",
+                            }}
+                          >
+                            {b.title}
+                          </h3>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
-
-            {/* CTA */}
-            <button
-              type="button"
-              onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-              className="btn-fairway text-[11px] py-3 px-6 tracking-[0.14em] w-full sm:w-auto min-h-[48px]"
-            >
-              {t("benefits.cta")}
-            </button>
-
           </div>
         </div>
-
       </div>
     </section>
   );

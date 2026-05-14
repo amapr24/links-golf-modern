@@ -185,7 +185,7 @@ export default function PricingSection() {
   };
 
   const inputClass =
-    "w-full px-4 py-3 text-sm rounded-sm border outline-none transition-all duration-200 focus:border-[oklch(0.42_0.14_145)] focus:ring-2 focus:ring-[oklch(0.42_0.14_145_/_0.15)]";
+    "w-full px-4 py-3 text-base rounded-sm border outline-none transition-all duration-200 focus:border-[oklch(0.42_0.14_145)] focus:ring-2 focus:ring-[oklch(0.42_0.14_145_/_0.15)]";
   const inputStyle = {
     fontFamily: "'Outfit', sans-serif",
     background: "white",
@@ -194,9 +194,9 @@ export default function PricingSection() {
   };
   const labelStyle = {
     fontFamily: "'Outfit', sans-serif",
-    fontSize: "0.7rem",
+    fontSize: "0.8125rem",
     fontWeight: 600,
-    letterSpacing: "0.12em",
+    letterSpacing: "0.1em",
     textTransform: "uppercase" as const,
     color: "oklch(0.45 0.06 145)",
     display: "block",
@@ -250,9 +250,8 @@ export default function PricingSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
-            <div className="text-center mb-14">
-          <p className="section-label mb-4 text-white/40">04 · Join Now</p>
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
+            <div className="text-center mb-8 md:mb-10">
           <h2
             className="text-white fade-up"
             style={{
@@ -268,8 +267,8 @@ export default function PricingSection() {
             today.
           </h2>
           <p
-            className="text-white/50 mt-3 fade-up"
-            style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, fontSize: "0.95rem" }}
+            className="text-white/60 mt-3 fade-up max-w-xl mx-auto leading-relaxed"
+            style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, fontSize: "clamp(1rem, 2.2vw, 1.0625rem)" }}
           >
             Unlock every major course in Puerto Rico. Pays for itself in as few as 3–4 rounds.
           </p>
@@ -327,7 +326,7 @@ export default function PricingSection() {
                     <Check size={11} style={{ color: "oklch(0.65 0.14 145)" }} />
                   </div>
                   <span
-                    className="text-white/70 text-sm"
+                    className="text-white/75 text-[0.9375rem] sm:text-base leading-snug"
                     style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                   >
                     {f}

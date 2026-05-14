@@ -52,7 +52,7 @@ function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => strin
 export default function CoursesSection() {
   const { t } = useLanguage();
   const [typeFilter, setTypeFilter] = useState<DirectoryFilter>("all");
-  const sectionRef = useScrollReveal({ threshold: 0.10 });
+  const sectionRef = useScrollReveal({ threshold: 0.1 });
 
   const activeTabId = tabIds[typeFilter];
 
@@ -68,7 +68,6 @@ export default function CoursesSection() {
         backgroundAttachment: "fixed",
       }}
     >
-      {/* Dark overlay */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -76,10 +75,14 @@ export default function CoursesSection() {
         }}
         aria-hidden
       />
+      {/* Top fade: same hand-off as How It Works → Join Now (forest into section) */}
+      <div
+        className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-10"
+        style={{ background: "linear-gradient(to bottom, oklch(0.13 0.05 145) 0%, transparent 100%)" }}
+        aria-hidden
+      />
 
       <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
-
-        {/* Single frosted container wrapping all content */}
         <div
           data-reveal
           data-frosted
@@ -92,15 +95,9 @@ export default function CoursesSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          {/* Inner padding container */}
-          <div className="px-4 py-5 sm:px-6 sm:py-7 md:px-8 md:py-10 lg:px-10 lg:py-12">
-
-            {/* Section header + filters */}
-            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 flex flex-col gap-3 sm:gap-4 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
-                  02 · {t("courses.label")}
-                </p>
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
+            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 flex flex-col gap-4">
+              <div className="max-w-3xl">
                 <h2
                   className="leading-tight"
                   style={{
@@ -113,18 +110,17 @@ export default function CoursesSection() {
                   {t("courses.heading")}
                 </h2>
                 <p
-                  className="text-xs sm:text-sm mt-2 md:max-w-xl lg:max-w-2xl"
-                  style={{ color: "oklch(0.65 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
+                  className="text-sm sm:text-base mt-2 md:max-w-2xl leading-relaxed"
+                  style={{ color: "oklch(0.72 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                 >
                   {t("courses.description")}
                 </p>
               </div>
 
-              {/* Type filters */}
-              <div className="flex flex-col gap-2 w-full md:w-auto md:items-end md:shrink-0">
+              <div className="flex flex-col gap-2 w-full">
                 <p
-                  className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider md:text-right"
-                  style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
+                  className="text-xs sm:text-sm font-semibold uppercase tracking-wider"
+                  style={{ color: "oklch(0.62 0.08 145)", fontFamily: "'Outfit', sans-serif" }}
                   id="courses-filter-label"
                 >
                   {t("courses.filterLabel")}
@@ -132,7 +128,7 @@ export default function CoursesSection() {
                 <div
                   role="tablist"
                   aria-labelledby="courses-filter-label"
-                  className="flex flex-wrap gap-2 justify-start md:justify-end w-full"
+                  className="flex flex-wrap gap-2 w-full"
                 >
                   {DIRECTORY_TYPES.map((type) => (
                     <button
@@ -143,11 +139,11 @@ export default function CoursesSection() {
                       aria-selected={typeFilter === type}
                       aria-controls="courses-network-panel"
                       onClick={() => setTypeFilter(type)}
-                      className="filter-pill px-3 sm:px-4 py-2 rounded-sm text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap min-h-[40px] flex items-center"
+                      className="filter-pill px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap min-h-[44px] flex items-center"
                       style={{
                         fontFamily: "'Outfit', sans-serif",
                         background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
-                        color: typeFilter === type ? "white" : "oklch(0.72 0.05 145)",
+                        color: typeFilter === type ? "white" : "oklch(0.78 0.05 145)",
                         border: `1px solid ${typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.35 0.08 145 / 0.5)"}`,
                       }}
                     >
@@ -158,8 +154,10 @@ export default function CoursesSection() {
               </div>
             </div>
 
-            {/* Map + course list */}
-            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 rounded-lg overflow-hidden border" style={{ borderColor: "rgba(255,255,255,0.12)" }}>
+            <div
+              className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 rounded-lg overflow-hidden border"
+              style={{ borderColor: "rgba(255,255,255,0.12)" }}
+            >
               <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
                 <div className="courses-map-mount">
                   <CoursesMap filter={typeFilter} />
@@ -167,32 +165,17 @@ export default function CoursesSection() {
               </div>
             </div>
 
-            {/* Bottom CTA */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3 md:gap-4">
-              <div className="flex flex-col gap-1.5 sm:gap-2 max-w-md">
-                <p className="text-xs sm:text-sm leading-relaxed" style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.65 0.05 145)" }}>
-                  {t("courses.bottomText")}
-                </p>
-                <a
-                  href="/courses"
-                  className="courses-directory-link lg:hidden inline-flex text-xs sm:text-sm font-medium w-fit min-h-[44px] items-center rounded-sm underline-offset-4 decoration-1 hover:underline touch-manipulation"
-                  style={{ color: "oklch(0.65 0.10 145)", fontFamily: "'Outfit', sans-serif" }}
-                >
-                  {t("courses.viewAll")}
-                </a>
-              </div>
+            <div className="flex justify-center">
               <button
                 type="button"
                 onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-                className="btn-fairway text-[11px] py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-full sm:w-auto"
+                className="btn-fairway text-xs sm:text-sm py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-full sm:w-auto"
               >
                 {t("pricing.joinNow")}
               </button>
             </div>
-
           </div>
         </div>
-
       </div>
     </section>
   );

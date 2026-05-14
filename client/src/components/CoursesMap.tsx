@@ -398,17 +398,6 @@ export function CoursesMap({ filter }: CoursesMapProps) {
           )}
         </div>
       </div>
-
-      {/* Course count info */}
-      <p
-        className="mt-4 text-sm md:text-base text-center min-[900px]:text-left leading-relaxed"
-        style={{
-          fontFamily: "'Outfit', sans-serif",
-          color: "oklch(0.45 0.06 145)",
-        }}
-      >
-        {t("courses.mapInfo", { count: filteredCourses.length })}
-      </p>
     </div>
   );
 }

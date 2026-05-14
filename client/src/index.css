@@ -92,6 +92,14 @@
   --sidebar-accent-foreground: oklch(0.95 0.01 85);
   --sidebar-border: oklch(0.25 0.06 145);
   --sidebar-ring: oklch(0.42 0.14 145);
+
+  /* Marketing type ramp — prefer these over one-off px in home sections */
+  --lg-label: 0.8125rem; /* form / UI labels */
+  --lg-body: 0.9375rem; /* paragraph & list text on light surfaces */
+  --lg-overline: 0.6875rem; /* min: uppercase line next to icons */
+  --lg-overline-max: 0.8125rem; /* max: same role, larger viewports */
+  --lg-card-title: 1.0625rem; /* min: serif title on dark cards (legacy / other sections) */
+  --lg-card-title-max: 1.25rem; /* max */
 }
 
 @layer base {

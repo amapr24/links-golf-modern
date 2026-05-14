@@ -5,6 +5,26 @@ Goal: Ship-ready, conversion-focused, bilingual membership site for Puerto Rico 
 
 ---
 
+## Prototype — home marketing polish (2026-05-13)
+
+Tracked from design pass; **implemented in repo** (verify in browser before checking off).
+
+- [x] Remove numbered section eyebrows (`01 · …` through `05 · …`) on home marketing sections.
+- [x] **Why Join:** center-aligned block; remove long description line under H2; benefit cards = title + subtitle (highlight) only; larger benefit titles; 3-up grid on large screens.
+- [x] **Why Join → Our Network:** top forest-to-transparent gradient on `CoursesSection` (same pattern as `PricingSection` after How It Works).
+- [x] **Our Network:** remove map footer “N courses shown”; remove “Explore all…” + directory link row; move type filters under intro copy; fix CTA showing raw `pricing.joinNow` (added i18n keys).
+- [x] **How It Works:** step titles on one row with icons; steps in a vertical list without per-step frosted cards; member card column to the side on `lg+`.
+- [x] **Join Now:** frosted inner padding uses responsive `%` instead of only fixed `rem` padding.
+- [x] **FAQ (05):** remove full-section white scrim; match mid-page sections (aerial + dark scrim + frosted shell + shadow).
+- [x] **Typography pass (prototype):** slightly larger filter pills, form labels, pricing feature bullets, FAQ questions/answers, How It Works step body; `--lg-label` / `--lg-body` tokens in `index.css` for reuse.
+
+**Follow-up**
+
+- [ ] Apply the same type ramp to any remaining `text-[10px]` / `0.7rem` labels sitewide (directory page, dashboard) for consistency.
+- [ ] Revisit FAQ accordion closed state (`rgba(255,255,255,0.5)`) on frosted dark bg if contrast feels off in sunlight photos.
+
+---
+
 ## Status: Sprint A — responsive shell (2026-05-13)
 
 **Shipped in repo:**
