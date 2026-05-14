@@ -65,7 +65,7 @@ export function DigitalMemberCard({
   const showcaseBrandImgStyle =
     showcase && !compact
       ? ({
-          height: "clamp(66px, 4.9vw, 76px)",
+          height: "clamp(70px, 5.1vw, 82px)",
           width: "auto",
           objectFit: "contain" as const,
         } as const)

@@ -91,18 +91,14 @@ export default function HowItWorksSection() {
   const sectionRef = useScrollReveal({ threshold: 0.1 });
 
   const memberCardWalletFooter = (
-    <div className="dmc-wallet-footer-split">
-      <div className="dmc-wallet-footer-split__cell">
-        <div className="dmc-wallet-pill">
-          <AppleWalletGlyph className="h-3.5 w-3.5 shrink-0 text-white/90 sm:h-4 sm:w-4" />
-          <span>Apple Wallet</span>
-        </div>
+    <div className="dmc-wallet-pills">
+      <div className="dmc-wallet-pill">
+        <AppleWalletGlyph className="h-3.5 w-3.5 shrink-0 text-white/90 sm:h-4 sm:w-4" />
+        <span>Apple Wallet</span>
       </div>
-      <div className="dmc-wallet-footer-split__cell">
-        <div className="dmc-wallet-pill">
-          <GoogleWalletGlyph className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
-          <span>Google Wallet</span>
-        </div>
+      <div className="dmc-wallet-pill">
+        <GoogleWalletGlyph className="h-3.5 w-3.5 shrink-0 sm:h-4 sm:w-4" />
+        <span>Google Wallet</span>
       </div>
     </div>
   );
@@ -231,7 +227,7 @@ export default function HowItWorksSection() {
                 })}
               </div>
 
-              <div className="mt-6 flex w-full shrink-0 flex-col items-center self-center lg:sticky lg:top-24 lg:mt-0 lg:max-w-[min(806px,62%)] xl:max-w-[min(858px,60%)]">
+              <div className="mt-6 flex w-full shrink-0 flex-col items-center self-center lg:sticky lg:top-24 lg:mt-0 lg:max-w-[min(940px,68%)] xl:max-w-[min(1000px,66%)]">
                 <div className="relative flex w-full max-w-[min(280px,85vw)] justify-center lg:max-w-none">
                   <DigitalMemberCard
                     compact={!isDesktopLayout}
