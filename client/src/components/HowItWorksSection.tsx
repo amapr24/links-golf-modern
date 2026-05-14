@@ -163,7 +163,7 @@ export default function HowItWorksSection() {
           }}
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[2.1%]">
-            <div className="text-center mb-4 sm:mb-5 md:mb-5 lg:mb-2">
+            <div className="text-center mb-3 sm:mb-4 md:mb-4 lg:mb-1.5">
               <p
                 className="section-label mb-1 sm:mb-1.5 lg:mb-0.5 text-[10px] sm:text-xs"
                 style={{ color: "oklch(0.65 0.10 145)" }}
@@ -193,7 +193,7 @@ export default function HowItWorksSection() {
                   return (
                     <div
                       key={step.number}
-                      className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-x-3 sm:gap-x-4 border-b border-white/[0.12] py-2 sm:py-2.5 lg:py-1.5 last:border-b-0"
+                      className="grid grid-cols-[auto_minmax(0,1fr)] items-stretch gap-x-3 sm:gap-x-4 border-b border-white/[0.12] py-1.5 sm:py-2 lg:py-1 last:border-b-0"
                     >
                       {/* Left column: icon vertically centered in the row */}
                       <div className="flex items-center justify-center self-stretch pr-0.5 sm:pr-1">

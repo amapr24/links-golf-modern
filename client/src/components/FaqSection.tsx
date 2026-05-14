@@ -119,7 +119,7 @@ export default function FaqSection() {
                 </h2>
               </div>
 
-              <div className="space-y-2 fade-up">
+              <div className="space-y-2 fade-up md:pt-0.5">
                 {faqs.map((faq, i) => (
                   <div
                     key={i}
@@ -194,7 +194,7 @@ export default function FaqSection() {
                     className="text-sm sm:text-base leading-relaxed"
                     style={{ color: "oklch(0.85 0.03 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                   >
-                    Reach us at{" "}
+                    {t("faq.reachUsAt")}{" "}
                     <a
                       href="mailto:info@linksgolfpr.com"
                       className="underline font-medium"

@@ -164,9 +164,9 @@
 - [x] Dark green text: Revert to lighter color — currently blends too much with background (Benefits, How It Works, FAQ)
 - [x] Course filters: Prevent wrapping to two rows on small screens, ensure single-row display
 - [x] Buttons: Change from full-width to auto width (Courses CTA, Pricing form buttons)
-- [ ] How It Works: Tighten vertical spacing — reduce gaps between steps
-- [ ] FAQ: Fix padding inconsistency between "Common Questions" heading and first question
-- [ ] Scrolling: Fix jumpy scroll behavior (investigate animation/transform issues)
+- [x] How It Works: Tighten vertical spacing — reduce gaps between steps
+- [x] FAQ: Fix padding inconsistency between "Common Questions" heading and first question
+- [x] Scrolling: Fix jumpy scroll behavior (investigate animation/transform issues)
 
 ## Spanish Translation Fixes (Current Sprint)
 - [x] Add missing translation keys to LanguageContext (PricingSection savings example, errors, navbar, success page, login)

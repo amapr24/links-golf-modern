@@ -229,6 +229,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.refundsPageLink": "Refunds & cancellations",
     "faq.a8Trail": "It explains cooling-off timing, when fees become non-refundable, and how to reach us about billing.",
     "faq.stillHaveQuestions": "Still have questions?",
+    "faq.reachUsAt": "Reach us at",
     "faq.contactUs": "Contact us at",
 
     // Footer
@@ -585,6 +586,7 @@ const translations: Record<Language, Record<string, string>> = {
     "faq.refundsPageLink": "Reembolsos y cancelaciones",
     "faq.a8Trail": "Explica el plazo de desistimiento, cuándo las cuotas dejan de ser reembolsables y cómo contactarnos por facturación.",
     "faq.stillHaveQuestions": "¿Aún tienes preguntas?",
+    "faq.reachUsAt": "Escríbenos a",
     "faq.contactUs": "Contáctanos en",
 
     // Footer
