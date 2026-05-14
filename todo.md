@@ -146,3 +146,8 @@
 - [x] Lighten frosted container backgrounds in CoursesSection (02): use rgba(255,255,255,0.04) or equivalent
 - [x] Lighten frosted container backgrounds in HowItWorksSection (03): use rgba(255,255,255,0.04) or equivalent
 - [x] Remove TrustStrip component from Home.tsx
+
+## Section Container Refactoring — Single Frosted Wrapper
+- [x] BenefitsSection (01): wrap header + benefit cards + stats row + CTA in single frosted container
+- [x] CoursesSection (02): wrap header/filters + map + CTA in single frosted container
+- [x] HowItWorksSection (03): wrap header + step cards + wallet preview in single frosted container

@@ -1,8 +1,9 @@
 /*
  * HowItWorksSection — "How It Works" (03)
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
- *         frosted dark-green content containers for legibility.
- *         Mobile-optimized: tighter padding, compact step cards, smaller wallet preview.
+ *         entire section wrapped in a single frosted container for cohesion.
+ * Animation: useScrollReveal drives fade-in on the container.
+ * Mobile-optimized: tighter padding, compact step cards, smaller wallet preview.
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
@@ -68,7 +69,7 @@ function getSteps(language: Language) {
 export default function HowItWorksSection() {
   const { language } = useLanguage();
   const steps = getSteps(language);
-  const sectionRef = useScrollReveal({ staggerMs: 100, threshold: 0.08 });
+  const sectionRef = useScrollReveal({ threshold: 0.10 });
 
   return (
     <section
@@ -92,11 +93,12 @@ export default function HowItWorksSection() {
       />
 
       <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
-        {/* Section header — frosted container */}
+
+        {/* Single frosted container wrapping all content */}
         <div
           data-reveal
           data-frosted
-          className="text-center mb-6 sm:mb-10 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8"
+          className="rounded-xl overflow-hidden"
           style={{
             background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(12px)",
@@ -105,125 +107,119 @@ export default function HowItWorksSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
-            03 · {language === "es" ? "Cómo Funciona" : "How It Works"}
-          </p>
-          <h2
-            className="text-white fade-up"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(1.9rem, 6vw, 3.2rem)",
-              fontWeight: 600,
-            }}
-          >
-            {language === "es" ? "Del registro al " : "From sign-up to "}
-            <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
-              {language === "es" ? "primer tee" : "first tee"}
-            </em>
-            {language === "es" ? " en minutos." : " in minutes."}
-          </h2>
-        </div>
+          {/* Inner padding container */}
+          <div className="px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10">
 
-        {/* Steps — frosted containers */}
-        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6">
-          {steps.map((step, i) => {
-            const Icon = step.icon;
-            return (
-              <div
-                key={step.number}
-                data-reveal
-                data-stagger
-                data-frosted
-                className="rounded-xl p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
+            {/* Section header */}
+            <div className="text-center mb-8 md:mb-12">
+              <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                03 · {language === "es" ? "Cómo Funciona" : "How It Works"}
+              </p>
+              <h2
                 style={{
-                  background: "rgba(255,255,255,0.04)",
-                  backdropFilter: "blur(10px)",
-                  WebkitBackdropFilter: "blur(10px)",
-                  border: "1px solid rgba(255,255,255,0.08)",
-                  boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(1.9rem, 6vw, 3.2rem)",
+                  fontWeight: 600,
+                  color: "white",
                 }}
               >
-                {/* Step number + icon */}
-                <div className="flex-shrink-0 md:flex md:justify-start md:mb-5">
+                {language === "es" ? "Del registro al " : "From sign-up to "}
+                <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
+                  {language === "es" ? "primer tee" : "first tee"}
+                </em>
+                {language === "es" ? " en minutos." : " in minutes."}
+              </h2>
+            </div>
+
+            {/* Steps */}
+            <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6 mb-6 md:mb-8">
+              {steps.map((step, i) => {
+                const Icon = step.icon;
+                return (
                   <div
-                    className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center"
+                    key={step.number}
+                    className="rounded-lg border p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
                     style={{
-                      background: "oklch(0.42 0.14 145 / 0.20)",
-                      border: "1px solid oklch(0.42 0.14 145 / 0.35)",
+                      background: "rgba(255,255,255,0.06)",
+                      borderColor: "rgba(255,255,255,0.12)",
+                      backdropFilter: "blur(8px)",
+                      WebkitBackdropFilter: "blur(8px)",
                     }}
                   >
-                    <Icon size={20} style={{ color: "oklch(0.65 0.14 145)" }} />
-                    <span
-                      className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
-                      style={{ background: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
-                    >
-                      {i + 1}
-                    </span>
+                    {/* Step number + icon */}
+                    <div className="flex-shrink-0 md:flex md:justify-start md:mb-5">
+                      <div
+                        className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center"
+                        style={{
+                          background: "oklch(0.42 0.14 145 / 0.20)",
+                          border: "1px solid oklch(0.42 0.14 145 / 0.35)",
+                        }}
+                      >
+                        <Icon size={20} style={{ color: "oklch(0.65 0.14 145)" }} />
+                        <span
+                          className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
+                          style={{ background: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
+                        >
+                          {i + 1}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <h3
+                        className="text-white font-semibold"
+                        style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.1rem, 3vw, 1.3rem)", fontWeight: 600 }}
+                      >
+                        {step.title}
+                      </h3>
+                      <p
+                        className="text-white/60 text-xs sm:text-sm leading-relaxed"
+                        style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
+                      >
+                        {step.body}
+                      </p>
+                    </div>
                   </div>
+                );
+              })}
+            </div>
+
+            {/* Wallet pass visual */}
+            <div className="flex flex-col items-center gap-4 sm:gap-6">
+              <div
+                className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
+                style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}
+              >
+                <DigitalMemberCard
+                  compact
+                  displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
+                  memberNumber="LGM-000000"
+                  validUntil="05/27"
+                  photoUrl={null}
+                />
+              </div>
+
+              {/* Wallet badges */}
+              <div className="flex justify-center gap-3 sm:gap-4 flex-wrap">
+                <div
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
+                  style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
+                >
+                  <AppleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-white/85" />
+                  <span className="text-[11px] sm:text-xs">Apple Wallet</span>
                 </div>
-                <div className="flex flex-col gap-1.5">
-                <h3
-                  className="text-white font-semibold"
-                  style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.1rem, 3vw, 1.3rem)", fontWeight: 600 }}
+                <div
+                  className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
+                  style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
                 >
-                  {step.title}
-                </h3>
-                <p
-                  className="text-white/60 text-xs sm:text-sm leading-relaxed"
-                  style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
-                >
-                  {step.body}
-                </p>
+                  <GoogleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+                  <span className="text-[11px] sm:text-xs">Google Wallet</span>
                 </div>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Wallet pass visual — frosted container */}
-        <div
-          data-reveal
-          data-frosted
-          className="mt-4 sm:mt-6 rounded-xl p-5 sm:p-6 md:p-8 flex flex-col items-center gap-4 sm:gap-6"
-          style={{
-            background: "rgba(255,255,255,0.04)",
-            backdropFilter: "blur(10px)",
-            WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid rgba(255,255,255,0.08)",
-            boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
-          }}
-        >
-          <div
-            className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
-            style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}
-          >
-            <DigitalMemberCard
-              compact
-              displayName={language === "es" ? "Tu nombre aquí" : "YOUR NAME HERE"}
-              memberNumber="LGM-000000"
-              validUntil="05/27"
-              photoUrl={null}
-            />
-          </div>
-
-          {/* Wallet badges */}
-          <div className="flex justify-center gap-3 sm:gap-4 flex-wrap">
-            <div
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
-              style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-            >
-              <AppleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-white/85" />
-              <span className="text-[11px] sm:text-xs">Apple Wallet</span>
             </div>
-            <div
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
-              style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
-            >
-              <GoogleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-              <span className="text-[11px] sm:text-xs">Google Wallet</span>
-            </div>
+
           </div>
         </div>
+
       </div>
     </section>
   );
