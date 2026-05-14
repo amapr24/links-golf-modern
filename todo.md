@@ -285,6 +285,62 @@
 
 ## Standards-based audits (follow-up passes)
 
+### Privacy / data-protection law review
+
+> **Applicability:** Puerto Rico Act 39-2012 + Act 111-2005 — **High confidence applies** (merchant is PR-targeted, sells only to PR residents). GDPR/UK GDPR — **Medium risk** because there is no geo-block; if even one EU resident signs up, GDPR applies. CCPA/CPRA — **Low** if residency gate holds. COPPA/BIPA — N/A.
+
+**Critical privacy items to add to the backlog:**
+
+- [ ] **Manus debug collector is a session-data exfiltration risk.** `vite-plugin-manus-runtime`'s collector captures `browserConsole`, `networkRequests`, and `sessionReplay` and writes them to `.manus-logs/` on disk. The toggle is `MANUS_DEV_TOOLS=1`, but there is no `NODE_ENV === 'production'` hard-stop and `.manus-logs/` is NOT in `.gitignore`. — `vite.config.ts:78-152,156-189`, `.gitignore`
+  - **Fix:** (a) Add `.manus-logs/` to `.gitignore` immediately. (b) Make the plugin return `null` when `process.env.NODE_ENV === 'production'`. (c) Strip `Authorization`, `Cookie`, `Set-Cookie`, and any `x-*-token` headers from logged network requests. (d) Add a CI check that builds with `NODE_ENV=production MANUS_DEV_TOOLS=1` and grep-fails the bundle if it contains any `__manus__` strings. (Also tracked under PCI v4 above.)
+- [ ] **Privacy policy does not name a single processor.** The current copy says "service providers (for example: hosting, email, database, analytics)" — generic language is below the PR Act 39 / GDPR standard. — `client/src/contexts/LanguageContext.tsx:283-291`
+  - **Fix:** Add a named processor schedule covering at minimum: Supabase (US/AWS) — auth, member DB, photo storage; Stripe (US) — payments; Resend (US) — transactional email; Upstash Redis (location depends on region selected) — OTP and rate-limit cache; AWS S3 / Forge proxy — file storage; Google Maps (Global) — course locations; Unsplash (US, optional) — member-card backgrounds. Confirm a signed DPA for each; reference the DPA availability in the policy.
+- [ ] **No data retention schedule.** Privacy policy says retention is per an "internal schedule" — not disclosable. PR Act 39 expects a defined schedule.
+  - **Fix:** Publish tiers — active members for the membership term + 12 months; payment records 7 years (PR tax requirements; verify with accountant); photos deleted with the member record or earlier on request; logs not retained in production beyond 30 days; dispute/fraud records 3 years.
+- [ ] **No DSAR / self-service deletion path.** Members cannot export or delete their data through the dashboard; no documented support contact for these requests beyond a generic `info@`. — `client/src/pages/Dashboard.tsx`, `server/routers.ts`
+  - **Fix:** Add tRPC `member.exportMyData` returning a JSON payload (profile, payment history minus PAN, photo URL) and `member.deleteAccount` which soft-deletes/anonymises the member row, revokes the Stripe subscription, deletes photos from S3/Supabase, and leaves only the tax-required payment shadow record. Surface both in the dashboard.
+- [ ] **Residency gate is checkbox-only.** Anyone can tick the "I am a PR resident" box; downstream legal copy and tax claims depend on it being true. — `client/src/components/PricingSection.tsx`
+  - **Fix:** Either accept this as a binding declaration (with the legal copy explicitly stating it's a representation that can void the membership if false) or add server-side geo-IP / address verification. Document the choice in the policy.
+- [ ] **Marketing email consent bundled with transactional consent.** Today, agreeing to the privacy policy implicitly authorises renewal / "material change" emails. There's no separate opt-in for marketing or newsletter sends. — `client/src/components/PricingSection.tsx`, privacy copy
+  - **Fix:** Add a separate, unchecked-by-default opt-in: "Send me Links Golf news, course offers, and special events." Keep transactional email (OTP, receipts, renewal notices) outside the opt-in (necessary for service).
+- [ ] **Address field collected but unused.** Optional field on signup but persisted to Supabase. Unjustified PII collection. — `client/src/components/PricingSection.tsx:504`, `server/memberProfileFromDb.ts`, `drizzle/schema.ts`
+  - **Fix:** Delete the field from the form and the schema (drizzle migration). Or, if address is needed for tax/IVU, mark it required and explain why.
+- [ ] **Photo upload lacks specific consent language.** Verification photo is required for signup but the legal copy doesn't mention it. — `client/src/components/PricingSection.tsx:518-562`
+  - **Fix:** Add an inline consent line near the upload: "I consent to Links Golf storing this photo solely for identity verification and my digital pass, and to delete it on request or 12 months after my membership ends." Store the version + timestamp alongside the other policy acceptances.
+- [ ] **Member photos served via Supabase public URLs.** Once issued, the URL works indefinitely; deleting the row does not revoke the URL until the object itself is purged. — `client/src/lib/supabase.ts`
+  - **Fix:** Move the `members` bucket to private; serve via short-TTL signed URLs (`createSignedUrl` with `expiresIn: 86400`). When deleting a member, also delete the object.
+- [ ] **`sidebar_state` cookie lacks `Secure` / `SameSite` flags.** Persisted preferences should still carry security attributes. — `client/src/components/ui/sidebar.tsx`
+  - **Fix:** Set `document.cookie = 'sidebar_state=…; Path=/; Secure; SameSite=Lax; Max-Age=…'` (Lax is fine for a UI preference; Strict if you prefer).
+- [ ] **No cookies / tracking section in the privacy policy.** Even with only first-party functional cookies, EU/PR-aware users expect a section. Google Maps additionally drops third-party cookies once loaded.
+  - **Fix:** Add a "Cookies and similar technologies" section listing the session cookie, the sidebar preference cookie, and the Google Maps embed's behaviour with a link to Google's privacy notice.
+- [ ] **No breach-notification procedure documented.** PR Act 39 expects notification within timelines (commonly read as without unreasonable delay, with documented protocol).
+  - **Fix:** Add `docs/incident-response.md` covering detection, containment, internal notification, customer notification ≤ 48h, regulator notification (where applicable), and post-incident review. Reference it in the privacy policy.
+- [ ] **Legal pages are English-only.** Already in P1 i18n, restated here because PR-targeted Spanish-speaking residents are entitled to the policy in Spanish.
+  - **Fix:** Translate Privacy, Terms, Refund, and the dashboard's account-deletion copy into Spanish; have a native PR speaker review.
+- [ ] **GDPR posture.** No geo-block, no consent banner, no Records of Processing Activities (RoPA), no DPO appointment. Currently relying on "not targeted at EU" — but the site is bilingual and accepts any email.
+  - **Fix:** Make a deliberate choice — either (a) **explicitly exclude EU/UK residents** (declaration on signup + Terms clause + decline emails with EU-resolving IPs), or (b) actually comply (CMP for cookies, lawful-basis matrix, DPAs, DSAR endpoint, data minimisation review, breach-notification SLA, RoPA). Option (a) is the realistic one for a PR-only product.
+- [ ] **Children's data — confirm and document.** Membership is for adults (golf course access). The privacy policy should state "we do not knowingly collect data from anyone under 18" and Terms should include a 18+ representation.
+- [ ] **OTP storage hygiene.** OTPs are in Redis with the email as the key. If Redis is shared / not encrypted at rest, this is a low-level PII exposure. — `server/otpStore.ts`
+  - **Fix:** Hash the email (sha256) as the Redis key; store OTP encrypted-at-rest if possible; verify the Upstash/Redis instance uses TLS and at-rest encryption.
+
+**Suggested updates to the existing privacy / terms / refund pages:**
+
+The current `LanguageContext.tsx` legal text reads as a placeholder draft. Before launch, expand to include at minimum:
+1. Identity of the controller (full registered business name, PR address — currently placeholder).
+2. Categories of personal data collected, source, purpose, legal basis (or "contractual necessity" for PR-specific).
+3. Named processor list (see above).
+4. Retention schedule (see above).
+5. Data-subject rights and how to exercise them (email + dashboard self-service when available).
+6. International transfers note (US, possibly EU for Supabase/Stripe sub-processors).
+7. Cookies section (see above).
+8. Children's data clause.
+9. Updates / version history.
+10. Effective date / "Last updated" stamp.
+
+Same exercise applies to the Terms (residency representation, photo licence, dispute resolution, governing law = PR, class-action waiver if desired) and the Refund Policy (must match what `charge.refunded` actually does — see Stripe checklist above).
+
+---
+
 ### SEO standards (Schema.org / OG / hreflang / robots / sitemap)
 
 > Most foundational SEO findings are already captured in the P1 SEO section above (`robots.txt`, `sitemap.xml`, per-route titles, structured data, canonical hardening). This pass adds standards-specific items and concrete copy-pasteable snippets.
