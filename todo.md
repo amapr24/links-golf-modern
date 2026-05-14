@@ -156,9 +156,3 @@
 - [x] BenefitsSection: adjust inner padding (px/py) and gaps between header/cards/stats/CTA for breathing room
 - [x] CoursesSection: adjust inner padding and gaps between header/filters/map/CTA for breathing room
 - [x] HowItWorksSection: adjust inner padding and gaps between header/steps/wallet for breathing room
-
-## Parallax Scrolling Effect — Background Depth
-- [x] Create useParallax hook: calculates scroll offset for gentle depth effect, respects prefers-reduced-motion
-- [x] Apply parallax to BenefitsSection (01) background image
-- [x] Apply parallax to CoursesSection (02) background image
-- [x] Apply parallax to HowItWorksSection (03) background image

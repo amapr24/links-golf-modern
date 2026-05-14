@@ -13,7 +13,6 @@ import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useParallax } from "@/hooks/useParallax";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -45,26 +44,19 @@ export default function CoursesSection() {
   const { t } = useLanguage();
   const [typeFilter, setTypeFilter] = useState<DirectoryFilter>("all");
   const sectionRef = useScrollReveal({ threshold: 0.10 });
-  const parallaxRef = useParallax({ intensity: 0.35 });
 
   const activeTabId = tabIds[typeFilter];
 
   return (
     <section
       id="courses"
-      ref={(el) => {
-        if (el) {
-          (sectionRef as any).current = el;
-          (parallaxRef as any).current = el;
-        }
-      }}
-      className="relative overflow-x-hidden will-change-[background-position]"
+      ref={sectionRef as RefObject<HTMLElement>}
+      className="relative overflow-x-hidden"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
-        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Dark overlay */}

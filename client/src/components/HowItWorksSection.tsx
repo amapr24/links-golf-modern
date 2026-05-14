@@ -12,7 +12,6 @@ import { useLanguage, type Language } from "@/contexts/LanguageContext";
 import { DigitalMemberCard } from "@/components/DigitalMemberCard";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { useParallax } from "@/hooks/useParallax";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -71,24 +70,17 @@ export default function HowItWorksSection() {
   const { language } = useLanguage();
   const steps = getSteps(language);
   const sectionRef = useScrollReveal({ threshold: 0.10 });
-  const parallaxRef = useParallax({ intensity: 0.35 });
 
   return (
     <section
       id="how-it-works"
-      ref={(el) => {
-        if (el) {
-          (sectionRef as any).current = el;
-          (parallaxRef as any).current = el;
-        }
-      }}
-      className="relative overflow-hidden will-change-[background-position]"
+      ref={sectionRef as RefObject<HTMLElement>}
+      className="relative overflow-hidden"
       style={{
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundAttachment: "fixed",
-        backgroundRepeat: "no-repeat",
       }}
     >
       {/* Dark overlay */}
