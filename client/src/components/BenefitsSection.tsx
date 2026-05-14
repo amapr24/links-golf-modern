@@ -119,11 +119,12 @@ export default function BenefitsSection() {
                   {t("benefits.headingAfter")}
                 </h2>
                 <p
-                  className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-relaxed"
+                  className="mt-2 sm:mt-2.5 max-w-md mx-auto lg:mx-0 text-sm sm:text-base leading-[1.65] sm:leading-[1.7]"
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     color: "oklch(0.35 0.05 145)",
                     fontWeight: 400,
+                    letterSpacing: "0.015em",
                   }}
                 >
                   {t("benefits.description")}

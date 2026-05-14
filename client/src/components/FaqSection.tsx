@@ -162,10 +162,11 @@ export default function FaqSection() {
                       }}
                     >
                       <div
-                        className="text-[13px] sm:text-sm leading-relaxed px-5 py-4"
+                        className="text-[13px] sm:text-sm leading-[1.65] sm:leading-[1.7] px-5 py-4"
                         style={{
                           fontFamily: "'Outfit', sans-serif",
                           color: "oklch(0.30 0.05 145)",
+                          letterSpacing: "0.015em",
                         }}
                       >
                         {faq.a}

@@ -8,10 +8,11 @@ export const howItWorksStepTitleStyle = {
   fontWeight: 600,
 } as const;
 
-export const howItWorksStepBodyClassName = "text-sm sm:text-base leading-relaxed";
+export const howItWorksStepBodyClassName = "text-sm sm:text-base leading-[1.65] sm:leading-[1.7]";
 
 export const howItWorksStepBodyStyle = {
   fontFamily: "'Outfit', sans-serif",
   fontWeight: 400,
   color: "oklch(0.35 0.05 145)",
+  letterSpacing: "0.015em",
 } as const;
