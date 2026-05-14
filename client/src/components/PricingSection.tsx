@@ -254,7 +254,7 @@ export default function PricingSection() {
           }}
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="text-center mb-6 sm:mb-7 md:mb-6 lg:mb-7">
+            <div className="text-center mb-6 sm:mb-7 md:mb-6.5 lg:mb-7">
           <p className="section-label mb-2.5 sm:mb-3 text-white/40">04 · {t("pricing.sectionEyebrow")}</p>
           <h2
             className="text-white fade-up"
