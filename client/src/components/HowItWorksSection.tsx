@@ -18,6 +18,7 @@ import {
   howItWorksStepTitleStyle,
 } from "@/lib/howItWorksStepTypography";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -70,6 +71,7 @@ function getSteps(language: Language) {
 
 export default function HowItWorksSection() {
   const { language, t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
   const steps = getSteps(language);
   const sectionRef = useScrollReveal({ threshold: 0.1 });
 
@@ -82,7 +84,7 @@ export default function HowItWorksSection() {
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: coarsePointer ? "scroll" : "fixed",
       }}
     >
       {/* Light wash + texture — home aerial stack: light 01 / 03 / 05, dark 02 / 04. */}
@@ -105,7 +107,7 @@ export default function HowItWorksSection() {
       <div
         className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -113,7 +115,7 @@ export default function HowItWorksSection() {
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -133,7 +135,7 @@ export default function HowItWorksSection() {
           }}
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="text-center mb-6 sm:mb-7 md:mb-6.5 lg:mb-7">
+            <div className="text-center mb-4 sm:mb-5 md:mb-5 lg:mb-5">
               <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                 03 · {t("nav.howItWorks")}
               </p>
@@ -153,14 +155,14 @@ export default function HowItWorksSection() {
               </h2>
             </div>
 
-            <div className="flex flex-col lg:flex-row lg:items-start lg:gap-12 xl:gap-16">
-              <div className="flex flex-col gap-8 sm:gap-10 flex-1 min-w-0">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:gap-10 xl:gap-12">
+              <div className="flex flex-col gap-5 sm:gap-6 flex-1 min-w-0">
                 {steps.map((step, i) => {
                   const Icon = step.icon;
                   return (
                     <div
                       key={step.number}
-                      className="border-b border-white/[0.12] pb-8 last:border-b-0 last:pb-0"
+                      className="border-b border-white/[0.12] pb-5 sm:pb-6 last:border-b-0 last:pb-0"
                     >
                       <div className="flex items-center gap-4 flex-wrap">
                         <div
@@ -196,7 +198,7 @@ export default function HowItWorksSection() {
                 })}
               </div>
 
-              <div className="flex flex-col items-center gap-4 sm:gap-5 mt-10 lg:mt-0 shrink-0 lg:sticky lg:top-28 self-center lg:self-start">
+              <div className="flex flex-col items-center gap-3 sm:gap-4 mt-6 lg:mt-0 shrink-0 lg:sticky lg:top-28 self-center lg:self-start">
                 <div
                   className="relative rounded-xl overflow-hidden shadow-2xl"
                   style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}

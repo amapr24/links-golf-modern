@@ -14,6 +14,7 @@ import { scrollSelectorIntoViewMotionSafe } from "@/lib/scroll";
 import { CoursesMap } from "./CoursesMap";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -52,6 +53,7 @@ function homeDirectoryTypeLabel(type: DirectoryFilter, t: (key: string) => strin
 
 export default function CoursesSection() {
   const { t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
   const [typeFilter, setTypeFilter] = useState<DirectoryFilter>("all");
   const sectionRef = useScrollReveal({ threshold: 0.1 });
 
@@ -66,7 +68,7 @@ export default function CoursesSection() {
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: coarsePointer ? "scroll" : "fixed",
       }}
     >
       {/* Dark wash — alternates with light 01 / 03 / 05. */}
@@ -81,7 +83,7 @@ export default function CoursesSection() {
       <div
         className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -89,7 +91,7 @@ export default function CoursesSection() {
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -133,7 +135,7 @@ export default function CoursesSection() {
                 </p>
               </div>
 
-              <div className="flex min-h-0 min-w-0 w-full flex-col justify-end gap-1.5 sm:gap-2 md:max-w-[min(100%,22rem)] lg:max-w-[24rem] md:items-end">
+              <div className="flex min-h-0 min-w-0 w-full flex-col justify-end gap-1.5 sm:gap-2 md:items-end">
                 <p
                   className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide sm:tracking-wider text-right w-full"
                   style={{ color: "oklch(0.62 0.08 145)", fontFamily: "'Outfit', sans-serif" }}
@@ -144,7 +146,8 @@ export default function CoursesSection() {
                 <div
                   role="tablist"
                   aria-labelledby="courses-filter-label"
-                  className="flex w-full flex-nowrap content-end justify-end gap-1.5 sm:gap-2 overflow-x-auto pb-1"
+                  className="flex w-full min-w-0 flex-nowrap content-end justify-start md:justify-end gap-1.5 sm:gap-2 overflow-x-auto overflow-y-hidden pb-1 [scrollbar-width:thin]"
+                  style={{ WebkitOverflowScrolling: "touch" }}
                 >
                   {DIRECTORY_TYPES.map((type) => (
                     <button
@@ -158,9 +161,9 @@ export default function CoursesSection() {
                       className="filter-pill flex-shrink-0 flex min-h-[36px] items-center justify-center rounded-sm px-2 py-1.5 text-[10px] font-semibold uppercase leading-tight tracking-wide transition-all duration-200 touch-manipulation whitespace-nowrap sm:min-h-[38px] sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wider md:min-h-[36px] md:px-2 md:py-1"
                       style={{
                         fontFamily: "'Outfit', sans-serif",
-                        background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
-                        color: typeFilter === type ? "white" : "oklch(0.78 0.05 145)",
-                        border: `1px solid ${typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.35 0.08 145 / 0.5)"}`,
+                        background: typeFilter === type ? "oklch(0.42 0.14 145)" : "rgba(255,255,255,0.12)",
+                        color: typeFilter === type ? "white" : "rgba(255,255,255,0.88)",
+                        border: `1px solid ${typeFilter === type ? "oklch(0.42 0.14 145)" : "rgba(255,255,255,0.28)"}`,
                       }}
                     >
                       {homeDirectoryTypeLabel(type, t)}
@@ -182,7 +185,7 @@ export default function CoursesSection() {
               <button
                 type="button"
                 onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-                className="btn-fairway text-xs sm:text-sm py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-auto"
+                className="btn-fairway text-xs sm:text-sm py-3 px-5 min-h-[44px] inline-flex items-center justify-center gap-2 shrink-0 touch-manipulation"
               >
                 {t("pricing.joinNow")}
               </button>

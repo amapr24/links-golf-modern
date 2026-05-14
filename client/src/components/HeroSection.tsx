@@ -135,10 +135,10 @@ export default function HeroSection() {
               transitionDelay: "500ms",
             }}
           >
-            <button onClick={scrollToPricing} className="btn-fairway text-sm py-4 px-7">
+            <button onClick={scrollToPricing} className="btn-fairway text-sm py-3.5 px-5 shrink-0">
               {t("hero.cta")}
             </button>
-            <button onClick={scrollToCourses} className="btn-outline-white text-sm py-4 px-7">
+            <button onClick={scrollToCourses} className="btn-outline-white text-sm py-3.5 px-5 shrink-0">
               {t("hero.viewCourses")}
             </button>
           </div>
@@ -155,6 +155,7 @@ export default function HeroSection() {
             {[
               { value: "15", label: t("hero.stats.courses") },
               { value: "25%", label: t("hero.stats.savings") },
+              { value: "$199", label: t("hero.stats.price") },
             ].map((stat) => (
               <div key={stat.value} className="flex items-baseline gap-1.5">
                 <span

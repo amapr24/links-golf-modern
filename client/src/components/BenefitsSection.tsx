@@ -15,12 +15,14 @@ import {
   howItWorksStepTitleStyle,
 } from "@/lib/howItWorksStepTypography";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 import type { RefObject } from "react";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
 export default function BenefitsSection() {
   const { t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
   const sectionRef = useScrollReveal({ threshold: 0.1 });
 
   const benefits = [
@@ -53,7 +55,7 @@ export default function BenefitsSection() {
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
-        backgroundAttachment: "fixed",
+        backgroundAttachment: coarsePointer ? "scroll" : "fixed",
       }}
     >
       {/* Light wash + texture — home aerial stack: light 01 / 03 / 05, dark 02 / 04. */}
@@ -76,7 +78,7 @@ export default function BenefitsSection() {
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />

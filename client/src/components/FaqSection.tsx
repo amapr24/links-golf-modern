@@ -8,6 +8,7 @@ import { Plus, Minus } from "lucide-react";
 import { Link } from "wouter";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
 
@@ -41,6 +42,7 @@ function buildFaqs(t: (key: string) => string): { q: string; a: ReactNode }[] {
 
 export default function FaqSection() {
   const { t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
   const faqs = buildFaqs(t);
   const [open, setOpen] = useState<number | null>(0);
 
@@ -48,7 +50,7 @@ export default function FaqSection() {
     backgroundImage: `url(${AERIAL_IMAGE})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundAttachment: "fixed",
+    backgroundAttachment: coarsePointer ? ("scroll" as const) : ("fixed" as const),
   };
 
   return (
@@ -73,7 +75,7 @@ export default function FaqSection() {
       <div
         className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -81,7 +83,7 @@ export default function FaqSection() {
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
@@ -99,7 +101,7 @@ export default function FaqSection() {
           }}
         >
           <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="grid md:grid-cols-[1fr_2fr] gap-10 md:gap-12 lg:gap-16 items-start">
+            <div className="grid md:grid-cols-[1fr_2fr] gap-6 md:gap-12 lg:gap-16 items-start">
               <div className="md:sticky md:top-24">
                 <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   05 · {t("faq.label")}
@@ -136,7 +138,7 @@ export default function FaqSection() {
                         className="font-medium text-sm sm:text-base"
                         style={{
                           fontFamily: "'Outfit', sans-serif",
-                          color: open === i ? "oklch(0.13 0.05 145)" : "oklch(0.72 0.05 145)",
+                          color: "oklch(0.13 0.05 145)",
                         }}
                       >
                         {faq.q}

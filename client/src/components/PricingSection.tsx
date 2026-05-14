@@ -12,6 +12,7 @@ import { trpc } from "@/lib/trpc";
 import { isSupabaseConfigured, saveMemberSignup, classifyMemberSignupError } from "@/lib/supabase";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MEMBER_CARD_AERIAL_IMAGE } from "@/lib/memberCardDisplay";
+import { useCoarsePointer } from "@/hooks/useCoarsePointer";
 import { formatUsPhoneForStorage, formatUsLocalDigitsForDisplay, normalizeUsLocalPhoneDigits } from "@shared/phoneNanp";
 
 const AERIAL_IMAGE = MEMBER_CARD_AERIAL_IMAGE;
@@ -29,6 +30,7 @@ type Step = 1 | 2;
 
 export default function PricingSection() {
   const { t } = useLanguage();
+  const coarsePointer = useCoarsePointer();
   const features = getFeatures(t);
   const createCheckoutMutation = trpc.member.createCheckout.useMutation();
   const [step, setStep] = useState<Step>(1);
@@ -207,7 +209,7 @@ export default function PricingSection() {
     backgroundImage: `url(${AERIAL_IMAGE})`,
     backgroundSize: "cover",
     backgroundPosition: "center",
-    backgroundAttachment: "fixed",
+    backgroundAttachment: coarsePointer ? ("scroll" as const) : ("fixed" as const),
   };
 
   return (
@@ -228,14 +230,14 @@ export default function PricingSection() {
       <div
         className="pointer-events-none absolute top-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to bottom, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to bottom, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
       <div
         className="pointer-events-none absolute bottom-0 left-0 right-0 h-28 z-[1]"
         style={{
-          background: "linear-gradient(to top, oklch(0.22 0.05 145 / 0.36) 0%, transparent 100%)",
+          background: "linear-gradient(to top, rgba(0,0,0,0.22) 0%, transparent 100%)",
         }}
         aria-hidden
       />
