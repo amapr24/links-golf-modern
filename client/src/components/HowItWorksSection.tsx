@@ -2,7 +2,7 @@
  * HowItWorksSection — "How It Works" (03)
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         frosted dark-green content containers for legibility.
- *         Matches the visual language of Benefits (01), Courses (02), Pricing (04).
+ *         Mobile-optimized: tighter padding, compact step cards, smaller wallet preview.
  */
 
 import { CreditCard, UserCheck, Flag } from "lucide-react";
@@ -87,25 +87,27 @@ export default function HowItWorksSection() {
         aria-hidden
       />
 
-      <div className="container relative z-10 py-20 md:py-28">
+      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
         {/* Section header — frosted container */}
         <div
-          className="text-center mb-12 rounded-xl px-8 py-8 fade-up"
+          data-frosted
+          className="text-center mb-6 sm:mb-10 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8 fade-up"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <p className="section-label mb-4" style={{ color: "oklch(0.65 0.10 145)" }}>
+          <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
             03 · {language === "es" ? "Cómo Funciona" : "How It Works"}
           </p>
           <h2
             className="text-white fade-up"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
+              fontSize: "clamp(1.9rem, 6vw, 3.2rem)",
               fontWeight: 600,
             }}
           >
@@ -118,51 +120,55 @@ export default function HowItWorksSection() {
         </div>
 
         {/* Steps — frosted containers */}
-        <div className="grid md:grid-cols-3 gap-4 md:gap-6 relative">
+        <div className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3 md:gap-6">
           {steps.map((step, i) => {
             const Icon = step.icon;
             return (
               <div
                 key={step.number}
-                className="fade-up rounded-xl p-6 md:p-8 text-center md:text-left"
+                data-frosted
+                className="fade-up rounded-xl p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
                 style={{
                   transitionDelay: `${i * 120}ms`,
-                  background: "oklch(0.13 0.05 145 / 0.72)",
+                  background: "oklch(0.13 0.05 145 / 0.75)",
                   backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
                   border: "1px solid oklch(0.30 0.08 145 / 0.45)",
                   boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
                 }}
               >
                 {/* Step number + icon */}
-                <div className="flex flex-col md:flex-row items-center md:items-start gap-4 mb-5">
+                <div className="flex-shrink-0 md:flex md:justify-start md:mb-5">
                   <div
-                    className="relative w-16 h-16 rounded-full flex items-center justify-center flex-shrink-0"
+                    className="relative w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center"
                     style={{
                       background: "oklch(0.42 0.14 145 / 0.20)",
                       border: "1px solid oklch(0.42 0.14 145 / 0.35)",
                     }}
                   >
-                    <Icon size={24} style={{ color: "oklch(0.65 0.14 145)" }} />
+                    <Icon size={20} style={{ color: "oklch(0.65 0.14 145)" }} />
                     <span
-                      className="absolute -top-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                      className="absolute -top-1 -right-1 w-5 h-5 sm:w-6 sm:h-6 rounded-full flex items-center justify-center text-white text-[10px] sm:text-xs font-bold"
                       style={{ background: "oklch(0.42 0.14 145)", fontFamily: "'Outfit', sans-serif" }}
                     >
                       {i + 1}
                     </span>
                   </div>
                 </div>
+                <div className="flex flex-col gap-1.5">
                 <h3
-                  className="text-white text-xl font-semibold mb-3"
-                  style={{ fontFamily: "'Cormorant Garamond', serif", fontWeight: 600 }}
+                  className="text-white font-semibold"
+                  style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "clamp(1.1rem, 3vw, 1.3rem)", fontWeight: 600 }}
                 >
                   {step.title}
                 </h3>
                 <p
-                  className="text-white/60 text-sm leading-relaxed"
+                  className="text-white/60 text-xs sm:text-sm leading-relaxed"
                   style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
                 >
                   {step.body}
                 </p>
+                </div>
               </div>
             );
           })}
@@ -170,17 +176,19 @@ export default function HowItWorksSection() {
 
         {/* Wallet pass visual — frosted container */}
         <div
-          className="mt-6 rounded-xl p-8 fade-up flex flex-col items-center gap-6"
+          data-frosted
+          className="mt-4 sm:mt-6 rounded-xl p-5 sm:p-6 md:p-8 fade-up flex flex-col items-center gap-4 sm:gap-6"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.72)",
+            background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >
           <div
             className="relative rounded-xl overflow-hidden shadow-2xl mx-auto"
-            style={{ width: "min(320px, 90vw)" }}
+            style={{ maxWidth: "min(280px, 85vw)", width: "100%" }}
           >
             <DigitalMemberCard
               compact
@@ -192,20 +200,20 @@ export default function HowItWorksSection() {
           </div>
 
           {/* Wallet badges */}
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-center gap-3 sm:gap-4 flex-wrap">
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
               style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
             >
-              <AppleWalletGlyph className="h-4 w-4 shrink-0 text-white/85" />
-              Apple Wallet
+              <AppleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0 text-white/85" />
+              <span className="text-[11px] sm:text-xs">Apple Wallet</span>
             </div>
             <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-xs font-medium text-white/70"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full text-xs font-medium text-white/70"
               style={{ background: "rgba(255,255,255,0.08)", fontFamily: "'Outfit', sans-serif" }}
             >
-              <GoogleWalletGlyph className="h-4 w-4 shrink-0" />
-              Google Wallet
+              <GoogleWalletGlyph className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="text-[11px] sm:text-xs">Google Wallet</span>
             </div>
           </div>
         </div>

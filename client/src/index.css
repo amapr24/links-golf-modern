@@ -322,4 +322,16 @@
     outline: 2px solid oklch(0.42 0.14 145);
     outline-offset: 3px;
   }
+
+  /*
+   * Frosted container fallback for browsers without backdrop-filter support
+   * (older Android WebView, Firefox < 103, etc.).
+   * When backdrop-filter is unsupported, increase the container opacity so the
+   * dark-green background itself provides sufficient contrast without blur.
+   */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-frosted] {
+      background: oklch(0.10 0.05 145 / 0.92) !important;
+    }
+  }
 }

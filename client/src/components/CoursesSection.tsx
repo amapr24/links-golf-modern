@@ -2,7 +2,7 @@
  * CoursesSection — "Our Network" (02)
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         frosted dark-green content containers for legibility.
- *         Matches the visual language of Benefits (01), Pricing (04), and FAQ (05).
+ *         Mobile-optimized: tighter padding, stacked header/filters, compact CTA bar.
  */
 
 import { useState } from "react";
@@ -63,27 +63,29 @@ export default function CoursesSection() {
         aria-hidden
       />
 
-      <div className="container relative z-10 py-20 md:py-28">
+      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
         {/* Section header + filters — frosted container */}
         <div
-          className="mb-8 rounded-xl px-6 py-6 md:px-8 md:py-8 fade-up"
+          data-frosted
+          className="mb-4 sm:mb-6 rounded-xl px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8 fade-up"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <p className="section-label mb-2" style={{ color: "oklch(0.65 0.10 145)" }}>
+              <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                 02 · {t("courses.label")}
               </p>
               <h2
                 className="leading-tight fade-up"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
-                  fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
+                  fontSize: "clamp(1.9rem, 6vw, 3.2rem)",
                   fontWeight: 600,
                   color: "white",
                 }}
@@ -91,7 +93,7 @@ export default function CoursesSection() {
                 {t("courses.heading")}
               </h2>
               <p
-                className="text-sm mt-2 fade-up md:max-w-xl lg:max-w-2xl"
+                className="text-xs sm:text-sm mt-2 fade-up md:max-w-xl lg:max-w-2xl"
                 style={{ color: "oklch(0.65 0.05 145)", fontFamily: "'Outfit', sans-serif", fontWeight: 300 }}
               >
                 {t("courses.description")}
@@ -99,9 +101,9 @@ export default function CoursesSection() {
             </div>
 
             {/* Type filters */}
-            <div className="flex flex-col gap-2.5 w-full md:w-auto md:items-end md:shrink-0">
+            <div className="flex flex-col gap-2 w-full md:w-auto md:items-end md:shrink-0">
               <p
-                className="text-xs font-semibold uppercase tracking-wider fade-up md:text-right"
+                className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider fade-up md:text-right"
                 style={{ color: "oklch(0.55 0.06 145)", fontFamily: "'Outfit', sans-serif" }}
                 id="courses-filter-label"
               >
@@ -121,7 +123,7 @@ export default function CoursesSection() {
                     aria-selected={typeFilter === type}
                     aria-controls="courses-network-panel"
                     onClick={() => setTypeFilter(type)}
-                    className="filter-pill px-4 py-2 rounded-sm text-xs font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap"
+                    className="filter-pill px-3 sm:px-4 py-2 rounded-sm text-[10px] sm:text-xs font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap min-h-[40px] flex items-center"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
                       background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
@@ -140,10 +142,12 @@ export default function CoursesSection() {
 
         {/* Map + course list — frosted container */}
         <div
+          data-frosted
           className="rounded-xl overflow-hidden fade-up"
           style={{
             background: "oklch(0.13 0.05 145 / 0.72)",
             backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
@@ -157,21 +161,23 @@ export default function CoursesSection() {
 
         {/* Bottom CTA — frosted container */}
         <div
-          className="mt-6 rounded-xl px-6 py-5 md:px-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-up"
+          data-frosted
+          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4 fade-up"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.72)",
+            background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >
           <div className="flex flex-col gap-2 max-w-md">
-            <p style={{ fontFamily: "'Outfit', sans-serif", fontSize: "0.9rem", color: "oklch(0.65 0.05 145)" }}>
+            <p className="text-xs sm:text-sm" style={{ fontFamily: "'Outfit', sans-serif", color: "oklch(0.65 0.05 145)" }}>
               {t("courses.bottomText")}
             </p>
             <a
               href="/courses"
-              className="courses-directory-link fairway-text-control lg:hidden inline-flex text-sm font-medium w-fit min-h-[44px] items-center rounded-sm underline-offset-4 decoration-1 hover:underline touch-manipulation"
+              className="courses-directory-link lg:hidden inline-flex text-xs sm:text-sm font-medium w-fit min-h-[44px] items-center rounded-sm underline-offset-4 decoration-1 hover:underline touch-manipulation"
               style={{ color: "oklch(0.65 0.10 145)", fontFamily: "'Outfit', sans-serif" }}
             >
               {t("courses.viewAll")}
@@ -180,7 +186,7 @@ export default function CoursesSection() {
           <button
             type="button"
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-            className="btn-fairway text-xs py-3 px-6 min-h-[44px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation"
+            className="btn-fairway text-[11px] py-3 px-6 min-h-[48px] inline-flex items-center justify-center gap-2 flex-shrink-0 touch-manipulation w-full sm:w-auto"
           >
             {t("nav.getCard")}
           </button>

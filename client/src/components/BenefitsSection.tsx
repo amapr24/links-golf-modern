@@ -2,7 +2,7 @@
  * BenefitsSection — "Why Join" (01)
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         frosted dark-green content containers for legibility.
- *         Matches the visual language of Pricing (04) and FAQ (05).
+ *         Mobile-optimized: tighter padding, compact stats, single-col cards on xs.
  */
 
 import { DollarSign, Smartphone, MapPin, CalendarCheck } from "lucide-react";
@@ -54,10 +54,11 @@ export default function BenefitsSection() {
         backgroundImage: `url(${AERIAL_IMAGE})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
+        /* Fixed attachment creates parallax on desktop; scroll on mobile avoids iOS jank */
         backgroundAttachment: "fixed",
       }}
     >
-      {/* Dark overlay — same depth as Pricing (04) */}
+      {/* Dark overlay */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -66,25 +67,33 @@ export default function BenefitsSection() {
         aria-hidden
       />
 
-      <div className="container relative z-10 py-20 md:py-28">
+      {/* Mobile: py-12 px-4 | Desktop: py-28 */}
+      <div className="container relative z-10 py-12 md:py-28 px-4 sm:px-6 md:px-8">
+
         {/* Section header — frosted container */}
         <div
-          className="mb-12 md:mb-16 fade-up rounded-xl px-8 py-8 md:py-10 inline-block"
+          data-frosted
+          className="mb-8 md:mb-12 fade-up rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10 inline-block w-full"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "oklch(0.13 0.05 145 / 0.80)",
             backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <p className="section-label mb-3" style={{ color: "oklch(0.65 0.10 145)" }}>
+          <p
+            className="section-label mb-2 text-[10px] sm:text-xs"
+            style={{ color: "oklch(0.65 0.10 145)" }}
+          >
             01 · {t("benefits.label")}
           </p>
           <h2
-            className="leading-tight max-w-xl"
+            className="leading-tight max-w-xl fade-up"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2.4rem, 5vw, 3.6rem)",
+              /* Smaller floor on mobile: 1.9rem → 3.6rem on wide */
+              fontSize: "clamp(1.9rem, 6vw, 3.6rem)",
               fontWeight: 600,
               color: "white",
               letterSpacing: "-0.01em",
@@ -93,7 +102,7 @@ export default function BenefitsSection() {
             {t("benefits.heading")}
           </h2>
           <p
-            className="mt-4 max-w-md text-base leading-relaxed"
+            className="mt-3 max-w-md text-sm sm:text-base leading-relaxed"
             style={{
               fontFamily: "'Outfit', sans-serif",
               color: "oklch(0.72 0.05 145)",
@@ -104,33 +113,35 @@ export default function BenefitsSection() {
           </p>
         </div>
 
-        {/* Benefit cards — 2-col on md, 4-col on lg — frosted containers */}
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {/* Benefit cards — 1-col on xs, 2-col on sm, 4-col on lg */}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4">
           {benefits.map((b, i) => {
             const Icon = b.icon;
             return (
               <div
                 key={b.id}
-                className="fade-up flex flex-col gap-4 rounded-xl border p-6"
+                data-frosted
+                className="fade-up flex flex-row sm:flex-col gap-4 rounded-xl border p-4 sm:p-5 md:p-6"
                 style={{
                   transitionDelay: `${i * 60}ms`,
-                  background: "oklch(0.13 0.05 145 / 0.72)",
+                  background: "oklch(0.13 0.05 145 / 0.75)",
                   borderColor: "oklch(0.30 0.08 145 / 0.5)",
                   backdropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
                   boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
                 }}
               >
-                {/* Icon */}
+                {/* Icon — left-aligned on mobile, top on sm+ */}
                 <div
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-lg"
+                  className="inline-flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-lg flex-shrink-0 self-start"
                   style={{ background: "oklch(0.42 0.14 145 / 0.25)" }}
                   aria-hidden
                 >
-                  <Icon size={18} style={{ color: "oklch(0.72 0.12 145)" }} />
+                  <Icon size={16} style={{ color: "oklch(0.72 0.12 145)" }} />
                 </div>
 
                 {/* Text */}
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1">
                   <p
                     className="text-[9px] font-semibold uppercase tracking-[0.15em]"
                     style={{
@@ -144,7 +155,7 @@ export default function BenefitsSection() {
                     className="leading-snug"
                     style={{
                       fontFamily: "'Cormorant Garamond', serif",
-                      fontSize: "1.2rem",
+                      fontSize: "clamp(1.05rem, 3vw, 1.2rem)",
                       fontWeight: 600,
                       color: "white",
                     }}
@@ -152,7 +163,7 @@ export default function BenefitsSection() {
                     {b.title}
                   </h3>
                   <p
-                    className="text-sm leading-relaxed"
+                    className="text-xs sm:text-sm leading-relaxed"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
                       color: "oklch(0.65 0.05 145)",
@@ -167,28 +178,31 @@ export default function BenefitsSection() {
           })}
         </div>
 
-        {/* Stats row — frosted container */}
+        {/* Stats row — frosted container, compact on mobile */}
         <div
-          className="mt-8 rounded-xl px-8 py-6 fade-up"
+          data-frosted
+          className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6 fade-up"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.72)",
+            background: "oklch(0.13 0.05 145 / 0.75)",
             backdropFilter: "blur(10px)",
+            WebkitBackdropFilter: "blur(10px)",
             border: "1px solid oklch(0.30 0.08 145 / 0.45)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {[
               { value: "15", label: t("benefits.stats.partnerCoursesLabel") },
               { value: "25%", label: t("benefits.stats.maxDiscountLabel") },
               { value: t("benefits.stats.breakEvenRange"), label: t("benefits.stats.breakEvenLabel") },
             ].map((stat) => (
-              <div key={stat.label} className="flex flex-col gap-1">
+              <div key={stat.label} className="flex flex-col gap-0.5">
                 <span
                   className="leading-none"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(2rem, 4vw, 2.8rem)",
+                    /* Smaller floor on mobile */
+                    fontSize: "clamp(1.5rem, 5vw, 2.8rem)",
                     fontWeight: 600,
                     color: "oklch(0.72 0.12 145)",
                   }}
@@ -196,7 +210,7 @@ export default function BenefitsSection() {
                   {stat.value}
                 </span>
                 <span
-                  className="text-xs uppercase tracking-wider"
+                  className="text-[9px] sm:text-xs uppercase tracking-wider leading-tight"
                   style={{
                     fontFamily: "'Outfit', sans-serif",
                     color: "oklch(0.55 0.06 145)",
@@ -210,11 +224,11 @@ export default function BenefitsSection() {
         </div>
 
         {/* CTA */}
-        <div className="mt-8 fade-up">
+        <div className="mt-5 sm:mt-8 fade-up">
           <button
             type="button"
             onClick={() => scrollSelectorIntoViewMotionSafe("#pricing")}
-            className="btn-fairway text-[11px] py-2.5 px-6 tracking-[0.14em]"
+            className="btn-fairway text-[11px] py-3 px-6 tracking-[0.14em] w-full sm:w-auto min-h-[48px]"
           >
             {t("benefits.cta")}
           </button>

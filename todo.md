@@ -120,6 +120,13 @@
 - [x] Make courses pill list scroll indicator background fully transparent
 
 ## Section Background Redesign
-- [ ] Section 01 (Why Join): full-bleed aerial photo background with frosted/shadowed content containers
-- [ ] Section 02 (Courses): full-bleed aerial photo background with frosted/shadowed content containers
-- [ ] Section 03 (How It Works): full-bleed aerial photo background with frosted/shadowed content containers
+- [x] Section 01 (Why Join): full-bleed aerial photo background with frosted/shadowed content containers
+- [x] Section 02 (Courses): full-bleed aerial photo background with frosted/shadowed content containers
+- [x] Section 03 (How It Works): full-bleed aerial photo background with frosted/shadowed content containers
+
+## Mobile Optimizations — Frosted Container Sections (Current Sprint)
+- [x] BenefitsSection (01): tighten mobile padding, reduce header font size, single-col benefit cards, compact stats row
+- [x] CoursesSection (02): tighten mobile padding, stack header/filters vertically, full-width filter pills, compact CTA bar
+- [x] HowItWorksSection (03): tighten mobile padding, reduce heading size, compact step cards, smaller wallet card preview
+- [x] Global: reduce section py on mobile (py-20 → py-14), reduce frosted container px on mobile (px-8 → px-4/px-5)
+- [x] Global: ensure backdrop-filter blur degrades gracefully on older mobile browsers (add @supports fallback)
