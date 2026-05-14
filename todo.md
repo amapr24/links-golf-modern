@@ -285,6 +285,59 @@
 
 ## Standards-based audits (follow-up passes)
 
+### OWASP ASVS 4.0.3 (Level 1 + key Level 2) — source-based audit
+
+> Estimated conformance: **~28 of 45 audited L1+L2 reqs PASS (≈ 62 %)**. Categories with the worst pass rate: V9 Communication (headers), V7 Logging, V11 Business logic, V12 SSRF, V14 Config.
+>
+> Each item below maps to an ASVS requirement ID. The existing P0/P1 audit already covers many ASVS findings; only **new** items are listed here. The "Existing → ASVS mapping" block at the end cross-references the P0/P1 items for traceability.
+
+**New ASVS findings to add to the backlog:**
+
+- [ ] **V9.2.1 / V14.4.1 — No HTTP security headers.** Express ships no CSP, HSTS, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `Cross-Origin-Opener-Policy`, or `Cross-Origin-Resource-Policy`. — `server/_core/index.ts`
+  - **Fix:** Add `helmet()` middleware before the tRPC router. Minimum CSP: `default-src 'self'; script-src 'self' https://js.stripe.com https://maps.googleapis.com; img-src 'self' data: https://*.unsplash.com https://*.googleusercontent.com; frame-src https://js.stripe.com; connect-src 'self' https://api.stripe.com`. HSTS: `max-age=31536000; includeSubDomains; preload` (prod only). Frame-options: `DENY`.
+- [ ] **V12.6.1 — Server-side request forgery in image/voice handlers.** `voiceTranscription.ts` and `imageGeneration.ts` fetch arbitrary external URLs supplied by request input. An attacker can probe internal services (cloud metadata `169.254.169.254`, internal IPs). — `server/_core/voiceTranscription.ts`, `server/_core/imageGeneration.ts`
+  - **Fix:** Validate URLs against an allowlist (S3 bucket(s), Supabase storage, public CDN); reject private IP ranges (`10/8`, `172.16/12`, `192.168/16`, `127/8`, `169.254/16`, `::1`); enforce response-size and timeout limits; disable redirects (or follow with the same checks). Or remove these endpoints entirely if they're vestigial (see V14.3.1 below).
+- [ ] **V7.1.1 / V7.1.3 — PII and OTP logged.** OTP is logged in dev mode (`server/routers.ts:119-120`); email addresses are logged in `sendOtpEmail` and `verifyOtp` happy paths; raw Resend/Supabase/Stripe error responses are logged verbatim and can contain auth headers. — `server/email.ts:52,119`, `server/routers.ts`
+  - **Fix:** Remove OTP from logs entirely (even in dev). Hash emails before logging (`sha256(email).slice(0,8)`). Wrap third-party calls in a helper that strips known sensitive keys (`authorization`, `set-cookie`, `api-key`) before logging.
+- [ ] **V14.1.1 — Build-time source map policy.** `esbuild` step has no `--sourcemap` flag (so server source maps are off, good), but Vite default behaviour for production is no source maps (good). However there is no explicit policy or assertion, so a config change could silently start shipping them.
+  - **Fix:** In `vite.config.ts`, explicitly set `build.sourcemap: 'hidden'` and upload them to your error tracker out-of-band. Add a CI check that `dist/public/assets/*.map` is not present.
+- [ ] **V10.2.1 — No dependency audit in CI.** `pnpm-lock.yaml` is checked in but no automated audit runs. — `package.json`, no `.github/workflows/`
+  - **Fix:** Add a job that runs `pnpm audit --prod --audit-level=moderate` on every PR. Pin tool versions; review the lockfile in code review.
+- [ ] **V10.3.1 — No SBOM / provenance.**
+  - **Fix:** Generate a CycloneDX SBOM at build (`pnpm dlx @cyclonedx/cyclonedx-npm`) and attach to releases.
+- [ ] **V7.2.1 — No request correlation id, no structured logging.** ≈ 80 raw `console.*` calls.
+  - **Fix:** Adopt `pino`; mint a `x-request-id` UUID in an Express middleware, attach to `ctx` for tRPC, include in every log line.
+- [ ] **V6.1.1 — No data classification.** Email, phone, member photo, Stripe customer id, subscription state, payment history — no documented sensitivity level.
+  - **Fix:** Add a short `docs/data-classification.md` mapping every column to one of {Public, Internal, Confidential, Restricted}. Use it to drive log redaction and access-control reviews.
+- [ ] **V14.3.1 / V1.2.1 — Unused-but-registered server modules.** `server/_core/{heartbeat,notification,dataApi,storageProxy,systemRouter,map,oauth,imageGeneration,voiceTranscription,llm,sdk}.ts` exist. Each one that's wired into the Express/tRPC router is reachable attack surface; each one that's dead code is maintenance debt.
+  - **Fix:** Audit `server/_core/index.ts` and `server/_core/systemRouter.ts` for which of these modules are actually mounted. Delete every unused module. For the ones that stay, ensure each has auth + rate-limit + input validation.
+- [ ] **V14.2.1 — No Subresource Integrity on third-party scripts.** If/when Stripe.js or Google Maps are loaded from their CDN.
+  - **Fix:** For Stripe.js, SRI isn't supported by Stripe (they require their live CDN script). For Google Maps, document why SRI is intentionally absent.
+- [ ] **V3.4.2 — `Secure` cookie flag conditional on `req.protocol`.** Correct when `trust proxy` is set; risky if it isn't (cookie issued without `Secure` over an HTTPS load balancer). — `server/_core/cookies.ts`, `server/_core/index.ts`
+  - **Fix:** Force `secure: true` whenever `NODE_ENV === 'production'`; let dev opt out via env var.
+- [ ] **V11.1.4 — Rate limiting only covers OTP send.** Login verify, checkout creation, profile updates, photo upload, payment history queries are unlimited per client.
+  - **Fix:** Add an Express-level rate limiter (`express-rate-limit` with a Redis store) keyed by IP + member id where applicable. Suggested ceilings: 60 req/min/IP global, 10 checkouts/hr/member, 30 verify attempts/hr/email.
+- [ ] **V5.1.2 — `as any` casts on Stripe period fields.** — `server/member.payments.ts:92,98` (already P0 but tagged here for ASVS traceability).
+
+**Existing P0/P1 items mapped to ASVS IDs (for traceability):**
+
+| ASVS req | Existing TODO item |
+|---|---|
+| V2.2.1 | Hard-coded JWT fallback secret |
+| V2.6.1 | Non-atomic OTP `verifyAndConsumeOtp` |
+| V2.6.2 | No per-OTP attempt cap |
+| V2.9.1 | In-memory OTP fallback in production |
+| V3.7.1 | No CSRF protection on tRPC mutations |
+| V4.1.1 | IDOR in `member.createCheckout` |
+| V8.2.1 | PII in `localStorage` |
+| V11.1.2 | Webhook not idempotent |
+| V11.1.3 | Subscription state transitions ignored |
+| V14.3.1 | Manus platform coupling / debug collector |
+
+**Threat-model gap (V1):** there is no `docs/threat-model.md`; before launch it should at least cover (a) the OTP flow, (b) the Stripe checkout/webhook flow, (c) the photo upload + S3 path, (d) the Supabase service-role data path. Even a one-page STRIDE-style listing is enough.
+
+---
+
 ### WCAG 2.1 Level A + AA — per-criterion source walk
 
 > axe-core could not be run (no browser available in sandbox; Playwright Chromium download blocked). This is a source-based walk; criteria not listed below were N/A or PASS. Re-run axe-core in a browser once available to confirm.
