@@ -242,8 +242,8 @@ export default function PricingSection() {
         aria-hidden
       />
 
-      {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
-      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
+      {/* Section chrome matches How It Works (03). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 lg:pt-6 lg:pb-6 px-4 sm:px-6 md:px-8">
         {/* Frosted container wrapper */}
         <div
           className="rounded-xl overflow-hidden"
@@ -255,32 +255,38 @@ export default function PricingSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
-            <div className="text-center mb-6 sm:mb-7 md:mb-6.5 lg:mb-7">
-          <p className="section-label mb-2.5 sm:mb-3 text-white/40">04 · {t("pricing.sectionEyebrow")}</p>
-          <h2
-            className="text-white fade-up"
-            style={{
-              fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2rem, 5.5vw, 3.2rem)",
-              fontWeight: 600,
-            }}
-          >
-            Start playing{" "}
-            <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
-              more
-            </em>{" "}
-            today.
-          </h2>
-          <p
-            className="text-white/60 mt-2 sm:mt-2.5 fade-up max-w-xl mx-auto leading-relaxed"
-            style={{ fontFamily: "'Outfit', sans-serif", fontWeight: 300, fontSize: "clamp(1rem, 2.2vw, 1.0625rem)" }}
-          >
-            Unlock every major course in Puerto Rico. Pays for itself in as few as 3–4 rounds.
-          </p>
-        </div>
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[2.1%]">
+            <div className="text-center mb-4 sm:mb-5 md:mb-5 lg:mb-2">
+              <p className="section-label mb-1 sm:mb-1.5 lg:mb-0.5 text-[10px] sm:text-xs text-white/40">
+                04 · {t("pricing.sectionEyebrow")}
+              </p>
+              <h2
+                className="text-white fade-up"
+                style={{
+                  fontFamily: "'Cormorant Garamond', serif",
+                  fontSize: "clamp(2rem, 5.5vw, 3.2rem)",
+                  fontWeight: 600,
+                }}
+              >
+                Start playing{" "}
+                <em style={{ color: "oklch(0.55 0.14 145)", fontStyle: "italic" }}>
+                  more
+                </em>{" "}
+                today.
+              </h2>
+              <p
+                className="text-white/60 mt-2 sm:mt-2.5 fade-up max-w-xl mx-auto leading-relaxed"
+                style={{
+                  fontFamily: "'Outfit', sans-serif",
+                  fontWeight: 300,
+                  fontSize: "clamp(1rem, 2.2vw, 1.0625rem)",
+                }}
+              >
+                Unlock every major course in Puerto Rico. Pays for itself in as few as 3–4 rounds.
+              </p>
+            </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-start">
+            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-start">
           {/* Left: Pricing card */}
           <div
             className="rounded-sm p-8 fade-up"

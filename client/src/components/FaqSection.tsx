@@ -88,8 +88,8 @@ export default function FaqSection() {
         aria-hidden
       />
 
-      {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
-      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
+      {/* Section chrome matches How It Works (03). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 lg:pt-6 lg:pb-6 px-4 sm:px-6 md:px-8">
         <div
           className="rounded-xl overflow-hidden"
           style={{
@@ -100,10 +100,10 @@ export default function FaqSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[2.1%]">
             <div className="grid md:grid-cols-[1fr_2fr] gap-6 md:gap-12 lg:gap-16 items-start">
               <div className="md:sticky md:top-24">
-                <p className="section-label mb-2.5 sm:mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
+                <p className="section-label mb-1 sm:mb-1.5 lg:mb-0.5 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   05 · {t("faq.label")}
                 </p>
                 <h2

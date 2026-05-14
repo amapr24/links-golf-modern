@@ -96,8 +96,8 @@ export default function CoursesSection() {
         aria-hidden
       />
 
-      {/* Slightly tighter md+ chrome than Benefits so Our Network reads less airy on desktop. */}
-      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
+      {/* Section chrome matches How It Works (03). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 lg:pt-6 lg:pb-6 px-4 sm:px-6 md:px-8">
         <div
           data-reveal
           data-frosted
@@ -110,14 +110,14 @@ export default function CoursesSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[2.1%]">
             <p
-              className="section-label mb-2.5 sm:mb-3 text-center text-[10px] sm:text-xs lg:leading-none"
+              className="section-label mb-1 sm:mb-1.5 lg:mb-0.5 text-center text-[10px] sm:text-xs lg:leading-none"
               style={{ color: "oklch(0.65 0.10 145)" }}
             >
               02 · {t("courses.label")}
             </p>
-            <div className="mb-6 sm:mb-7 md:mb-6.5 lg:mb-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-stretch md:gap-x-8 lg:gap-x-10 md:gap-y-0">
+            <div className="mb-4 sm:mb-5 md:mb-5 lg:mb-2 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-stretch md:gap-x-8 lg:gap-x-10 md:gap-y-0">
               <div className="max-w-3xl min-w-0">
                 <h2
                   className="leading-tight"
