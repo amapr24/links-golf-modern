@@ -108,7 +108,7 @@ export default function BenefitsSection() {
                   className="leading-[1.12] lg:leading-tight"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(1.35rem, 3.8vw, 2.1rem)",
+                    fontSize: "clamp(1.8rem, 4.5vw, 2.8rem)",
                     fontWeight: 600,
                     color: "white",
                     letterSpacing: "-0.01em",

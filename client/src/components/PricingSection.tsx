@@ -260,7 +260,7 @@ export default function PricingSection() {
             className="text-white fade-up"
             style={{
               fontFamily: "'Cormorant Garamond', serif",
-              fontSize: "clamp(2.2rem, 5vw, 3.2rem)",
+              fontSize: "clamp(2rem, 5.5vw, 3.2rem)",
               fontWeight: 600,
             }}
           >

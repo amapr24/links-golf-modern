@@ -118,7 +118,7 @@ export default function CoursesSection() {
                   className="leading-tight"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(1.9rem, 6vw, 3.2rem)",
+                    fontSize: "clamp(2rem, 5.5vw, 3.2rem)",
                     fontWeight: 600,
                     color: "white",
                   }}

@@ -108,7 +108,7 @@ export default function FaqSection() {
                   className="leading-tight fade-up"
                   style={{
                     fontFamily: "'Cormorant Garamond', serif",
-                    fontSize: "clamp(2rem, 4vw, 3rem)",
+                    fontSize: "clamp(2rem, 5.5vw, 3.2rem)",
                     fontWeight: 600,
                     color: "white",
                   }}
