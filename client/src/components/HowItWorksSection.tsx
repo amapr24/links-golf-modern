@@ -108,8 +108,8 @@ export default function HowItWorksSection() {
         aria-hidden
       />
 
-      {/* Top / bottom padding matches CoursesSection (tight band). */}
-      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-4 sm:px-6 md:px-8">
+      {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
         <div
           data-reveal
           data-frosted
@@ -122,8 +122,8 @@ export default function HowItWorksSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
-            <div className="text-center mb-8 sm:mb-10 md:mb-12">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+            <div className="text-center mb-8 sm:mb-10 md:mb-5 lg:mb-6">
               <p className="section-label mb-3 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                 03 · {t("nav.howItWorks")}
               </p>

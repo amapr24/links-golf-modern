@@ -77,8 +77,8 @@ export default function FaqSection() {
         aria-hidden
       />
 
-      {/* Top / bottom padding matches PricingSection (tight band above footer). */}
-      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-4 sm:px-6 md:px-8">
+      {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
         <div
           className="rounded-xl overflow-hidden"
           style={{
@@ -89,8 +89,8 @@ export default function FaqSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
-            <div className="grid md:grid-cols-[1fr_2fr] gap-12 md:gap-20 items-start">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+            <div className="grid md:grid-cols-[1fr_2fr] gap-10 md:gap-12 lg:gap-16 items-start">
               <div className="md:sticky md:top-24">
                 <p className="section-label mb-4 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   05 · {t("faq.label")}

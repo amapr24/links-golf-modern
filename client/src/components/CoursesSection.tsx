@@ -3,7 +3,7 @@
  * Design: Full-bleed aerial photo (fixed attachment) with dark overlay,
  *         entire section wrapped in a single frosted container for cohesion.
  * Animation: useScrollReveal drives fade-in on the container.
- * Mobile-optimized: tighter padding, stacked header/filters, compact CTA bar.
+ * Mobile-optimized: heading + filters in a two-column band (filters bottom-right from md).
  */
 
 import { useState } from "react";
@@ -92,8 +92,8 @@ export default function CoursesSection() {
         aria-hidden
       />
 
-      {/* Top padding matches BenefitsSection bottom; bottom matches HowItWorksSection top (tight band). */}
-      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-10 pb-7 sm:pb-9 md:pb-10 px-4 sm:px-6 md:px-8">
+      {/* Slightly tighter md+ chrome than Benefits so Our Network reads less airy on desktop. */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
         <div
           data-reveal
           data-frosted
@@ -106,9 +106,9 @@ export default function CoursesSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
-            <div className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 flex flex-col gap-4">
-              <div className="max-w-3xl">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+            <div className="mb-6 sm:mb-7 md:mb-5 lg:mb-6 grid grid-cols-1 gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-stretch md:gap-x-8 lg:gap-x-10 md:gap-y-0">
+              <div className="max-w-3xl min-w-0">
                 <p className="section-label mb-2 text-[10px] sm:text-xs" style={{ color: "oklch(0.65 0.10 145)" }}>
                   02 · {t("courses.label")}
                 </p>
@@ -131,9 +131,9 @@ export default function CoursesSection() {
                 </p>
               </div>
 
-              <div className="flex flex-col gap-2 w-full">
+              <div className="flex min-h-0 min-w-0 w-full flex-col justify-end gap-1.5 sm:gap-2 md:max-w-[min(100%,22rem)] lg:max-w-[24rem] md:items-end">
                 <p
-                  className="text-xs sm:text-sm font-semibold uppercase tracking-wider"
+                  className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide sm:tracking-wider text-right w-full"
                   style={{ color: "oklch(0.62 0.08 145)", fontFamily: "'Outfit', sans-serif" }}
                   id="courses-filter-label"
                 >
@@ -142,7 +142,7 @@ export default function CoursesSection() {
                 <div
                   role="tablist"
                   aria-labelledby="courses-filter-label"
-                  className="flex flex-wrap gap-2 w-full"
+                  className="flex w-full flex-wrap content-end justify-end gap-1.5 sm:gap-2"
                 >
                   {DIRECTORY_TYPES.map((type) => (
                     <button
@@ -153,7 +153,7 @@ export default function CoursesSection() {
                       aria-selected={typeFilter === type}
                       aria-controls="courses-network-panel"
                       onClick={() => setTypeFilter(type)}
-                      className="filter-pill px-3 sm:px-4 py-2 rounded-sm text-xs sm:text-sm font-semibold uppercase tracking-wider transition-all duration-200 touch-manipulation whitespace-nowrap min-h-[44px] flex items-center"
+                      className="filter-pill flex min-h-[36px] items-center justify-center rounded-sm px-2 py-1.5 text-[10px] font-semibold uppercase leading-tight tracking-wide transition-all duration-200 touch-manipulation whitespace-nowrap sm:min-h-[38px] sm:px-2.5 sm:py-1.5 sm:text-xs sm:tracking-wider md:min-h-[36px] md:px-2 md:py-1"
                       style={{
                         fontFamily: "'Outfit', sans-serif",
                         background: typeFilter === type ? "oklch(0.42 0.14 145)" : "oklch(0.20 0.06 145 / 0.7)",
@@ -168,10 +168,7 @@ export default function CoursesSection() {
               </div>
             </div>
 
-            <div
-              className="mb-6 sm:mb-7 md:mb-8 lg:mb-10 rounded-lg overflow-hidden border"
-              style={{ borderColor: "rgba(255,255,255,0.12)" }}
-            >
+            <div className="mb-6 sm:mb-7 md:mb-5 lg:mb-6 rounded-lg overflow-hidden">
               <div id="courses-network-panel" role="tabpanel" aria-labelledby={activeTabId}>
                 <div className="courses-map-mount">
                   <CoursesMap filter={typeFilter} />

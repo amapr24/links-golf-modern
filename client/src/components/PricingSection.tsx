@@ -247,8 +247,8 @@ export default function PricingSection() {
         aria-hidden
       />
 
-      {/* Top / bottom padding matches HowItWorksSection (tight band). */}
-      <div className="container relative z-10 py-7 sm:py-9 md:py-10 px-4 sm:px-6 md:px-8">
+      {/* Slightly tighter md+ chrome (matches Our Network / CoursesSection rhythm). */}
+      <div className="container relative z-10 pt-7 sm:pt-9 md:pt-8 pb-7 sm:pb-9 md:pb-8 px-4 sm:px-6 md:px-8">
         {/* Frosted container wrapper */}
         <div
           className="rounded-xl overflow-hidden"
@@ -260,8 +260,8 @@ export default function PricingSection() {
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
-          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[6%]">
-            <div className="text-center mb-8 md:mb-10">
+          <div className="px-[4%] py-[4%] sm:px-[5%] sm:py-[5%] md:px-[5%] md:py-[3.25%] lg:py-[3.75%]">
+            <div className="text-center mb-8 md:mb-5 lg:mb-6">
           <p className="section-label mb-4 text-white/40">04 · {t("pricing.sectionEyebrow")}</p>
           <h2
             className="text-white fade-up"

@@ -264,7 +264,7 @@ export function CoursesMap({ filter }: CoursesMapProps) {
         role="presentation"
       >
         {/* Map — wider, shorter rectangle to echo Puerto Rico's shape */}
-        <div className="relative min-h-0 min-w-0 h-[min(55vh,22rem)] min-[640px]:max-[899px]:h-[340px] min-[900px]:h-[380px] min-[900px]:min-h-0 rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)] ring-1 ring-black/[0.06]">
+        <div className="relative min-h-0 min-w-0 h-[min(55vh,22rem)] min-[640px]:max-[899px]:h-[340px] min-[900px]:h-[380px] min-[900px]:min-h-0 rounded-lg overflow-hidden shadow-[0_8px_30px_rgba(0,0,0,0.08)]">
           <MapView
             initialCenter={{ lat: 18.2208, lng: -66.5901 }}
             initialZoom={9}
@@ -321,11 +321,11 @@ export function CoursesMap({ filter }: CoursesMapProps) {
                       else delete pillRefs.current[course.slug];
                     }}
                     onClick={() => onCoursePillClick(course)}
-                    className="course-map-pill flex w-full items-center justify-between gap-2 rounded-lg border px-3 py-2.5 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
+                    className="course-map-pill flex w-full items-center justify-between gap-2 rounded-lg border border-transparent px-3 py-2.5 text-left transition-colors duration-200 touch-manipulation outline-none focus-visible:ring-2 focus-visible:ring-[oklch(0.42_0.14_145)] focus-visible:ring-offset-2 focus-visible:ring-offset-[#F7F3EC]"
                     style={{
                       fontFamily: "'Outfit', sans-serif",
                       background: selected ? "oklch(0.97 0.03 145)" : "white",
-                      borderColor: selected ? "oklch(0.42 0.14 145)" : "oklch(0.88 0.02 85)",
+                      borderColor: selected ? "oklch(0.42 0.14 145)" : "transparent",
                       boxShadow: selected
                         ? "0 0 0 1px oklch(0.42 0.14 145)"
                         : "0 1px 0 rgba(0,0,0,0.04)",
