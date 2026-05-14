@@ -81,10 +81,10 @@ export default function BenefitsSection() {
           data-frosted
           className="mb-8 md:mb-12 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-10 inline-block w-full"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.80)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
@@ -130,8 +130,8 @@ export default function BenefitsSection() {
                 data-frosted
                 className="flex flex-row sm:flex-col gap-4 rounded-xl border p-4 sm:p-5 md:p-6"
                 style={{
-                  background: "oklch(0.13 0.05 145 / 0.75)",
-                  borderColor: "oklch(0.30 0.08 145 / 0.5)",
+                  background: "rgba(255,255,255,0.04)",
+                  borderColor: "rgba(255,255,255,0.08)",
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
                   boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
@@ -190,10 +190,10 @@ export default function BenefitsSection() {
           data-frosted
           className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 md:py-6"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >

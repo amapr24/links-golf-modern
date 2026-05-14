@@ -98,10 +98,10 @@ export default function HowItWorksSection() {
           data-frosted
           className="text-center mb-6 sm:mb-10 rounded-xl px-5 py-6 sm:px-6 sm:py-7 md:px-8 md:py-8"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.80)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
@@ -136,10 +136,10 @@ export default function HowItWorksSection() {
                 data-frosted
                 className="rounded-xl p-5 sm:p-6 md:p-8 flex flex-row md:flex-col gap-4 md:gap-0"
                 style={{
-                  background: "oklch(0.13 0.05 145 / 0.75)",
+                  background: "rgba(255,255,255,0.04)",
                   backdropFilter: "blur(10px)",
                   WebkitBackdropFilter: "blur(10px)",
-                  border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+                  border: "1px solid rgba(255,255,255,0.08)",
                   boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
                 }}
               >
@@ -186,10 +186,10 @@ export default function HowItWorksSection() {
           data-frosted
           className="mt-4 sm:mt-6 rounded-xl p-5 sm:p-6 md:p-8 flex flex-col items-center gap-4 sm:gap-6"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >

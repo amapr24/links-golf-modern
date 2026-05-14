@@ -75,10 +75,10 @@ export default function CoursesSection() {
           data-frosted
           className="mb-4 sm:mb-6 rounded-xl px-5 py-5 sm:px-6 sm:py-6 md:px-8 md:py-8"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.80)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
@@ -153,10 +153,10 @@ export default function CoursesSection() {
           data-frosted
           className="rounded-xl overflow-hidden"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.72)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
           }}
         >
@@ -174,10 +174,10 @@ export default function CoursesSection() {
           data-frosted
           className="mt-4 sm:mt-6 rounded-xl px-5 py-4 sm:px-6 sm:py-5 md:px-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4"
           style={{
-            background: "oklch(0.13 0.05 145 / 0.75)",
+            background: "rgba(255,255,255,0.04)",
             backdropFilter: "blur(10px)",
             WebkitBackdropFilter: "blur(10px)",
-            border: "1px solid oklch(0.30 0.08 145 / 0.45)",
+            border: "1px solid rgba(255,255,255,0.08)",
             boxShadow: "0 4px 24px rgba(0,0,0,0.30)",
           }}
         >

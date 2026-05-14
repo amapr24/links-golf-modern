@@ -140,3 +140,9 @@
 - [x] Apply data-reveal and stagger delays to frosted containers in CoursesSection (02)
 - [x] Apply data-reveal and stagger delays to frosted containers in HowItWorksSection (03)
 - [x] Ensure prefers-reduced-motion disables all animations
+
+## Design Refinements — Lighter Frosted Containers & Trust Strip Removal
+- [x] Lighten frosted container backgrounds in BenefitsSection (01): use rgba(255,255,255,0.04) or equivalent
+- [x] Lighten frosted container backgrounds in CoursesSection (02): use rgba(255,255,255,0.04) or equivalent
+- [x] Lighten frosted container backgrounds in HowItWorksSection (03): use rgba(255,255,255,0.04) or equivalent
+- [x] Remove TrustStrip component from Home.tsx
